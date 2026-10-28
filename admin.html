@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Math Teacher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="logo" href="index.html">📐 Math Teacher</a>
+      <nav><a href="index.html">← Сайтқа қайту</a></nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="admin-box">
+        <span class="badge">Бастапқы Admin</span>
+        <h1>Материалдарды қалай өзгертемін?</h1>
+        <p>Бұл алғашқы нұсқада толық серверлік админ панель жасалған жоқ. Барлық материал <strong>data.js</strong> файлында сақталады. Оны өзгерту өте оңай.</p>
+
+        <h2>1. Сынып қосу немесе өзгерту</h2>
+        <p><code>data.js</code> ішіндегі <code>classes</code> бөлігін өзгертіңіз.</p>
+
+        <h2>2. Тақырып қосу</h2>
+        <p>Қажетті сыныптың <code>topics</code> массивіне жаңа тақырып қосыңыз.</p>
+
+        <h2>3. ҚМЖ немесе файл қосу</h2>
+        <p>Файлды жоба ішіндегі <code>materials</code> папкасына салып, оның атын <code>data.js</code> ішіндегі <code>file</code> орнына жазыңыз.</p>
+
+        <div class="code-note">
+          <strong>Мысал:</strong><br>
+          <code>file: "materials/7-synyp/kвадрат-tengdeu-kmj.pdf"</code>
+        </div>
+
+        <h2>Кейін жасайтын Admin Panel</h2>
+        <ul>
+          <li>🔐 Логин/пароль арқылы кіру</li>
+          <li>➕ ҚМЖ жүктеу</li>
+          <li>✏️ Материалды өзгерту</li>
+          <li>🗑️ Материалды өшіру</li>
+          <li>⭐ Негізгі ҚМЖ таңдау</li>
+          <li>📚 Оқулық пен КТП жүктеу</li>
+        </ul>
+
+        <a class="button" href="index.html">Сайтты көру</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
