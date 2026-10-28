@@ -1,77 +1,209 @@
 <!DOCTYPE html>
 <html lang="kk">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MathHub | Мұғалімге арналған математика платформасы</title>
+
+  <title>Math Teacher</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <header class="header">
-    <div class="container nav">
-      <a class="logo" href="index.html">📐 Math Teacher</a>
-      <nav>
-        <a href="#classes">Сыныптар</a>
-        <a href="#features">Мүмкіндіктер</a>
-        <a href="admin.html">⚙️ Admin</a>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <div class="container header-inner">
+
+      <a href="index.html" class="logo">
+        📐 Math Teacher
+      </a>
+
+      <nav class="main-nav">
+
+        <a href="index.html">
+          Басты бет
+        </a>
+
+        <a href="#classes">
+          Сыныптар
+        </a>
+
+        <a href="#favorites">
+          ⭐ Таңдаулылар
+        </a>
+
       </nav>
+
     </div>
+
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="container hero-content">
-        <div>
-          <span class="badge">5–11 сынып • Математика</span>
-          <h1>Мұғалімнің сабағын жеңілдететін платформа</h1>
-          <p>Оқулық, КТП, ҚМЖ және 45 минуттық сабақ материалдарын бір жерден табуға арналған бастапқы нұсқа бұл.</p>
-          <a class="button" href="#classes">Сыныпты таңдау →</a>
-        </div>
-        <div class="hero-card">
-          <div class="big-icon">∑</div>
-          <h3>Бір сабақ — бір орын</h3>
-          <p>Тақырыпты таңдаңыз да, сабаққа қажетті материалдарды бір жерден ашыңыз.</p>
-        </div>
-      </div>
-    </section>
 
-    <section id="classes" class="section">
-      <div class="container">
-        <div class="section-title">
-          <span>01</span>
-          <div>
-            <h2>Сыныпты таңдаңыз</h2>
-            <p>Қажетті сыныпқа кіріп, оның материалдарын ашыңыз.</p>
-          </div>
-        </div>
-        <div id="classGrid" class="class-grid"></div>
-      </div>
-    </section>
+  <!-- HERO -->
 
-    <section id="features" class="section light">
-      <div class="container">
-        <div class="section-title">
-          <span>02</span>
-          <div>
-            <h2>Платформада не болады?</h2>
-            <p>Бұл бірінші нұсқа. Кейін әр бөлімді кеңейте аламыз.</p>
-          </div>
-        </div>
-        <div class="feature-grid">
-          <article><div class="feature-icon">📚</div><h3>Оқулық</h3><p>Сыныпқа арналған кітапты PDF немесе басқа файл ретінде қосуға болады.</p></article>
-          <article><div class="feature-icon">📅</div><h3>КТП</h3><p>Тақырыптарды КТП бойынша ретімен орналастыруға болады.</p></article>
-          <article><div class="feature-icon">📝</div><h3>ҚМЖ</h3><p>Әр тақырыпқа бір немесе бірнеше дайын ҚМЖ сақталады.</p></article>
-          <article><div class="feature-icon">⏱️</div><h3>45 минут</h3><p>Мұғалімге сабақтың кезеңдері, түсіндіруі, жұптық жұмыс және ойындар беріледі.</p></article>
-        </div>
-      </div>
-    </section>
-  </main>
+  <section class="hero">
 
-  <footer>
-    <div class="container">© 2026 Math Teacher Platform • Бастапқы нұсқа</div>
+    <div class="container">
+
+      <span class="badge">
+        Математика мұғалімдеріне арналған платформа
+      </span>
+
+      <h1>
+        Сабаққа дайындалуды
+        <br>
+        жеңілдетіңіз
+      </h1>
+
+      <p>
+        5–11 сыныптарға арналған оқулықтар,
+        КТП, ҚМЖ және дайын сабақ материалдары
+        бір жерде.
+      </p>
+
+
+      <!-- SEARCH -->
+
+      <div class="search-box">
+
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="🔎 Тақырыпты іздеу..."
+        >
+
+        <button
+          class="button"
+          onclick="searchLessons()"
+        >
+          Іздеу
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SEARCH RESULTS -->
+
+  <section
+    id="searchResults"
+    class="container"
+    style="display: none;"
+  >
+
+    <div class="page-heading">
+
+      <h2>
+        Іздеу нәтижелері
+      </h2>
+
+    </div>
+
+    <div id="searchResultsList"></div>
+
+  </section>
+
+
+  <!-- CLASSES -->
+
+  <section
+    id="classes"
+    class="container section"
+  >
+
+    <div class="page-heading">
+
+      <span class="badge">
+        5–11 сынып
+      </span>
+
+      <h2>
+        Сыныпты таңдаңыз
+      </h2>
+
+      <p>
+        Қажетті сыныпты таңдап,
+        пәндер мен тоқсандарға өтіңіз.
+      </p>
+
+    </div>
+
+
+    <div id="classGrid" class="class-grid"></div>
+
+  </section>
+
+
+  <!-- FAVORITES -->
+
+  <section
+    id="favorites"
+    class="container section"
+  >
+
+    <div class="page-heading">
+
+      <span class="badge">
+        ⭐ Менің сабақтарым
+      </span>
+
+      <h2>
+        Таңдаулылар
+      </h2>
+
+      <p>
+        Сіз сақтаған сабақтар осы жерде көрсетіледі.
+      </p>
+
+    </div>
+
+
+    <div id="favoritesList">
+
+      <div class="admin-box">
+
+        <h3>
+          Әзірге таңдаулы сабақ жоқ
+        </h3>
+
+        <p>
+          Ұнаған сабақтың ішінен ⭐ батырмасын
+          басып, оны осы жерге сақтай аласыз.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+
+    <div class="container">
+
+      <p>
+        © 2026 Math Teacher
+      </p>
+
+    </div>
+
   </footer>
 
+
   <script src="data.js"></script>
+  <script src="7-synyp-algebra-1-toqsan-data.js"></script>
   <script src="script.js"></script>
+
 </body>
+
 </html>
