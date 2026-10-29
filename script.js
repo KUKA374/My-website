@@ -318,30 +318,29 @@ function renderQuarterPage() {
       href="class.html?class=${classId}&subject=${subjectId}"
       class="back-link"
     >
-      ← ${grade7AlgebraQ1.subject}
+      ← Алгебра
     </a>
 
-    <div class="page-heading">
+    <div class="page-heading quarter-heading">
+
       <span class="badge">
-        ${grade7AlgebraQ1.grade}-сынып •
-        ${grade7AlgebraQ1.quarter}-тоқсан
+        7-сынып • 1-тоқсан
       </span>
 
-      <h1>
-        ${grade7AlgebraQ1.subject}
-      </h1>
+      <h1>Алгебра</h1>
 
-      <p>
-        ${lessons.length} сабақ
-      </p>
+      <p>${lessons.length} сабақ</p>
+
     </div>
 
     <div class="lesson-list" id="lessonList"></div>
   `;
 
-  const lessonList = document.getElementById("lessonList");
+  const lessonList =
+    document.getElementById("lessonList");
 
   lessons.forEach(lesson => {
+
     const card = document.createElement("a");
 
     card.href =
@@ -351,10 +350,11 @@ function renderQuarterPage() {
 
     card.innerHTML = `
       <div class="lesson-number">
-        ${lesson.number}
+        ${String(lesson.number).padStart(2, "0")}
       </div>
 
       <div class="lesson-info">
+
         <h3>${lesson.title}</h3>
 
         ${
@@ -362,6 +362,7 @@ function renderQuarterPage() {
             ? `<p>${lesson.objective}</p>`
             : ""
         }
+
       </div>
 
       <div class="lesson-arrow">
@@ -372,12 +373,6 @@ function renderQuarterPage() {
     lessonList.appendChild(card);
   });
 }
-
-
-// ==========================================
-// Ескі class жүйесі
-// Басқа материалдар үшін сақталады
-// ==========================================
 
 function renderClassPage() {
   const container = document.getElementById("classPage");
