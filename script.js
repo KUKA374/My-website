@@ -107,57 +107,93 @@ function renderCurriculumClassPage() {
       ← Сыныптарға қайту
     </a>
 
-    <div class="page-heading">
+    <div class="page-heading class-heading">
       <span class="badge">${classData.title}</span>
       <h1>${classData.title}</h1>
-      <p>Қажетті пәнді таңдаңыз.</p>
+      <p>Пәнді және қажетті тоқсанды таңдаңыз.</p>
     </div>
 
-    <div class="subject-grid" id="subjectGrid"></div>
+    <div class="subjects-container" id="subjectsContainer"></div>
   `;
 
-  const subjectGrid = document.getElementById("subjectGrid");
+  const subjectsContainer =
+    document.getElementById("subjectsContainer");
 
   classData.subjects.forEach(subject => {
-    const card = document.createElement("a");
 
-    card.href =
-      `class.html?class=${classId}&subject=${subject.id}`;
+    const subjectBlock = document.createElement("div");
 
-    card.className = "subject-card";
+    subjectBlock.className = "subject-block";
 
-    const availableCount =
-      subject.quarters.filter(q => q.available).length;
+    subjectBlock.innerHTML = `
+      <div class="subject-header">
 
-    card.innerHTML = `
-      <div class="subject-icon">
-        ${subject.id === "algebra" ? "📐" : "📏"}
+        <div class="subject-icon">
+          ${subject.id === "algebra" ? "📐" : "📏"}
+        </div>
+
+        <div>
+          <h2>${subject.title}</h2>
+          <p>4 тоқсан</p>
+        </div>
+
       </div>
 
-      <div>
-        <h3>${subject.title}</h3>
-        <p>4 тоқсан</p>
-        ${
-          availableCount > 0
-            ? `<span class="available-label">
-                ${availableCount} тоқсан дайын
-              </span>`
-            : ""
-        }
-      </div>
-
-      <div class="class-arrow">→</div>
+      <div class="quarters-grid"></div>
     `;
 
-    subjectGrid.appendChild(card);
+    const quartersGrid =
+      subjectBlock.querySelector(".quarters-grid");
+
+    subject.quarters.forEach(quarter => {
+
+      const quarterCard =
+        document.createElement("a");
+
+      if (quarter.available) {
+
+        quarterCard.href =
+          `class.html?class=${classId}&subject=${subject.id}&quarter=${quarter.id}`;
+
+        quarterCard.className =
+          "quarter-card available";
+
+        quarterCard.innerHTML = `
+          <span class="quarter-number">
+            ${quarter.id}
+          </span>
+
+          <div>
+            <strong>${quarter.title}</strong>
+            <small>Материалдар бар →</small>
+          </div>
+        `;
+
+      } else {
+
+        quarterCard.href = "javascript:void(0)";
+
+        quarterCard.className =
+          "quarter-card disabled";
+
+        quarterCard.innerHTML = `
+          <span class="quarter-number">
+            ${quarter.id}
+          </span>
+
+          <div>
+            <strong>${quarter.title}</strong>
+            <small>Жақында қосылады</small>
+          </div>
+        `;
+      }
+
+      quartersGrid.appendChild(quarterCard);
+    });
+
+    subjectsContainer.appendChild(subjectBlock);
   });
 }
-
-
-// ==========================================
-// Пән беті
-// Пән → Тоқсан
-// ==========================================
 
 function renderSubjectPage() {
   const container = document.getElementById("classPage");
