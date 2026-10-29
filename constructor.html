@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сабақ конструкторы | Math Teacher</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .constructor-page{max-width:1000px;margin:0 auto;padding:32px 0 60px}
+    .constructor-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+    .constructor-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px;box-shadow:0 3px 12px rgba(0,0,0,.04)}
+    .constructor-card h2{margin:0 0 16px;font-size:20px}
+    .constructor-form label{display:block;margin:12px 0 6px;font-weight:600;font-size:14px}
+    .constructor-form input,.constructor-form textarea,.constructor-form select{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:9px;padding:10px;font:inherit;background:#fff}
+    .constructor-form textarea{min-height:90px;resize:vertical}
+    .constructor-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .constructor-button{border:0;border-radius:9px;padding:10px 14px;background:#4f46e5;color:#fff;cursor:pointer;font-weight:600}
+    .constructor-button.secondary{background:#eef2ff;color:#4338ca}
+    .constructor-preview h1{margin-top:0;font-size:28px}
+    .preview-section{padding:12px 0;border-bottom:1px solid #eef0f4}
+    .preview-section:last-child{border-bottom:0}
+    .preview-section h3{margin:0 0 6px;font-size:15px}
+    .preview-section p{margin:0;color:#687386;white-space:pre-wrap;line-height:1.5}
+    .saved-message{margin-top:10px;color:#15803d;font-size:14px;min-height:20px}
+    @media(max-width:700px){.constructor-grid{grid-template-columns:1fr}.constructor-page{padding:20px 0 40px}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="logo" href="index.html">📐 Math Teacher</a>
+      <nav><a href="index.html">← Басты бет</a></nav>
+    </div>
+  </header>
+
+  <main class="container constructor-page">
+    <a class="back-link" href="index.html">← Басты бетке қайту</a>
+
+    <div class="page-heading">
+      <span class="badge">🛠 Сабақ конструкторы</span>
+      <h1>Өз сабағыңды құрастыр</h1>
+      <p>Мұғалім сабақ құрылымын толтырып, браузерде сақтай алады.</p>
+    </div>
+
+    <div class="constructor-grid">
+      <section class="constructor-card constructor-form">
+        <h2>Сабақ мәліметтері</h2>
+
+        <label for="lessonTitle">Сабақ атауы</label>
+        <input id="lessonTitle" placeholder="Мысалы: Пропорция">
+
+        <label for="lessonGoal">Сабақ мақсаты</label>
+        <textarea id="lessonGoal" placeholder="Оқу мақсатын жазыңыз"></textarea>
+
+        <label for="lessonExplain">Түсіндіру</label>
+        <textarea id="lessonExplain" placeholder="Теория, формула, мысал..."></textarea>
+
+        <label for="lessonPair">Жұптық жұмыс</label>
+        <textarea id="lessonPair" placeholder="Жұпқа арналған тапсырма"></textarea>
+
+        <label for="lessonGroup">Топтық жұмыс</label>
+        <textarea id="lessonGroup" placeholder="Топқа арналған тапсырма"></textarea>
+
+        <label for="lessonIndividual">Жеке жұмыс</label>
+        <textarea id="lessonIndividual" placeholder="Деңгейлік тапсырмалар"></textarea>
+
+        <label for="lessonGame">Ойын</label>
+        <textarea id="lessonGame" placeholder="Ойынның ережесі"></textarea>
+
+        <label for="lessonAssessment">Бағалау</label>
+        <textarea id="lessonAssessment" placeholder="Дескрипторлар мен ұпайлар"></textarea>
+
+        <label for="lessonHomework">Үй тапсырмасы</label>
+        <textarea id="lessonHomework" placeholder="Үй тапсырмасы"></textarea>
+
+        <div class="constructor-actions">
+          <button class="constructor-button" onclick="saveLesson()">💾 Сақтау</button>
+          <button class="constructor-button secondary" onclick="window.print()">🖨 Басып шығару</button>
+        </div>
+        <div id="savedMessage" class="saved-message"></div>
+      </section>
+
+      <section class="constructor-card constructor-preview">
+        <h2>Алдын ала көру</h2>
+        <div id="preview"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const fields = {
+      lessonTitle: "Сабақ атауы",
+      lessonGoal: "Сабақ мақсаты",
+      lessonExplain: "Түсіндіру",
+      lessonPair: "Жұптық жұмыс",
+      lessonGroup: "Топтық жұмыс",
+      lessonIndividual: "Жеке жұмыс",
+      lessonGame: "Ойын",
+      lessonAssessment: "Бағалау",
+      lessonHomework: "Үй тапсырмасы"
+    };
+
+    function getFormData() {
+      const result = {};
+      Object.keys(fields).forEach(function(id) {
+        result[id] = document.getElementById(id).value.trim();
+      });
+      return result;
+    }
+
+    function renderPreview() {
+      const data = getFormData();
+      const preview = document.getElementById("preview");
+
+      preview.innerHTML = `
+        <h1>${data.lessonTitle || "Жаңа сабақ"}</h1>
+        ${data.lessonGoal ? `<div class="preview-section"><h3>🎯 Мақсат</h3><p>${data.lessonGoal}</p></div>` : ""}
+        ${data.lessonExplain ? `<div class="preview-section"><h3>📚 Түсіндіру</h3><p>${data.lessonExplain}</p></div>` : ""}
+        ${data.lessonPair ? `<div class="preview-section"><h3>👥 Жұптық жұмыс</h3><p>${data.lessonPair}</p></div>` : ""}
+        ${data.lessonGroup ? `<div class="preview-section"><h3>👨‍👩‍👧‍👦 Топтық жұмыс</h3><p>${data.lessonGroup}</p></div>` : ""}
+        ${data.lessonIndividual ? `<div class="preview-section"><h3>✏️ Жеке жұмыс</h3><p>${data.lessonIndividual}</p></div>` : ""}
+        ${data.lessonGame ? `<div class="preview-section"><h3>🎮 Ойын</h3><p>${data.lessonGame}</p></div>` : ""}
+        ${data.lessonAssessment ? `<div class="preview-section"><h3>✅ Бағалау</h3><p>${data.lessonAssessment}</p></div>` : ""}
+        ${data.lessonHomework ? `<div class="preview-section"><h3>🏠 Үй тапсырмасы</h3><p>${data.lessonHomework}</p></div>` : ""}
+        ${Object.values(data).every(function(value){ return !value; }) ? `<p>Сол жақтағы өрістерді толтырсаңыз, сабақтың алдын ала көрінісі осында шығады.</p>` : ""}
+      `;
+    }
+
+    function saveLesson() {
+      const data = getFormData();
+      localStorage.setItem("mathTeacherCustomLesson", JSON.stringify(data));
+      document.getElementById("savedMessage").textContent = "✓ Сабақ осы браузерде сақталды.";
+    }
+
+    function loadLesson() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("mathTeacherCustomLesson") || "null");
+        if (!saved) return;
+        Object.keys(fields).forEach(function(id) {
+          document.getElementById(id).value = saved[id] || "";
+        });
+      } catch (error) {}
+      renderPreview();
+    }
+
+    Object.keys(fields).forEach(function(id) {
+      document.getElementById(id).addEventListener("input", renderPreview);
+    });
+
+    loadLesson();
+  </script>
+</body>
+</html>
