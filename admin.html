@@ -11,6 +11,7 @@
     .admin-profile{padding:14px;border-radius:14px;background:#f5f7ff;margin-bottom:18px}
     .admin-profile strong{display:block;margin-bottom:4px}
     .role-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#edf1ff;color:var(--primary);font-size:12px;font-weight:700}
+    .super-badge{background:#fff0c7;color:#9a6700}
     .admin-menu{display:grid;gap:6px}
     .admin-menu button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;font:inherit;color:var(--dark)}
     .admin-menu button:hover,.admin-menu button.active{background:#eef2ff;color:var(--primary);font-weight:700}
@@ -20,9 +21,7 @@
     .admin-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px}
     .admin-top h1{margin:0 0 5px;font-size:34px}
     .admin-top p{margin:0;color:var(--muted)}
-    .role-switch{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--border);padding:7px;border-radius:12px}
-    .role-switch button{border:0;background:transparent;padding:8px 11px;border-radius:8px;cursor:pointer;font-weight:700;color:var(--muted)}
-    .role-switch button.active{background:var(--primary);color:#fff}
+    .logout-button{border:1px solid var(--border);background:#fff;padding:9px 12px;border-radius:9px;cursor:pointer;font:inherit;font-weight:700}
     .admin-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
     .admin-stat{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px}
     .admin-stat span{font-size:28px;font-weight:800;color:var(--primary);display:block}
@@ -43,14 +42,14 @@
     .notice{padding:13px 15px;border-radius:12px;background:#f5f7fa;color:var(--muted);font-size:14px;margin-top:14px}
     .back-link{display:inline-block;margin-bottom:20px;color:var(--primary);font-weight:700}
     @media(max-width:850px){.admin-layout{grid-template-columns:1fr}.admin-sidebar{position:static}.admin-cards{grid-template-columns:1fr 1fr}.admin-grid{grid-template-columns:1fr}}
-    @media(max-width:520px){.admin-cards{grid-template-columns:1fr}.admin-top{align-items:flex-start;flex-direction:column}.role-switch{width:100%}.role-switch button{flex:1}}
+    @media(max-width:520px){.admin-cards{grid-template-columns:1fr}.admin-top{align-items:flex-start;flex-direction:column}.admin-top-right{width:100%}.logout-button{width:100%}}
   </style>
 </head>
 <body>
   <header class="header">
     <div class="container nav">
       <a class="logo" href="index.html">📐 Math Teacher</a>
-      <nav><a href="index.html">← Сайтқа қайту</a></nav>
+      <nav><button class="logout-button" id="logoutButton" type="button">Шығу</button></nav>
     </div>
   </header>
 
@@ -61,7 +60,7 @@
       <div class="admin-layout" id="adminPanel">
         <aside class="admin-sidebar">
           <div class="admin-profile">
-            <strong>👤 Math Teacher</strong>
+            <strong id="profileName">👤 Math Teacher</strong>
             <span class="role-badge" id="roleLabel">Admin</span>
           </div>
 
@@ -85,13 +84,11 @@
         <section class="admin-main">
           <div class="admin-top">
             <div>
-              <h1>Admin Panel</h1>
-              <p id="roleDescription">Материалдарды көру және сабақ контентін басқару бөлімі.</p>
+              <h1 id="panelTitle">Admin Panel</h1>
+              <p id="roleDescription">Материалдарды және сабақ контентін басқару бөлімі.</p>
             </div>
-
-            <div class="role-switch" aria-label="Демо рөлді таңдау">
-              <button id="adminRoleBtn" class="active" type="button">Admin</button>
-              <button id="superRoleBtn" type="button">Super Admin</button>
+            <div class="admin-top-right">
+              <button class="logout-button" id="logoutButton2" type="button">Аккаунттан шығу</button>
             </div>
           </div>
 
@@ -103,7 +100,7 @@
 
           <div class="admin-section">
             <h2>📚 Сабақ материалдарын басқару</h2>
-            <p>Сабаққа қажетті контентті осы бөлімдер арқылы қосу жоспарланған.</p>
+            <p>Сабаққа қажетті контентті осы бөлімдер арқылы басқаруға болады.</p>
             <div class="admin-grid">
               <button class="admin-action" type="button"><strong>🎥 Видеосабақ</strong><span>Видео сілтемесін немесе материалын қосу</span></button>
               <button class="admin-action" type="button"><strong>📚 Теория</strong><span>Тақырып түсіндірмесі мен мысалдарды қосу</span></button>
@@ -114,12 +111,12 @@
               <button class="admin-action" type="button"><strong>✅ Бағалау</strong><span>Бағалау критерийлері мен дескрипторларды қосу</span></button>
               <button class="admin-action" type="button"><strong>🏠 Үй тапсырмасы</strong><span>Үй тапсырмасын шаблон арқылы қосу</span></button>
             </div>
-            <div class="notice">ℹ️ Қазір бұл бет — Admin Panel интерфейсінің бірінші нұсқасы. Файлдарды базаға сақтау, нақты логин және рөлдерді сервер арқылы қорғау келесі кезеңде жасалады.</div>
+            <div class="notice">ℹ️ Қазіргі кезеңде бұл интерфейс логин мен рөл жүйесінің бірінші нұсқасымен жұмыс істейді. Нақты базаға сақтау және файлдарды серверге жүктеу кейін қосылады.</div>
           </div>
 
           <div class="admin-section">
             <h2>📌 Соңғы материалдар</h2>
-            <p>Қазір сайттағы бар контентті басқаруға арналған болашақ тізімнің үлгісі.</p>
+            <p>Сайттағы сабақ контентін басқаруға арналған тізім.</p>
             <div class="material-list">
               <div class="material-row"><div><strong>1-сабақ — Қатынастар және пропорция</strong><small>7-сынып • Алгебра • 1-тоқсан</small></div><span class="material-status">Белсенді</span></div>
               <div class="material-row"><div><strong>Видеосабақ</strong><small>1-сабаққа байланысты</small></div><span class="material-status">Дайын</span></div>
@@ -129,7 +126,7 @@
 
           <div class="admin-section super-panel super-only">
             <h2>👑 Super Admin басқаруы</h2>
-            <p>Бұл бөлім тек Super Admin рөлі үшін көрсетіледі.</p>
+            <p>Бұл бөлім тек Super Admin аккаунтымен кіргенде көрсетіледі.</p>
             <div class="admin-grid">
               <button class="admin-action" type="button"><strong>👤 Админ қосу</strong><span>Жаңа басқарушы қолданушы жасау</span></button>
               <button class="admin-action" type="button"><strong>🏫 Сынып/пән басқару</strong><span>Сайттың оқу құрылымын өзгерту</span></button>
@@ -142,26 +139,30 @@
     </div>
   </main>
 
+  <script src="auth.js"></script>
   <script>
-    const panel = document.getElementById('adminPanel');
-    const roleLabel = document.getElementById('roleLabel');
-    const roleDescription = document.getElementById('roleDescription');
-    const adminRoleBtn = document.getElementById('adminRoleBtn');
-    const superRoleBtn = document.getElementById('superRoleBtn');
+    const user = requireRole(["admin", "super_admin"]);
 
-    function setRole(role) {
-      const isSuper = role === 'super';
-      panel.classList.toggle('super-mode', isSuper);
-      roleLabel.textContent = isSuper ? 'Super Admin' : 'Admin';
+    if (user) {
+      const isSuper = user.role === "super_admin";
+      const panel = document.getElementById("adminPanel");
+      const roleLabel = document.getElementById("roleLabel");
+      const profileName = document.getElementById("profileName");
+      const panelTitle = document.getElementById("panelTitle");
+      const roleDescription = document.getElementById("roleDescription");
+
+      panel.classList.toggle("super-mode", isSuper);
+      roleLabel.textContent = isSuper ? "Super Admin" : "Admin";
+      roleLabel.classList.toggle("super-badge", isSuper);
+      profileName.textContent = (isSuper ? "👑 " : "👤 ") + user.name;
+      panelTitle.textContent = isSuper ? "Super Admin Panel" : "Admin Panel";
       roleDescription.textContent = isSuper
-        ? 'Сайттың материалдарын және негізгі құрылымын басқару бөлімі.'
-        : 'Материалдарды көру және сабақ контентін басқару бөлімі.';
-      adminRoleBtn.classList.toggle('active', !isSuper);
-      superRoleBtn.classList.toggle('active', isSuper);
+        ? "Сайттың материалдарын және негізгі құрылымын басқару бөлімі."
+        : "Материалдарды және сабақ контентін басқару бөлімі.";
     }
 
-    adminRoleBtn.addEventListener('click', () => setRole('admin'));
-    superRoleBtn.addEventListener('click', () => setRole('super'));
+    document.getElementById("logoutButton").addEventListener("click", logoutUser);
+    document.getElementById("logoutButton2").addEventListener("click", logoutUser);
   </script>
 </body>
 </html>
