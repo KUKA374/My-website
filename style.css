@@ -105,3 +105,153 @@ footer { padding: 25px 0; color: var(--muted); background: white; border-top: 1p
   .nav { align-items: flex-start; padding: 15px 0; flex-direction: column; }
   .hero h1 { font-size: 38px; }
 }
+/* ==========================================
+   Сынып → Пән → Тоқсан
+   ========================================== */
+
+.subjects-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 35px;
+  margin-bottom: 50px;
+}
+
+.subject-block {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.subject-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.subject-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f1f5ff;
+  border-radius: 14px;
+
+  font-size: 26px;
+}
+
+.subject-header h2 {
+  margin: 0 0 5px 0;
+  font-size: 24px;
+}
+
+.subject-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+
+/* Тоқсандар */
+
+.quarters-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.quarter-card {
+  text-decoration: none;
+  color: inherit;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 16px;
+
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+
+  background: #f8fafc;
+
+  transition: all 0.2s ease;
+}
+
+.quarter-card.available {
+  cursor: pointer;
+}
+
+.quarter-card.available:hover {
+  transform: translateY(-2px);
+  border-color: #4f46e5;
+  box-shadow: 0 5px 15px rgba(79, 70, 229, 0.12);
+}
+
+.quarter-card.disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.quarter-number {
+  min-width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eef2ff;
+  color: #4338ca;
+
+  font-weight: 700;
+}
+
+.quarter-card strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.quarter-card small {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+
+/* ==========================================
+   Телефонға бейімдеу
+   ========================================== */
+
+@media (max-width: 800px) {
+
+  .quarters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+@media (max-width: 500px) {
+
+  .subject-block {
+    padding: 18px;
+  }
+
+  .quarters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subject-header h2 {
+    font-size: 20px;
+  }
+
+}
