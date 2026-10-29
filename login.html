@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кіру | Math Teacher</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f8fc}
+    .login-wrap{width:min(420px,calc(100% - 32px))}
+    .login-card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:32px;box-shadow:0 12px 35px rgba(15,23,42,.08)}
+    .login-logo{text-align:center;font-size:28px;font-weight:800;margin-bottom:8px}
+    .login-subtitle{text-align:center;color:var(--muted);margin:0 0 26px}
+    .login-form{display:grid;gap:14px}
+    .login-form label{font-size:14px;font-weight:700}
+    .login-form input{width:100%;box-sizing:border-box;padding:12px 13px;border:1px solid var(--border);border-radius:10px;font:inherit;margin-top:6px}
+    .login-form input:focus{outline:2px solid #c7d2fe;border-color:#818cf8}
+    .login-button{border:0;border-radius:10px;padding:13px;background:var(--primary);color:#fff;font:inherit;font-weight:700;cursor:pointer;margin-top:4px}
+    .login-error{display:none;padding:11px 12px;border-radius:10px;background:#fff1f2;color:#be123c;font-size:13px}
+    .login-info{margin-top:18px;padding:12px;border-radius:10px;background:#f8fafc;color:var(--muted);font-size:12px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <main class="login-wrap">
+    <section class="login-card">
+      <div class="login-logo">📐 Math Teacher</div>
+      <p class="login-subtitle">Платформаға кіру</p>
+
+      <form id="loginForm" class="login-form">
+        <label>Логин<input id="login" type="text" autocomplete="username" required></label>
+        <label>Пароль<input id="password" type="password" autocomplete="current-password" required></label>
+        <div id="loginError" class="login-error"></div>
+        <button class="login-button" type="submit">Кіру</button>
+      </form>
+
+      <div class="login-info">
+        Қолданушының рөлі логин арқылы автоматты анықталады. Сайтта Admin немесе Super Admin таңдауы жоқ.
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    const existingUser = getCurrentUser();
+    if (existingUser) routeAfterLogin(existingUser);
+
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const result = loginUser(document.getElementById("login").value.trim(), document.getElementById("password").value);
+      const error = document.getElementById("loginError");
+      if (!result.success) {
+        error.textContent = result.message;
+        error.style.display = "block";
+        return;
+      }
+      error.style.display = "none";
+      routeAfterLogin(result.user);
+    });
+  </script>
+</body>
+</html>
