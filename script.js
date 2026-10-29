@@ -648,9 +648,6 @@ function renderLessonPage() {
 
 
 function renderLessonSection(title, content) {
-
-  // Егер бөлімде ақпарат жоқ болса,
-  // оны мүлдем көрсетпейміз
   if (
     content === null ||
     content === undefined ||
@@ -662,32 +659,25 @@ function renderLessonSection(title, content) {
   if (typeof content === "string") {
     return `
       <section class="lesson-section">
-
         <h2>${title}</h2>
-
         <div class="lesson-text">
           ${content}
         </div>
-
       </section>
     `;
   }
 
   return `
     <section class="lesson-section">
-
       <h2>${title}</h2>
-
       <pre class="lesson-text">${JSON.stringify(
         content,
         null,
         2
       )}</pre>
-
     </section>
   `;
 }
-
 
 // ==========================================
 // ІЗДЕУ
