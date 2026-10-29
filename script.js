@@ -941,12 +941,21 @@ renderFavorites();
 
 renderClasses();
 
-renderCurriculumClassPage();
+const currentClassId = getClassId();
+const currentSubjectId = getSubjectId();
+const currentQuarterId = getQuarterId();
 
-renderSubjectPage();
-
-renderQuarterPage();
-
-renderClassPage();
+if (currentClassId && currentSubjectId && currentQuarterId) {
+  renderQuarterPage();
+} 
+else if (currentClassId && currentSubjectId) {
+  renderSubjectPage();
+} 
+else if (currentClassId) {
+  renderCurriculumClassPage();
+} 
+else {
+  renderClassPage();
+}
 
 renderLessonPage();
