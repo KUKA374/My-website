@@ -77,3 +77,45 @@ const lessonContent = {
     ]
   }
 };
+
+/* Cloud integration: after the page renders, replace demo content with
+   the latest shared material when Firebase is configured. */
+(function loadSharedLessonContent() {
+  function loadScript(src) {
+    return new Promise(function(resolve, reject) {
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function run() {
+    try {
+      await loadScript("firebase-config.js");
+      await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js");
+      await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js");
+      await loadScript("database.js");
+    } catch (error) {
+      console.warn("Shared database is not available yet.", error);
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const lessonId = params.get("lesson");
+    if (!lessonId || !window.MathTeacherDB) return;
+
+    try {
+      const saved = await window.MathTeacherDB.getLessonMaterial(lessonId);
+      if (!saved) return;
+      lessonContent[lessonId] = Object.assign({}, lessonContent[lessonId] || {}, saved);
+      if (typeof renderCompactLessonPage === "function") renderCompactLessonPage();
+    } catch (error) {
+      console.error("Shared lesson content could not be loaded.", error);
+    }
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+})();
