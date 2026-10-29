@@ -1,7 +1,7 @@
 /*
-  Math Teacher — login and role routing (first prototype)
-  NOTE: This is a front-end prototype. Real production authentication
-  should be moved to a secure backend/database before launch.
+  Math Teacher — first-stage login and role routing.
+  This is a prototype for GitHub Pages. Production authentication
+  must later move to a secure backend/database.
 */
 
 const AUTH_USERS = [
@@ -45,12 +45,7 @@ function logoutUser() {
 function routeAfterLogin(user) {
   if (!user) return;
 
-  if (user.role === "super_admin") {
-    window.location.href = "super-admin.html";
-    return;
-  }
-
-  if (user.role === "admin") {
+  if (user.role === "super_admin" || user.role === "admin") {
     window.location.href = "admin.html";
     return;
   }
