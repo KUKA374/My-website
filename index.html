@@ -1,408 +1,75 @@
 <!DOCTYPE html>
 <html lang="kk">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Math Teacher</title>
-
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-  <!-- HEADER -->
   <header class="site-header">
-
     <div class="container header-inner">
-
-      <a href="index.html" class="logo">
-        📐 Math Teacher
-      </a>
-
+      <a href="index.html" class="logo">📐 Math Teacher</a>
       <nav class="main-nav">
-
-        <a href="index.html">
-          Басты бет
-        </a>
-
-        <a href="#classes">
-          Сыныптар
-        </a>
-
-        <a href="#favorites">
-          ⭐ Таңдаулылар
-        </a>
-
+        <a href="index.html">Басты бет</a>
+        <a href="#classes">Сыныптар</a>
+        <a href="#favorites">⭐ Таңдаулылар</a>
+        <a href="admin.html">⚙️ Басқару</a>
       </nav>
-
     </div>
-
   </header>
 
-
-  <!-- HERO -->
   <section class="hero">
-
     <div class="container">
-
-      <span class="badge">
-        Математика мұғалімдеріне арналған платформа
-      </span>
-
-      <h1>
-        Сабаққа дайындалуды
-        <br>
-        жеңілдетіңіз
-      </h1>
-
-      <p>
-        5–11 сыныптарға арналған оқулықтар,
-        КТП, ҚМЖ және дайын сабақ материалдары
-        бір жерде.
-      </p>
-
+      <span class="badge">Математика мұғалімдеріне арналған платформа</span>
+      <h1>Сабаққа дайындалуды<br>жеңілдетіңіз</h1>
+      <p>5–11 сыныптарға арналған оқулықтар, КТП, ҚМЖ және дайын сабақ материалдары бір жерде.</p>
       <div class="search-box">
-
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="🔎 Тақырыпты іздеу..."
-        >
-
-        <button
-          class="button"
-          onclick="searchLessons()"
-        >
-          Іздеу
-        </button>
-
+        <input type="text" id="searchInput" placeholder="🔎 Тақырыпты іздеу...">
+        <button class="button" onclick="searchLessons()">Іздеу</button>
       </div>
-
     </div>
-
   </section>
 
-
-  <!-- SEARCH RESULTS -->
-  <section
-    id="searchResults"
-    class="container"
-    style="display: none;"
-  >
-
-    <div class="page-heading">
-
-      <h2>
-        Іздеу нәтижелері
-      </h2>
-
-    </div>
-
+  <section id="searchResults" class="container" style="display: none;">
+    <div class="page-heading"><h2>Іздеу нәтижелері</h2></div>
     <div id="searchResultsList"></div>
-
   </section>
 
-
-  <!-- CLASSES -->
-  <section
-    id="classes"
-    class="container section"
-  >
-
+  <section id="classes" class="container section">
     <div class="page-heading">
-
-      <span class="badge">
-        5–11 сынып
-      </span>
-
-      <h2>
-        Сыныпты таңдаңыз
-      </h2>
-
-      <p>
-        Қажетті сыныпты таңдап,
-        пәндер мен тоқсандарға өтіңіз.
-      </p>
-
+      <span class="badge">5–11 сынып</span>
+      <h2>Сыныпты таңдаңыз</h2>
+      <p>Қажетті сыныпты таңдап, пәндер мен тоқсандарға өтіңіз.</p>
     </div>
-
-
-    <!-- ОСЫ ЖЕРДЕ СЫНЫПТАР БОЛАДЫ -->
-
-    <div
-      id="classGrid"
-      class="class-grid"
-    >
-
-      <a
-        href="class.html?class=5"
-        class="class-card"
-      >
-
-        <div class="class-number">
-          5
-        </div>
-
-        <div class="class-info">
-
-          <h3>
-            5-сынып
-          </h3>
-
-          <p>
-            Математика
-          </p>
-
-        </div>
-
-        <div class="class-arrow">
-          →
-        </div>
-
-      </a>
-
-
-      <a
-        href="class.html?class=6"
-        class="class-card"
-      >
-
-        <div class="class-number">
-          6
-        </div>
-
-        <div class="class-info">
-
-          <h3>
-            6-сынып
-          </h3>
-
-          <p>
-            Математика
-          </p>
-
-        </div>
-
-        <div class="class-arrow">
-          →
-        </div>
-
-      </a>
-
-
-      <a
-        href="class.html?class=7"
-        class="class-card"
-      >
-
-        <div class="class-number">
-          7
-        </div>
-
-        <div class="class-info">
-
-          <h3>
-            7-сынып
-          </h3>
-
-          <p>
-            Алгебра және Геометрия
-          </p>
-
-        </div>
-
-        <div class="class-arrow">
-          →
-        </div>
-
-      </a>
-
-
-      <a
-        href="class.html?class=8"
-        class="class-card"
-      >
-
-        <div class="class-number">
-          8
-        </div>
-
-        <div class="class-info">
-
-          <h3>
-            8-сынып
-          </h3>
-
-          <p>
-            Алгебра және Геометрия
-          </p>
-
-        </div>
-
-        <div class="class-arrow">
-          →
-        </div>
-
-      </a>
-
-
-      <a
-        href="class.html?class=9"
-        class="class-card"
-      >
-
-        <div class="class-number">
-          9
-        </div>
-
-        <div class="class-info">
-
-          <h3>
-            9-сынып
-          </h3>
-
-          <p>
-            Алгебра және Геометрия
-          </p>
-
-        </div>
-
-        <div class="class-arrow">
-          →
-        </div>
-
-      </a>
-
-
-      <a
-        href="class.html?class=10"
-        class="class-card"
-      >
-
-        <div class="class-number">
-          10
-        </div>
-
-        <div class="class-info">
-
-          <h3>
-            10-сынып
-          </h3>
-
-          <p>
-            Алгебра және Геометрия
-          </p>
-
-        </div>
-
-        <div class="class-arrow">
-          →
-        </div>
-
-      </a>
-
-
-      <a
-        href="class.html?class=11"
-        class="class-card"
-      >
-
-        <div class="class-number">
-          11
-        </div>
-
-        <div class="class-info">
-
-          <h3>
-            11-сынып
-          </h3>
-
-          <p>
-            Алгебра және Геометрия
-          </p>
-
-        </div>
-
-        <div class="class-arrow">
-          →
-        </div>
-
-      </a>
-
-    </div>
-
+    <div id="classGrid" class="class-grid"></div>
   </section>
 
-
-  <!-- FAVORITES -->
-  <section
-    id="favorites"
-    class="container section"
-  >
-
+  <section id="favorites" class="container section">
     <div class="page-heading">
-
-      <span class="badge">
-        ⭐ Менің сабақтарым
-      </span>
-
-      <h2>
-        Таңдаулылар
-      </h2>
-
-      <p>
-        Сіз сақтаған сабақтар осы жерде көрсетіледі.
-      </p>
-
+      <span class="badge">⭐ Менің сабақтарым</span>
+      <h2>Таңдаулылар</h2>
+      <p>Сіз сақтаған сабақтар осы жерде көрсетіледі.</p>
     </div>
-
-
     <div id="favoritesList">
-
       <div class="admin-box">
-
-        <h3>
-          Әзірге таңдаулы сабақ жоқ
-        </h3>
-
-        <p>
-          Ұнаған сабақтың ішінен ⭐ батырмасын
-          басып, оны осы жерге сақтай аласыз.
-        </p>
-
+        <h3>Әзірге таңдаулы сабақ жоқ</h3>
+        <p>Ұнаған сабақтың ішінен ⭐ батырмасын басып, оны осы жерге сақтай аласыз.</p>
       </div>
-
     </div>
-
   </section>
 
-
-  <!-- FOOTER -->
   <footer class="site-footer">
-
-    <div class="container">
-
-      <p>
-        © 2026 Math Teacher
-      </p>
-
-    </div>
-
+    <div class="container"><p>© 2026 Math Teacher</p></div>
   </footer>
 
-
-  <!-- JAVASCRIPT FILES -->
-
+  <script src="auth.js"></script>
+  <script>
+    requireRole(["teacher", "admin", "super_admin"]);
+  </script>
   <script src="data.js"></script>
-
   <script src="curriculum-data.js"></script>
-
   <script src="7-synyp-algebra-1-toqsan-data.js"></script>
-
   <script src="script.js"></script>
-
 </body>
-
 </html>
