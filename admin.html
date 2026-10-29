@@ -3,8 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin | Math Teacher</title>
+  <title>Admin Panel | Math Teacher</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-layout{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
+    .admin-sidebar{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;position:sticky;top:92px}
+    .admin-profile{padding:14px;border-radius:14px;background:#f5f7ff;margin-bottom:18px}
+    .admin-profile strong{display:block;margin-bottom:4px}
+    .role-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#edf1ff;color:var(--primary);font-size:12px;font-weight:700}
+    .admin-menu{display:grid;gap:6px}
+    .admin-menu button{border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;font:inherit;color:var(--dark)}
+    .admin-menu button:hover,.admin-menu button.active{background:#eef2ff;color:var(--primary);font-weight:700}
+    .super-only{display:none}
+    .super-mode .super-only{display:block}
+    .admin-main{min-width:0}
+    .admin-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px}
+    .admin-top h1{margin:0 0 5px;font-size:34px}
+    .admin-top p{margin:0;color:var(--muted)}
+    .role-switch{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--border);padding:7px;border-radius:12px}
+    .role-switch button{border:0;background:transparent;padding:8px 11px;border-radius:8px;cursor:pointer;font-weight:700;color:var(--muted)}
+    .role-switch button.active{background:var(--primary);color:#fff}
+    .admin-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+    .admin-stat{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px}
+    .admin-stat span{font-size:28px;font-weight:800;color:var(--primary);display:block}
+    .admin-stat small{color:var(--muted)}
+    .admin-section{background:#fff;border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:20px}
+    .admin-section h2{margin:0 0 6px;font-size:22px}
+    .admin-section>p{margin:0 0 18px;color:var(--muted)}
+    .admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .admin-action{border:1px solid var(--border);background:#f8fafc;border-radius:14px;padding:16px;text-align:left;cursor:pointer}
+    .admin-action:hover{border-color:#c7d2fe;background:#f5f7ff}
+    .admin-action strong{display:block;margin-bottom:4px}
+    .admin-action span{font-size:13px;color:var(--muted)}
+    .material-list{display:grid;gap:10px}
+    .material-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--border);border-radius:12px}
+    .material-row small{display:block;color:var(--muted);margin-top:2px}
+    .material-status{font-size:12px;font-weight:700;color:#16803a}
+    .super-panel{background:#fffaf0;border:1px solid #f0dfb2}
+    .notice{padding:13px 15px;border-radius:12px;background:#f5f7fa;color:var(--muted);font-size:14px;margin-top:14px}
+    .back-link{display:inline-block;margin-bottom:20px;color:var(--primary);font-weight:700}
+    @media(max-width:850px){.admin-layout{grid-template-columns:1fr}.admin-sidebar{position:static}.admin-cards{grid-template-columns:1fr 1fr}.admin-grid{grid-template-columns:1fr}}
+    @media(max-width:520px){.admin-cards{grid-template-columns:1fr}.admin-top{align-items:flex-start;flex-direction:column}.role-switch{width:100%}.role-switch button{flex:1}}
+  </style>
 </head>
 <body>
   <header class="header">
@@ -16,38 +56,112 @@
 
   <main class="section">
     <div class="container">
-      <div class="admin-box">
-        <span class="badge">Бастапқы Admin</span>
-        <h1>Материалдарды қалай өзгертемін?</h1>
-        <p>Бұл алғашқы нұсқада толық серверлік админ панель жасалған жоқ. Барлық материал <strong>data.js</strong> файлында сақталады. Оны өзгерту өте оңай.</p>
+      <a class="back-link" href="index.html">← Басты бетке қайту</a>
 
-        <h2>1. Сынып қосу немесе өзгерту</h2>
-        <p><code>data.js</code> ішіндегі <code>classes</code> бөлігін өзгертіңіз.</p>
+      <div class="admin-layout" id="adminPanel">
+        <aside class="admin-sidebar">
+          <div class="admin-profile">
+            <strong>👤 Math Teacher</strong>
+            <span class="role-badge" id="roleLabel">Admin</span>
+          </div>
 
-        <h2>2. Тақырып қосу</h2>
-        <p>Қажетті сыныптың <code>topics</code> массивіне жаңа тақырып қосыңыз.</p>
+          <div class="admin-menu">
+            <button class="active" type="button">📊 Басты панель</button>
+            <button type="button">📚 Материалдар</button>
+            <button type="button">🎥 Видеосабақтар</button>
+            <button type="button">👥 Жұптық жұмыс</button>
+            <button type="button">👨‍👩‍👧‍👦 Топтық жұмыс</button>
+            <button type="button">📝 Жеке жұмыс</button>
+            <button type="button">🎮 Ойындар</button>
+            <button type="button">✅ Бағалау</button>
+            <button type="button">🏠 Үй тапсырмасы</button>
+            <button class="super-only" type="button">👤 Админдер</button>
+            <button class="super-only" type="button">🏫 Сыныптар мен пәндер</button>
+            <button class="super-only" type="button">📋 КТП басқару</button>
+            <button class="super-only" type="button">⚙️ Сайт баптаулары</button>
+          </div>
+        </aside>
 
-        <h2>3. ҚМЖ немесе файл қосу</h2>
-        <p>Файлды жоба ішіндегі <code>materials</code> папкасына салып, оның атын <code>data.js</code> ішіндегі <code>file</code> орнына жазыңыз.</p>
+        <section class="admin-main">
+          <div class="admin-top">
+            <div>
+              <h1>Admin Panel</h1>
+              <p id="roleDescription">Материалдарды көру және сабақ контентін басқару бөлімі.</p>
+            </div>
 
-        <div class="code-note">
-          <strong>Мысал:</strong><br>
-          <code>file: "materials/7-synyp/kвадрат-tengdeu-kmj.pdf"</code>
-        </div>
+            <div class="role-switch" aria-label="Демо рөлді таңдау">
+              <button id="adminRoleBtn" class="active" type="button">Admin</button>
+              <button id="superRoleBtn" type="button">Super Admin</button>
+            </div>
+          </div>
 
-        <h2>Кейін жасайтын Admin Panel</h2>
-        <ul>
-          <li>🔐 Логин/пароль арқылы кіру</li>
-          <li>➕ ҚМЖ жүктеу</li>
-          <li>✏️ Материалды өзгерту</li>
-          <li>🗑️ Материалды өшіру</li>
-          <li>⭐ Негізгі ҚМЖ таңдау</li>
-          <li>📚 Оқулық пен КТП жүктеу</li>
-        </ul>
+          <div class="admin-cards">
+            <div class="admin-stat"><span>7–11</span><small>Қолданылатын сыныптар</small></div>
+            <div class="admin-stat"><span>2</span><small>Негізгі пәндер</small></div>
+            <div class="admin-stat"><span>8</span><small>Материал түрі</small></div>
+          </div>
 
-        <a class="button" href="index.html">Сайтты көру</a>
+          <div class="admin-section">
+            <h2>📚 Сабақ материалдарын басқару</h2>
+            <p>Сабаққа қажетті контентті осы бөлімдер арқылы қосу жоспарланған.</p>
+            <div class="admin-grid">
+              <button class="admin-action" type="button"><strong>🎥 Видеосабақ</strong><span>Видео сілтемесін немесе материалын қосу</span></button>
+              <button class="admin-action" type="button"><strong>📚 Теория</strong><span>Тақырып түсіндірмесі мен мысалдарды қосу</span></button>
+              <button class="admin-action" type="button"><strong>👥 Жұптық жұмыс</strong><span>Шаблон файл арқылы тапсырмалар қосу</span></button>
+              <button class="admin-action" type="button"><strong>👨‍👩‍👧‍👦 Топтық жұмыс</strong><span>Топтарға арналған материалдарды қосу</span></button>
+              <button class="admin-action" type="button"><strong>📝 Жеке жұмыс</strong><span>Деңгейлік тапсырмаларды қосу</span></button>
+              <button class="admin-action" type="button"><strong>🎮 Ойын</strong><span>Сабаққа арналған ойын материалын қосу</span></button>
+              <button class="admin-action" type="button"><strong>✅ Бағалау</strong><span>Бағалау критерийлері мен дескрипторларды қосу</span></button>
+              <button class="admin-action" type="button"><strong>🏠 Үй тапсырмасы</strong><span>Үй тапсырмасын шаблон арқылы қосу</span></button>
+            </div>
+            <div class="notice">ℹ️ Қазір бұл бет — Admin Panel интерфейсінің бірінші нұсқасы. Файлдарды базаға сақтау, нақты логин және рөлдерді сервер арқылы қорғау келесі кезеңде жасалады.</div>
+          </div>
+
+          <div class="admin-section">
+            <h2>📌 Соңғы материалдар</h2>
+            <p>Қазір сайттағы бар контентті басқаруға арналған болашақ тізімнің үлгісі.</p>
+            <div class="material-list">
+              <div class="material-row"><div><strong>1-сабақ — Қатынастар және пропорция</strong><small>7-сынып • Алгебра • 1-тоқсан</small></div><span class="material-status">Белсенді</span></div>
+              <div class="material-row"><div><strong>Видеосабақ</strong><small>1-сабаққа байланысты</small></div><span class="material-status">Дайын</span></div>
+              <div class="material-row"><div><strong>Жұптық жұмыс</strong><small>1-сабаққа байланысты</small></div><span class="material-status">Демо</span></div>
+            </div>
+          </div>
+
+          <div class="admin-section super-panel super-only">
+            <h2>👑 Super Admin басқаруы</h2>
+            <p>Бұл бөлім тек Super Admin рөлі үшін көрсетіледі.</p>
+            <div class="admin-grid">
+              <button class="admin-action" type="button"><strong>👤 Админ қосу</strong><span>Жаңа басқарушы қолданушы жасау</span></button>
+              <button class="admin-action" type="button"><strong>🏫 Сынып/пән басқару</strong><span>Сайттың оқу құрылымын өзгерту</span></button>
+              <button class="admin-action" type="button"><strong>📋 КТП басқару</strong><span>КТП қосу, ауыстыру немесе жаңарту</span></button>
+              <button class="admin-action" type="button"><strong>⚙️ Жүйе баптаулары</strong><span>Негізгі сайт параметрлерін басқару</span></button>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </main>
+
+  <script>
+    const panel = document.getElementById('adminPanel');
+    const roleLabel = document.getElementById('roleLabel');
+    const roleDescription = document.getElementById('roleDescription');
+    const adminRoleBtn = document.getElementById('adminRoleBtn');
+    const superRoleBtn = document.getElementById('superRoleBtn');
+
+    function setRole(role) {
+      const isSuper = role === 'super';
+      panel.classList.toggle('super-mode', isSuper);
+      roleLabel.textContent = isSuper ? 'Super Admin' : 'Admin';
+      roleDescription.textContent = isSuper
+        ? 'Сайттың материалдарын және негізгі құрылымын басқару бөлімі.'
+        : 'Материалдарды көру және сабақ контентін басқару бөлімі.';
+      adminRoleBtn.classList.toggle('active', !isSuper);
+      superRoleBtn.classList.toggle('active', isSuper);
+    }
+
+    adminRoleBtn.addEventListener('click', () => setRole('admin'));
+    superRoleBtn.addEventListener('click', () => setRole('super'));
+  </script>
 </body>
 </html>
