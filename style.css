@@ -255,3 +255,158 @@ footer { padding: 25px 0; color: var(--muted); background: white; border-top: 1p
   }
 
 }
+/* ==========================================
+   Тоқсан ішіндегі сабақтар
+   ========================================== */
+
+.quarter-heading {
+  margin-bottom: 30px;
+}
+
+.quarter-heading h1 {
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+
+
+/* Сабақтардың тізімі */
+
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  margin-top: 25px;
+  margin-bottom: 50px;
+}
+
+
+/* Бір сабақтың карточкасы */
+
+.lesson-card {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 18px 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  text-decoration: none;
+  color: inherit;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+/* Курсор апарғанда */
+
+.lesson-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #c7d2fe;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+
+/* Сабақ нөмірі */
+
+.lesson-number {
+  flex-shrink: 0;
+
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #eef2ff;
+
+  color: #4338ca;
+
+  border-radius: 12px;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+
+/* Сабақтың негізгі ақпараты */
+
+.lesson-info {
+  flex: 1;
+  min-width: 0;
+}
+
+
+.lesson-info h3 {
+  margin: 0 0 6px 0;
+
+  font-size: 16px;
+  line-height: 1.45;
+
+  color: #172033;
+}
+
+
+.lesson-info p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+
+/* Оң жақтағы стрелка */
+
+.lesson-arrow {
+  flex-shrink: 0;
+
+  font-size: 22px;
+
+  color: #64748b;
+}
+
+
+/* Телефон */
+
+@media (max-width: 600px) {
+
+  .lesson-card {
+    padding: 15px;
+
+    gap: 12px;
+  }
+
+  .lesson-number {
+    width: 42px;
+    height: 42px;
+  }
+
+  .lesson-info h3 {
+    font-size: 14px;
+  }
+
+  .lesson-info p {
+    font-size: 12px;
+  }
+
+  .lesson-arrow {
+    font-size: 18px;
+  }
+}
