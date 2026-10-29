@@ -7,20 +7,238 @@
   <title>Сабақ</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ==========================================
+       ЖИНАҚЫ САБАҚ БЕТІ
+       ========================================== */
+
+    .compact-lesson-page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 0 55px;
+    }
+
+    .compact-lesson-top {
+      margin-bottom: 22px;
+    }
+
+    .compact-meta {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .compact-meta span {
+      padding: 5px 9px;
+      border-radius: 8px;
+      background: #eef2ff;
+      color: #4338ca;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .compact-lesson-title {
+      margin: 0 0 10px;
+      font-size: clamp(27px, 4vw, 40px);
+      line-height: 1.2;
+    }
+
+    .compact-objective {
+      margin: 0 0 14px;
+      color: #687386;
+      font-size: 14px;
+    }
+
+    .compact-favorite {
+      margin: 0;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .compact-favorite:hover {
+      background: #f5f7ff;
+      border-color: #a5b4fc;
+    }
+
+    .compact-structure-title {
+      margin: 25px 0 12px;
+      font-size: 20px;
+    }
+
+    .compact-lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .compact-lesson-card {
+      min-height: 110px;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .compact-lesson-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .compact-lesson-card p {
+      margin: 0;
+      color: #687386;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .compact-empty {
+      color: #8a94a6 !important;
+      font-style: italic;
+    }
+
+    @media (max-width: 650px) {
+      .compact-lesson-page {
+        padding-top: 18px;
+      }
+
+      .compact-lesson-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .compact-lesson-card {
+        min-height: auto;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
   <main class="container">
-
     <div id="lessonPage"></div>
-
   </main>
 
   <script src="data.js"></script>
   <script src="curriculum-data.js"></script>
   <script src="7-synyp-algebra-1-toqsan-data.js"></script>
   <script src="script.js"></script>
+
+  <script>
+    // script.js-тегі бұрынғы барлық функциялар сақталады.
+    // Бұл тек тақырып ашылғандағы көріністі жинақы етеді.
+    (function renderCompactLessonPage() {
+      const container = document.getElementById("lessonPage");
+
+      if (!container || typeof grade7AlgebraQ1 === "undefined") {
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const lessonId = params.get("lesson");
+
+      const lesson = grade7AlgebraQ1.lessons.find(function(item) {
+        return String(item.id) === String(lessonId);
+      });
+
+      if (!lesson) {
+        return;
+      }
+
+      const lessonData = lesson.lesson || {};
+
+      function contentText(content) {
+        if (content === null || content === undefined || content === "") {
+          return "Бұл бөлім әзірге қосылмаған.";
+        }
+
+        if (typeof content === "string") {
+          return content;
+        }
+
+        return JSON.stringify(content, null, 2);
+      }
+
+      function card(title, content) {
+        const isEmpty =
+          content === null ||
+          content === undefined ||
+          content === "";
+
+        return `
+          <article class="compact-lesson-card">
+            <h3>${title}</h3>
+            <p class="${isEmpty ? "compact-empty" : ""}">
+              ${contentText(content)}
+            </p>
+          </article>
+        `;
+      }
+
+      const objective = lesson.objective || "";
+
+      container.innerHTML = `
+        <div class="compact-lesson-page">
+
+          <a
+            href="class.html?class=7&subject=algebra&quarter=1"
+            class="back-link"
+          >
+            ← Сабақтарға қайту
+          </a>
+
+          <section class="compact-lesson-top">
+            <div class="compact-meta">
+              <span>7-сынып</span>
+              <span>Алгебра</span>
+              <span>1-тоқсан</span>
+              <span>Сабақ №${lesson.number}</span>
+            </div>
+
+            <h1 class="compact-lesson-title">
+              ${lesson.title}
+            </h1>
+
+            ${objective ? `<p class="compact-objective">${objective}</p>` : ""}
+
+            <button
+              id="favoriteButton"
+              class="compact-favorite"
+              onclick="toggleFavorite('${lesson.id}')"
+            >
+              ☆ Таңдаулыға қосу
+            </button>
+          </section>
+
+          <h2 class="compact-structure-title">
+            📚 Сабақ құрылымы
+          </h2>
+
+          <section class="compact-lesson-grid">
+            ${card("📚 Тақырыпты түсіндіру", lessonData.explanation)}
+            ${card("👥 Жұптық жұмыс", lessonData.pairWork)}
+            ${card("👨‍👩‍👧‍👦 Топтық жұмыс", lessonData.groupWork)}
+            ${card("✏️ Жеке жұмыс", lessonData.individualWork)}
+            ${card("🎮 Ойын", lessonData.game)}
+            ${card("✅ Бағалау", lessonData.assessment)}
+            ${card("🏠 Үй тапсырмасы", lessonData.homework)}
+          </section>
+
+        </div>
+      `;
+
+      if (typeof updateFavoriteButton === "function") {
+        updateFavoriteButton();
+      }
+    })();
+  </script>
 
 </body>
 </html>
