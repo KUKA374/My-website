@@ -647,48 +647,45 @@ function renderLessonPage() {
 }
 
 
-function renderLessonSection(
-  title,
-  content
-) {
+function renderLessonSection(title, content) {
 
-  if (!content) {
-
-    return `
-
-      <div class="lesson-section">
-
-        <h2>
-          ${title}
-        </h2>
-
-        <p class="empty-content">
-          Бұл бөлім әзірге қосылмаған.
-        </p>
-
-      </div>
-
-    `;
-
+  // Егер бөлімде ақпарат жоқ болса,
+  // оны мүлдем көрсетпейміз
+  if (
+    content === null ||
+    content === undefined ||
+    content === ""
+  ) {
+    return "";
   }
 
+  if (typeof content === "string") {
+    return `
+      <section class="lesson-section">
+
+        <h2>${title}</h2>
+
+        <div class="lesson-text">
+          ${content}
+        </div>
+
+      </section>
+    `;
+  }
 
   return `
+    <section class="lesson-section">
 
-    <div class="lesson-section">
+      <h2>${title}</h2>
 
-      <h2>
-        ${title}
-      </h2>
+      <pre class="lesson-text">${JSON.stringify(
+        content,
+        null,
+        2
+      )}</pre>
 
-      <div class="lesson-text">
-        ${content}
-      </div>
-
-    </div>
-
+    </section>
   `;
-
 }
 
 
