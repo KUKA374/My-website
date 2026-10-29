@@ -410,3 +410,200 @@ footer { padding: 25px 0; color: var(--muted); background: white; border-top: 1p
     font-size: 18px;
   }
 }
+/* ==========================================
+   ЖАҢА ТОҚСАН БЕТІ
+   ========================================== */
+
+.quarter-page-header {
+  margin-top: 25px;
+  margin-bottom: 28px;
+}
+
+.quarter-page-badge {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.quarter-page-header h1 {
+  margin: 14px 0 6px;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.quarter-page-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+
+/* ==========================================
+   САБАҚТАРДЫҢ ЖАҢА ТІЗІМІ
+   ========================================== */
+
+.quarter-lesson-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+
+.quarter-lesson-card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 76px;
+  box-sizing: border-box;
+
+  padding: 14px 18px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  text-decoration: none;
+  color: inherit;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+
+.quarter-lesson-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #c7d2fe;
+
+  box-shadow:
+    0 7px 18px rgba(0, 0, 0, 0.07);
+}
+
+
+/* Нөмір */
+
+.quarter-lesson-number {
+  flex-shrink: 0;
+
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 16px;
+
+  border-radius: 11px;
+
+  background: #eef2ff;
+  color: #4338ca;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+/* Сабақ атауы */
+
+.quarter-lesson-info {
+  flex: 1;
+  min-width: 0;
+}
+
+
+.quarter-lesson-info h3 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  line-height: 1.4;
+}
+
+
+.quarter-lesson-info p {
+  margin: 5px 0 0;
+
+  color: #6b7280;
+
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+
+/* Оң жақтағы стрелка */
+
+.quarter-lesson-arrow {
+  flex-shrink: 0;
+
+  margin-left: 15px;
+
+  color: #64748b;
+
+  font-size: 20px;
+
+  transition:
+    transform 0.18s ease;
+}
+
+
+.quarter-lesson-card:hover
+.quarter-lesson-arrow {
+  transform: translateX(3px);
+}
+
+
+/* ==========================================
+   МОБИЛЬДІ НҰСҚА
+   ========================================== */
+
+@media (max-width: 600px) {
+
+  .quarter-page-header h1 {
+    font-size: 26px;
+  }
+
+
+  .quarter-lesson-card {
+    min-height: 68px;
+    padding: 12px;
+  }
+
+
+  .quarter-lesson-number {
+    width: 40px;
+    height: 40px;
+
+    margin-right: 12px;
+
+    font-size: 13px;
+  }
+
+
+  .quarter-lesson-info h3 {
+    font-size: 14px;
+  }
+
+
+  .quarter-lesson-info p {
+    font-size: 11px;
+  }
+
+
+  .quarter-lesson-arrow {
+    margin-left: 10px;
+    font-size: 18px;
+  }
+
+}
