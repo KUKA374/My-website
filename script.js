@@ -92,6 +92,7 @@ function renderClasses() {
   const container = document.getElementById("classGrid");
 
   if (!container) {
+    console.log("classGrid табылмады");
     return;
   }
 
@@ -134,13 +135,9 @@ function renderClasses() {
 
     container.appendChild(card);
   });
+
+  console.log("Сыныптар шығарылды:", Object.keys(curriculum));
 }
-
-
-// ==========================================
-// CLASS PAGE
-// Сынып → Пән → Тоқсан
-// ==========================================
 
 function renderCurriculumClassPage() {
   const container = document.getElementById("classPage");
