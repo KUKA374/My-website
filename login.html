@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Кіру | Math Teacher</title>
   <link rel="stylesheet" href="style.css">
+  <script src="firebase-config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
   <style>
     body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f8fc}
     .login-wrap{width:min(420px,calc(100% - 32px))}
@@ -34,26 +38,56 @@
       </form>
 
       <div class="login-info">
-        Қолданушының рөлі логин арқылы автоматты анықталады. Сайтта Admin немесе Super Admin таңдауы жоқ.
+        Қолданушының рөлі логин арқылы автоматты анықталады. Admin немесе Super Admin таңдау қажет емес.
       </div>
     </section>
   </main>
 
   <script src="auth.js"></script>
   <script>
-    const existingUser = getCurrentUser();
-    if (existingUser) routeAfterLogin(existingUser);
+    const auth = firebase.auth();
+    auth.onAuthStateChanged(async function(firebaseUser) {
+      if (!firebaseUser) return;
+      try {
+        const profile = await firebase.firestore().collection("users").doc(firebaseUser.uid).get();
+        if (profile.exists) {
+          const data = profile.data();
+          const sessionUser = {
+            uid: firebaseUser.uid,
+            login: String(firebaseUser.email || "").split("@")[0],
+            email: firebaseUser.email || "",
+            role: data.role,
+            name: data.name || firebaseUser.email || "Қолданушы"
+          };
+          sessionStorage.setItem("mathTeacherUser", JSON.stringify(sessionUser));
+          routeAfterLogin(sessionUser);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
 
-    document.getElementById("loginForm").addEventListener("submit", function(event) {
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
       event.preventDefault();
-      const result = loginUser(document.getElementById("login").value.trim(), document.getElementById("password").value);
+      const button = document.querySelector(".login-button");
       const error = document.getElementById("loginError");
+      button.disabled = true;
+      button.textContent = "Кіру...";
+      error.style.display = "none";
+
+      const result = await loginUser(
+        document.getElementById("login").value.trim(),
+        document.getElementById("password").value
+      );
+
       if (!result.success) {
         error.textContent = result.message;
         error.style.display = "block";
+        button.disabled = false;
+        button.textContent = "Кіру";
         return;
       }
-      error.style.display = "none";
+
       routeAfterLogin(result.user);
     });
   </script>
