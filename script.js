@@ -1,1615 +1,951 @@
-// ============================================
-// CLASS ID
-// ============================================
+// ==========================================
+// Math Teacher — Main Script
+// ==========================================
+
+
+// ---------- URL параметрлерін алу ----------
 
 function getClassId() {
-  return Number(
-    new URLSearchParams(location.search).get("class")
-  );
+  const params = new URLSearchParams(window.location.search);
+  return params.get("class");
 }
-
-
-// ============================================
-// LESSON ID
-// ============================================
 
 function getLessonId() {
-  return new URLSearchParams(location.search).get("lesson");
+  const params = new URLSearchParams(window.location.search);
+  return params.get("lesson");
+}
+
+function getSubjectId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("subject");
+}
+
+function getQuarterId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("quarter");
 }
 
 
-// ============================================
-// БАСТЫ БЕТТЕГІ СЫНЫПТАР
-// ============================================
+// ==========================================
+// Файлға сілтеме
+// ==========================================
+
+function fileLink(file, title) {
+  if (!file) {
+    return `<span class="empty-content">${title} әзірге қосылмаған</span>`;
+  }
+
+  return `
+    <a href="${file}" target="_blank" class="button">
+      ${title}
+    </a>
+  `;
+}
+
+
+// ==========================================
+// Басты бет — сыныптарды көрсету
+// ==========================================
 
 function renderClasses() {
+  const container = document.getElementById("classGrid");
 
-  const grid = document.getElementById("classGrid");
+  if (!container || typeof curriculum === "undefined") {
+    return;
+  }
 
-  if (!grid) return;
+  container.innerHTML = "";
+
+  Object.keys(curriculum).forEach(classId => {
+    const classData = curriculum[classId];
+
+    const card = document.createElement("a");
+
+    card.href = `class.html?class=${classId}`;
+    card.className = "class-card";
+
+    card.innerHTML = `
+      <div class="class-number">${classId}</div>
+      <div class="class-info">
+        <h3>${classData.title}</h3>
+        <p>
+          ${classData.subjects.length === 1
+            ? "Математика"
+            : "Алгебра және Геометрия"}
+        </p>
+      </div>
+      <div class="class-arrow">→</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
 
 
-  grid.innerHTML = classes.map(item => `
+// ==========================================
+// Жаңа сынып беті
+// Сынып → Пән
+// ==========================================
 
-    <a
-      class="class-card"
-      href="class.html?class=${item.id}"
-    >
+function renderCurriculumClassPage() {
+  const container = document.getElementById("classPage");
 
-      <div class="class-number">
-        ${item.id}
+  if (!container || typeof curriculum === "undefined") {
+    return;
+  }
+
+  const classId = getClassId();
+
+  if (!classId || !curriculum[classId]) {
+    return;
+  }
+
+  const classData = curriculum[classId];
+
+  container.innerHTML = `
+    <a href="index.html#classes" class="back-link">
+      ← Сыныптарға қайту
+    </a>
+
+    <div class="page-heading">
+      <span class="badge">${classData.title}</span>
+      <h1>${classData.title}</h1>
+      <p>Қажетті пәнді таңдаңыз.</p>
+    </div>
+
+    <div class="subject-grid" id="subjectGrid"></div>
+  `;
+
+  const subjectGrid = document.getElementById("subjectGrid");
+
+  classData.subjects.forEach(subject => {
+    const card = document.createElement("a");
+
+    card.href =
+      `class.html?class=${classId}&subject=${subject.id}`;
+
+    card.className = "subject-card";
+
+    const availableCount =
+      subject.quarters.filter(q => q.available).length;
+
+    card.innerHTML = `
+      <div class="subject-icon">
+        ${subject.id === "algebra" ? "📐" : "📏"}
       </div>
 
       <div>
-
-        <h3>
-          ${item.title}
-        </h3>
-
-        <p>
-          ${item.description}
-        </p>
-
-        <span>
-          Материалдарды ашу →
-        </span>
-
+        <h3>${subject.title}</h3>
+        <p>4 тоқсан</p>
+        ${
+          availableCount > 0
+            ? `<span class="available-label">
+                ${availableCount} тоқсан дайын
+              </span>`
+            : ""
+        }
       </div>
 
-    </a>
-
-  `).join("");
-}
-
-
-// ============================================
-// ФАЙЛ БАТЫРМАСЫ
-// ============================================
-
-function fileLink(file, label) {
-
-  if (!file) {
-
-    return `
-      <span class="empty-file">
-        Файл әзірге қосылмаған
-      </span>
+      <div class="class-arrow">→</div>
     `;
 
-  }
-
-
-  return `
-
-    <a
-      class="button small"
-      href="${file}"
-      target="_blank"
-    >
-      ${label}
-    </a>
-
-  `;
+    subjectGrid.appendChild(card);
+  });
 }
 
 
-// ============================================
-// 7-СЫНЫП АЛГЕБРА 1-ТОҚСАН
-// ============================================
+// ==========================================
+// Пән беті
+// Пән → Тоқсан
+// ==========================================
 
-function renderNewGrade7Page() {
+function renderSubjectPage() {
+  const container = document.getElementById("classPage");
 
-  const page =
-    document.getElementById("classPage");
+  if (!container || typeof curriculum === "undefined") {
+    return;
+  }
 
-  if (!page) return;
-
+  const classId = getClassId();
+  const subjectId = getSubjectId();
 
   if (
-    typeof grade7AlgebraQ1 === "undefined"
+    !classId ||
+    !subjectId ||
+    !curriculum[classId]
   ) {
-
-    page.innerHTML = `
-
-      <div class="admin-box">
-
-        <h1>
-          Деректер табылмады
-        </h1>
-
-        <p>
-          7-сыныптың Алгебра деректер
-          файлы қосылмаған.
-        </p>
-
-      </div>
-
-    `;
-
     return;
   }
 
+  const classData = curriculum[classId];
 
-  const current =
-    grade7AlgebraQ1;
-
-
-  page.innerHTML = `
-
-    <div class="page-heading">
-
-      <span class="badge">
-        ${current.grade}
-      </span>
-
-      <h1>
-        ${current.subject}
-      </h1>
-
-      <p>
-        ${current.quarter}
-      </p>
-
-    </div>
-
-
-    <div class="resource-row">
-
-
-      <!-- ОҚУЛЫҚ -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          📚
-        </div>
-
-        <h3>
-          Оқулық
-        </h3>
-
-        <p>
-          ${current.textbook.title}
-        </p>
-
-        ${fileLink(
-          current.textbook.file,
-          "Оқулықты ашу"
-        )}
-
-      </div>
-
-
-      <!-- КТП -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          📅
-        </div>
-
-        <h3>
-          КТП
-        </h3>
-
-        <p>
-          ${current.quarter} бойынша
-          ${current.lessons.length} сабақ.
-        </p>
-
-        <p>
-          Апталық жүктеме:
-          ${current.weeklyHours} сағат
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <h2 class="topic-title">
-      КТП бойынша тақырыптар
-    </h2>
-
-
-    <div class="topic-list">
-
-      ${current.lessons.map(lesson => `
-
-        <a
-          class="topic-card"
-          href="lesson.html?class=7&lesson=${lesson.id}"
-          style="
-            text-decoration: none;
-            color: inherit;
-            display: block;
-          "
-        >
-
-          <div class="topic-top">
-
-            <span class="topic-number">
-              ${lesson.number}
-            </span>
-
-            <div>
-
-              <h3>
-                ${lesson.title}
-              </h3>
-
-              <p>
-                <strong>
-                  Оқу мақсаты:
-                </strong>
-
-                ${lesson.objective}
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div
-            style="
-              margin-top: 15px;
-              font-weight: 600;
-            "
-          >
-            Сабақты ашу →
-          </div>
-
-        </a>
-
-      `).join("")}
-
-    </div>
-
-  `;
-}
-
-
-// ============================================
-// ЕСКІ СЫНЫПТАРДЫ КӨРСЕТУ
-// ============================================
-
-function renderClassPage() {
-
-  const page =
-    document.getElementById("classPage");
-
-  if (!page) return;
-
-
-  const id =
-    getClassId();
-
-
-  // 7-сыныптың жаңа жүйесі
-
-  if (
-    id === 7 &&
-    typeof grade7AlgebraQ1 !== "undefined"
-  ) {
-
-    renderNewGrade7Page();
-
-    return;
-  }
-
-
-  // Ескі жүйе
-
-  const current =
-    classes.find(
-      item => item.id === id
-    );
-
-
-  if (!current) {
-
-    page.innerHTML = `
-
-      <div class="admin-box">
-
-        <h1>
-          Сынып табылмады
-        </h1>
-
-        <a
-          class="button"
-          href="index.html"
-        >
-          Басты бетке қайту
-        </a>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  page.innerHTML = `
-
-    <div class="page-heading">
-
-      <span class="badge">
-        ${current.title}
-      </span>
-
-      <h1>
-        ${current.description}
-      </h1>
-
-      <p>
-        Оқулық, КТП тақырыптары,
-        ҚМЖ және 45 минуттық сабақ
-        материалдары.
-      </p>
-
-    </div>
-
-
-    <div class="resource-row">
-
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          📚
-        </div>
-
-        <h3>
-          Оқулық
-        </h3>
-
-        <p>
-          ${current.textbook.title}
-        </p>
-
-        ${fileLink(
-          current.textbook.file,
-          "Оқулықты ашу"
-        )}
-
-      </div>
-
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          📅
-        </div>
-
-        <h3>
-          КТП
-        </h3>
-
-        <p>
-          Бұл жерге осы сыныптың
-          КТП файлын кейін қосасыз.
-        </p>
-
-        <span class="empty-file">
-          Файл әзірге қосылмаған
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <h2 class="topic-title">
-      КТП бойынша тақырыптар
-    </h2>
-
-
-    <div class="topic-list">
-
-      ${current.topics.map(
-        (topic, index) => `
-
-        <article class="topic-card">
-
-          <div class="topic-top">
-
-            <span class="topic-number">
-              ${index + 1}
-            </span>
-
-            <div>
-
-              <h3>
-                ${topic.title}
-              </h3>
-
-              <p>
-                <strong>
-                  Оқу мақсаты:
-                </strong>
-
-                ${topic.objective}
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div class="topic-grid">
-
-
-            <div>
-
-              <h4>
-                📝 ҚМЖ
-              </h4>
-
-              <p>
-                ${topic.kmj.title}
-              </p>
-
-              ${fileLink(
-                topic.kmj.file,
-                "ҚМЖ-ны ашу"
-              )}
-
-            </div>
-
-
-            <div>
-
-              <h4>
-                👨‍🏫 Түсіндіру
-              </h4>
-
-              <p>
-                ${topic.lesson.explanation}
-              </p>
-
-            </div>
-
-
-            <div>
-
-              <h4>
-                👥 Жұптық жұмыс
-              </h4>
-
-              <p>
-                ${topic.lesson.pairWork}
-              </p>
-
-            </div>
-
-
-            <div>
-
-              <h4>
-                🎮 Ойын
-              </h4>
-
-              <p>
-                ${topic.lesson.game}
-              </p>
-
-            </div>
-
-
-            <div>
-
-              <h4>
-                🏠 Үй тапсырмасы
-              </h4>
-
-              <p>
-                ${topic.lesson.homework}
-              </p>
-
-            </div>
-
-
-          </div>
-
-        </article>
-
-      `
-      ).join("")}
-
-    </div>
-
-  `;
-}
-
-
-// ============================================
-// ЖЕКЕ САБАҚ БЕТІ
-// ============================================
-
-function renderLessonPage() {
-
-  const page =
-    document.getElementById("lessonPage");
-
-  if (!page) return;
-
-
-  const lessonId =
-    getLessonId();
-
-
-  // Деректерді тексеру
-
-  if (
-    typeof grade7AlgebraQ1 === "undefined"
-  ) {
-
-    page.innerHTML = `
-
-      <div class="admin-box">
-
-        <h1>
-          Деректер табылмады
-        </h1>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  // Сабақты табу
-
-  const lesson =
-    grade7AlgebraQ1.lessons.find(
-      item =>
-        String(item.id) ===
-        String(lessonId)
-    );
-
-
-  // Сабақ табылмаса
-
-  if (!lesson) {
-
-    page.innerHTML = `
-
-      <div class="admin-box">
-
-        <h1>
-          Сабақ табылмады
-        </h1>
-
-        <a
-          class="button"
-          href="class.html?class=7"
-        >
-          ← Тақырыптарға қайту
-        </a>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  // ========================================
-  // САБАҚТЫ КӨРСЕТУ
-  // ========================================
-
-  page.innerHTML = `
-
-    <div class="page-heading">
-
-
-      <!-- АРТҚА -->
-
-      <a
-        href="class.html?class=7"
-        style="
-          display: inline-block;
-          margin-bottom: 20px;
-          text-decoration: none;
-        "
-      >
-        ← Тақырыптарға қайту
-      </a>
-
-
-      <!-- СЫНЫП -->
-
-      <span class="badge">
-        ${grade7AlgebraQ1.grade}
-      </span>
-
-
-      <!-- ТАҚЫРЫП -->
-
-      <h1>
-        ${lesson.number}.
-        ${lesson.title}
-      </h1>
-
-
-      <!-- ОҚУ МАҚСАТЫ -->
-
-      <p>
-
-        <strong>
-          Оқу мақсаты:
-        </strong>
-
-        ${lesson.objective}
-
-      </p>
-
-
-      <!-- ⭐ ТАҢДАУЛЫ -->
-
-      <button
-        id="favoriteButton"
-        class="button"
-        onclick="
-          toggleFavorite('${lesson.id}')
-        "
-        style="
-          margin-top: 15px;
-        "
-      >
-        ☆ Таңдаулыға қосу
-      </button>
-
-
-    </div>
-
-
-    <!-- ================================= -->
-    <!-- САБАҚ МАТЕРИАЛДАРЫ -->
-    <!-- ================================= -->
-
-    <div class="topic-grid">
-
-
-      <!-- ҚМЖ -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          📝
-        </div>
-
-        <h3>
-          ҚМЖ
-        </h3>
-
-
-        ${
-          lesson.kmj
-            ? `
-
-              <p>
-                ${lesson.kmj.title}
-              </p>
-
-              ${fileLink(
-                lesson.kmj.file,
-                "ҚМЖ ашу"
-              )}
-
-            `
-            : `
-
-              <p>
-                Бұл тақырыпқа ҚМЖ
-                әзірге қосылмаған.
-              </p>
-
-              <span class="empty-file">
-                ҚМЖ әзірге қосылмаған
-              </span>
-
-            `
-        }
-
-      </div>
-
-
-      <!-- ТҮСІНДІРУ -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          👨‍🏫
-        </div>
-
-        <h3>
-          Тақырыпты түсіндіру
-        </h3>
-
-
-        ${
-          lesson.lesson.explanation
-            ? `
-
-              <p>
-                ${lesson.lesson.explanation}
-              </p>
-
-            `
-            : `
-
-              <p class="empty-file">
-                Түсіндіру материалы
-                әзірге қосылмаған.
-              </p>
-
-            `
-        }
-
-      </div>
-
-
-      <!-- ЖҰПТЫҚ ЖҰМЫС -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          👥
-        </div>
-
-        <h3>
-          Жұптық жұмыс
-        </h3>
-
-
-        ${
-          lesson.lesson.pairWork
-            ? `
-
-              <p>
-                ${lesson.lesson.pairWork}
-              </p>
-
-            `
-            : `
-
-              <p class="empty-file">
-                Жұптық жұмыс
-                әзірге қосылмаған.
-              </p>
-
-            `
-        }
-
-      </div>
-
-
-      <!-- ТОПТЫҚ ЖҰМЫС -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          👨‍👩‍👧‍👦
-        </div>
-
-        <h3>
-          Топтық жұмыс
-        </h3>
-
-
-        ${
-          lesson.lesson.groupWork
-            ? `
-
-              <p>
-                ${lesson.lesson.groupWork}
-              </p>
-
-            `
-            : `
-
-              <p class="empty-file">
-                Топтық жұмыс
-                әзірге қосылмаған.
-              </p>
-
-            `
-        }
-
-      </div>
-
-
-      <!-- ЖЕКЕ ТАПСЫРМА -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          ✏️
-        </div>
-
-        <h3>
-          Жеке тапсырма
-        </h3>
-
-
-        ${
-          lesson.lesson.individualWork
-            ? `
-
-              <p>
-                ${lesson.lesson.individualWork}
-              </p>
-
-            `
-            : `
-
-              <p class="empty-file">
-                Жеке тапсырма
-                әзірге қосылмаған.
-              </p>
-
-            `
-        }
-
-      </div>
-
-
-      <!-- ОЙЫН -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          🎮
-        </div>
-
-        <h3>
-          Ойын
-        </h3>
-
-
-        ${
-          lesson.lesson.game
-            ? `
-
-              <p>
-                ${lesson.lesson.game}
-              </p>
-
-            `
-            : `
-
-              <p class="empty-file">
-                Ойын әзірге
-                қосылмаған.
-              </p>
-
-            `
-        }
-
-      </div>
-
-
-      <!-- БАҒАЛАУ -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          ✅
-        </div>
-
-        <h3>
-          Бағалау
-        </h3>
-
-
-        ${
-          lesson.lesson.assessment
-            ? `
-
-              <p>
-                ${lesson.lesson.assessment}
-              </p>
-
-            `
-            : `
-
-              <p class="empty-file">
-                Бағалау материалы
-                әзірге қосылмаған.
-              </p>
-
-            `
-        }
-
-      </div>
-
-
-      <!-- ҮЙ ТАПСЫРМАСЫ -->
-
-      <div class="resource-card">
-
-        <div class="feature-icon">
-          🏠
-        </div>
-
-        <h3>
-          Үй тапсырмасы
-        </h3>
-
-
-        ${
-          lesson.lesson.homework
-            ? `
-
-              <p>
-                ${lesson.lesson.homework}
-              </p>
-
-            `
-            : `
-
-              <p class="empty-file">
-                Үй тапсырмасы
-                әзірге қосылмаған.
-              </p>
-
-            `
-        }
-
-      </div>
-
-
-    </div>
-
-
-    <!-- ================================= -->
-    <!-- 45 МИНУТТЫҚ САБАҚ -->
-    <!-- ================================= -->
-
-    <div
-      class="resource-card"
-      style="
-        margin-top: 30px;
-      "
-    >
-
-      <div class="feature-icon">
-        ⏱️
-      </div>
-
-      <h2>
-        45 минуттық сабақ
-      </h2>
-
-      <p>
-        Бұл бөлімде кейін осы тақырыпқа
-        арналған толық сабақ сценарийі
-        көрсетіледі.
-      </p>
-
-
-      <div
-        style="
-          margin-top: 20px;
-        "
-      >
-
-        <p>
-          <strong>
-            00–05 мин
-          </strong>
-          — Ұйымдастыру
-        </p>
-
-        <p>
-          <strong>
-            05–10 мин
-          </strong>
-          — Қызығушылықты ояту
-        </p>
-
-        <p>
-          <strong>
-            10–20 мин
-          </strong>
-          — Тақырыпты түсіндіру
-        </p>
-
-        <p>
-          <strong>
-            20–28 мин
-          </strong>
-          — Жұптық жұмыс
-        </p>
-
-        <p>
-          <strong>
-            28–35 мин
-          </strong>
-          — Топтық жұмыс
-        </p>
-
-        <p>
-          <strong>
-            35–40 мин
-          </strong>
-          — Жеке тапсырма
-        </p>
-
-        <p>
-          <strong>
-            40–43 мин
-          </strong>
-          — Бағалау
-        </p>
-
-        <p>
-          <strong>
-            43–45 мин
-          </strong>
-          — Үй тапсырмасы
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <!-- АРТҚА БАТЫРМАСЫ -->
-
-    <div
-      style="
-        margin-top: 30px;
-        margin-bottom: 40px;
-      "
-    >
-
-      <a
-        class="button"
-        href="class.html?class=7"
-      >
-        ← Барлық тақырыптарға қайту
-      </a>
-
-    </div>
-
-  `;
-
-
-  // ⭐ Таңдаулы батырмасын жаңарту
-
-  updateFavoriteButton(
-    lesson.id
+  const subject = classData.subjects.find(
+    item => item.id === subjectId
   );
 
+  if (!subject) {
+    return;
+  }
+
+  container.innerHTML = `
+    <a href="class.html?class=${classId}" class="back-link">
+      ← ${classData.title}
+    </a>
+
+    <div class="page-heading">
+      <span class="badge">${subject.title}</span>
+      <h1>${subject.title}</h1>
+      <p>${classData.title} бойынша тоқсанды таңдаңыз.</p>
+    </div>
+
+    <div class="quarter-grid" id="quarterGrid"></div>
+  `;
+
+  const quarterGrid = document.getElementById("quarterGrid");
+
+  subject.quarters.forEach(quarter => {
+    const card = document.createElement("a");
+
+    if (quarter.available) {
+      card.href =
+        `class.html?class=${classId}&subject=${subjectId}&quarter=${quarter.id}`;
+
+      card.className = "quarter-card";
+    } else {
+      card.href = "javascript:void(0)";
+      card.className = "quarter-card disabled";
+    }
+
+    card.innerHTML = `
+      <div class="quarter-number">
+        ${quarter.id}
+      </div>
+
+      <div>
+        <h3>${quarter.title}</h3>
+
+        ${
+          quarter.available
+            ? `<p class="available-label">Материалдар бар →</p>`
+            : `<p>Жақында қосылады</p>`
+        }
+      </div>
+    `;
+
+    quarterGrid.appendChild(card);
+  });
 }
 
 
-// ============================================
-// 🔎 САБАҚТАРДЫ ІЗДЕУ
-// ============================================
+// ==========================================
+// Тоқсан беті
+// Тоқсан → Тақырыптар
+// ==========================================
+
+function renderQuarterPage() {
+  const container = document.getElementById("classPage");
+
+  if (!container) {
+    return;
+  }
+
+  const classId = getClassId();
+  const subjectId = getSubjectId();
+  const quarterId = getQuarterId();
+
+  if (
+    classId !== "7" ||
+    subjectId !== "algebra" ||
+    quarterId !== "1"
+  ) {
+    return;
+  }
+
+  if (
+    typeof grade7AlgebraQ1 === "undefined" ||
+    !grade7AlgebraQ1.lessons
+  ) {
+    container.innerHTML = `
+      <div class="admin-box">
+        <h3>Материал табылмады</h3>
+        <p>Бұл тоқсанның материалдары әзірге қосылмаған.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  const lessons = grade7AlgebraQ1.lessons;
+
+  container.innerHTML = `
+    <a
+      href="class.html?class=${classId}&subject=${subjectId}"
+      class="back-link"
+    >
+      ← ${grade7AlgebraQ1.subject}
+    </a>
+
+    <div class="page-heading">
+      <span class="badge">
+        ${grade7AlgebraQ1.grade}-сынып •
+        ${grade7AlgebraQ1.quarter}-тоқсан
+      </span>
+
+      <h1>
+        ${grade7AlgebraQ1.subject}
+      </h1>
+
+      <p>
+        ${lessons.length} сабақ
+      </p>
+    </div>
+
+    <div class="lesson-list" id="lessonList"></div>
+  `;
+
+  const lessonList = document.getElementById("lessonList");
+
+  lessons.forEach(lesson => {
+    const card = document.createElement("a");
+
+    card.href =
+      `lesson.html?class=7&lesson=${lesson.id}`;
+
+    card.className = "lesson-card";
+
+    card.innerHTML = `
+      <div class="lesson-number">
+        ${lesson.number}
+      </div>
+
+      <div class="lesson-info">
+        <h3>${lesson.title}</h3>
+
+        ${
+          lesson.objective
+            ? `<p>${lesson.objective}</p>`
+            : ""
+        }
+      </div>
+
+      <div class="lesson-arrow">
+        →
+      </div>
+    `;
+
+    lessonList.appendChild(card);
+  });
+}
+
+
+// ==========================================
+// Ескі class жүйесі
+// Басқа материалдар үшін сақталады
+// ==========================================
+
+function renderClassPage() {
+  const container = document.getElementById("classPage");
+
+  if (!container) {
+    return;
+  }
+
+  // Егер жаңа curriculum жүйесі қолданылса,
+  // ескі жүйені іске қоспаймыз.
+  if (
+    typeof curriculum !== "undefined" &&
+    getClassId() &&
+    curriculum[getClassId()]
+  ) {
+    return;
+  }
+
+  if (typeof classes === "undefined") {
+    return;
+  }
+
+  const id = getClassId();
+
+  const classData = classes.find(
+    item => String(item.id) === String(id)
+  );
+
+  if (!classData) {
+    return;
+  }
+
+  container.innerHTML = `
+    <a href="index.html#classes" class="back-link">
+      ← Артқа
+    </a>
+
+    <div class="page-heading">
+      <span class="badge">${classData.title}</span>
+      <h1>${classData.title}</h1>
+      <p>${classData.description || ""}</p>
+    </div>
+
+    ${
+      classData.textbook
+        ? `
+        <div class="admin-box">
+          <h3>📚 Оқулық</h3>
+          <p>${classData.textbook.title || ""}</p>
+          ${
+            classData.textbook.file
+              ? fileLink(
+                  classData.textbook.file,
+                  "Оқулықты ашу"
+                )
+              : ""
+          }
+        </div>
+        `
+        : ""
+    }
+
+    <div class="lesson-list">
+      ${
+        (classData.topics || [])
+          .map((topic, index) => `
+            <div class="lesson-card">
+              <div class="lesson-number">
+                ${index + 1}
+              </div>
+
+              <div class="lesson-info">
+                <h3>${topic.title}</h3>
+                <p>${topic.objective || ""}</p>
+              </div>
+            </div>
+          `)
+          .join("")
+      }
+    </div>
+  `;
+}
+
+
+// ==========================================
+// 7-сыныптың ескі арнайы беті
+// Қазір жаңа жүйе қолданылатындықтан
+// тоқсан беті арқылы ашылады
+// ==========================================
+
+function renderNewGrade7Page() {
+  // Бұл функция бұрынғы кодпен үйлесімді болу үшін
+  // сақталып тұр.
+
+  const container = document.getElementById("classPage");
+
+  if (!container) {
+    return;
+  }
+
+  const classId = getClassId();
+
+  if (classId !== "7") {
+    return;
+  }
+
+  // Жаңа curriculum жүйесі бар болса,
+  // жаңа навигация қолданылады.
+  if (typeof curriculum !== "undefined") {
+    return;
+  }
+}
+
+
+// ==========================================
+// Сабақ беті
+// ==========================================
+
+function renderLessonPage() {
+  const container = document.getElementById("lessonPage");
+
+  if (!container) {
+    return;
+  }
+
+  const lessonId = getLessonId();
+
+  if (
+    typeof grade7AlgebraQ1 === "undefined" ||
+    !grade7AlgebraQ1.lessons
+  ) {
+    container.innerHTML = `
+      <div class="admin-box">
+        <h3>Сабақ табылмады</h3>
+      </div>
+    `;
+
+    return;
+  }
+
+  const lesson = grade7AlgebraQ1.lessons.find(
+    item => String(item.id) === String(lessonId)
+  );
+
+  if (!lesson) {
+    container.innerHTML = `
+      <div class="admin-box">
+        <h3>Сабақ табылмады</h3>
+        <p>Бұл сабақтың материалы әзірге жоқ.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  const isFavorite = getFavorites().includes(
+    String(lesson.id)
+  );
+
+  container.innerHTML = `
+    <a
+      href="class.html?class=7&subject=algebra&quarter=1"
+      class="back-link"
+    >
+      ← 1-тоқсанға қайту
+    </a>
+
+    <div class="page-heading">
+      <span class="badge">
+        7-сынып • Алгебра • 1-тоқсан
+      </span>
+
+      <h1>${lesson.title}</h1>
+
+      ${
+        lesson.objective
+          ? `<p>${lesson.objective}</p>`
+          : ""
+      }
+
+      <button
+        class="favorite-button"
+        onclick="toggleFavorite('${lesson.id}')"
+        id="favoriteButton"
+      >
+        ${isFavorite ? "⭐ Таңдаулыдан өшіру" : "☆ Таңдаулыға қосу"}
+      </button>
+    </div>
+
+    <div class="lesson-content">
+
+      ${renderLessonSection(
+        "📄 ҚМЖ",
+        lesson.kmj,
+        "ҚМЖ әзірге қосылмаған."
+      )}
+
+      ${renderLessonSection(
+        "📚 Тақырыпты түсіндіру",
+        lesson.lesson?.explanation,
+        "Түсіндіру материалы әзірге қосылмаған."
+      )}
+
+      ${renderLessonSection(
+        "👥 Жұптық жұмыс",
+        lesson.lesson?.pairWork,
+        "Жұптық жұмыс әзірге қосылмаған."
+      )}
+
+      ${renderLessonSection(
+        "👨‍👩‍👧‍👦 Топтық жұмыс",
+        lesson.lesson?.groupWork,
+        "Топтық жұмыс әзірге қосылмаған."
+      )}
+
+      ${renderLessonSection(
+        "✏️ Жеке жұмыс",
+        lesson.lesson?.individualWork,
+        "Жеке жұмыс әзірге қосылмаған."
+      )}
+
+      ${renderLessonSection(
+        "🎮 Ойын",
+        lesson.lesson?.game,
+        "Ойын әзірге қосылмаған."
+      )}
+
+      ${renderLessonSection(
+        "✅ Бағалау",
+        lesson.lesson?.assessment,
+        "Бағалау материалы әзірге қосылмаған."
+      )}
+
+      ${renderLessonSection(
+        "🏠 Үй тапсырмасы",
+        lesson.lesson?.homework,
+        "Үй тапсырмасы әзірге қосылмаған."
+      )}
+
+      <div class="lesson-section">
+        <h2>⏱️ 45 минуттық сабақ жоспары</h2>
+
+        <div class="timeline">
+
+          <div class="timeline-item">
+            <strong>00–05 мин</strong>
+            <span>Ұйымдастыру</span>
+          </div>
+
+          <div class="timeline-item">
+            <strong>05–10 мин</strong>
+            <span>Өткенді қайталау / Қызығушылықты ояту</span>
+          </div>
+
+          <div class="timeline-item">
+            <strong>10–20 мин</strong>
+            <span>Жаңа тақырыпты түсіндіру</span>
+          </div>
+
+          <div class="timeline-item">
+            <strong>20–28 мин</strong>
+            <span>Жұптық жұмыс</span>
+          </div>
+
+          <div class="timeline-item">
+            <strong>28–35 мин</strong>
+            <span>Топтық жұмыс</span>
+          </div>
+
+          <div class="timeline-item">
+            <strong>35–40 мин</strong>
+            <span>Жеке жұмыс</span>
+          </div>
+
+          <div class="timeline-item">
+            <strong>40–43 мин</strong>
+            <span>Бағалау</span>
+          </div>
+
+          <div class="timeline-item">
+            <strong>43–45 мин</strong>
+            <span>Үй тапсырмасы</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+
+// ==========================================
+// Сабақ бөлімін жасау
+// ==========================================
+
+function renderLessonSection(title, content, emptyText) {
+  if (!content) {
+    return `
+      <div class="lesson-section">
+        <h2>${title}</h2>
+        <p class="empty-content">
+          ${emptyText}
+        </p>
+      </div>
+    `;
+  }
+
+  if (typeof content === "object") {
+    return `
+      <div class="lesson-section">
+        <h2>${title}</h2>
+        <pre class="lesson-text">${JSON.stringify(
+          content,
+          null,
+          2
+        )}</pre>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="lesson-section">
+      <h2>${title}</h2>
+      <div class="lesson-text">
+        ${content}
+      </div>
+    </div>
+  `;
+}
+
+
+// ==========================================
+// Іздеу
+// ==========================================
 
 function searchLessons() {
-
-  const input =
-    document.getElementById(
-      "searchInput"
-    );
-
-  const resultsBox =
-    document.getElementById(
-      "searchResults"
-    );
-
+  const input = document.getElementById("searchInput");
+  const resultsSection =
+    document.getElementById("searchResults");
   const resultsList =
-    document.getElementById(
-      "searchResultsList"
-    );
-
+    document.getElementById("searchResultsList");
 
   if (
     !input ||
-    !resultsBox ||
+    !resultsSection ||
     !resultsList
   ) {
     return;
   }
 
+  const query = input.value
+    .trim()
+    .toLowerCase();
 
-  const searchText =
-    input.value
-      .trim()
-      .toLowerCase();
-
-
-  // Бос іздеу
-
-  if (!searchText) {
-
-    resultsBox.style.display =
-      "none";
-
+  if (!query) {
+    resultsSection.style.display = "none";
     return;
   }
 
-
   let results = [];
 
-
-  // ========================================
-  // 7-СЫНЫП АЛГЕБРА
-  // ========================================
-
   if (
-    typeof grade7AlgebraQ1 !==
-    "undefined"
+    typeof grade7AlgebraQ1 !== "undefined" &&
+    grade7AlgebraQ1.lessons
   ) {
-
-    grade7AlgebraQ1.lessons.forEach(
-      lesson => {
-
-        const title =
-          lesson.title.toLowerCase();
-
-        const objective =
-          lesson.objective.toLowerCase();
-
-
-        if (
-          title.includes(searchText) ||
-          objective.includes(searchText)
-        ) {
-
-          results.push({
-
-            lesson: lesson,
-
-            classId: 7,
-
-            subject: "Алгебра",
-
-            quarter: "1-тоқсан"
-
-          });
-
-        }
-
-      }
+    results = grade7AlgebraQ1.lessons.filter(
+      lesson =>
+        lesson.title
+          .toLowerCase()
+          .includes(query) ||
+        (
+          lesson.objective || ""
+        )
+          .toLowerCase()
+          .includes(query)
     );
-
   }
 
+  resultsSection.style.display = "block";
 
-  resultsBox.style.display =
-    "block";
-
-
-  // Нәтиже жоқ
-
-  if (
-    results.length === 0
-  ) {
-
+  if (results.length === 0) {
     resultsList.innerHTML = `
-
       <div class="admin-box">
-
-        <h3>
-          Нәтиже табылмады
-        </h3>
-
+        <h3>Нәтиже табылмады</h3>
         <p>
-          "${input.value}"
-          бойынша сабақ табылмады.
+          Басқа тақырып атауын жазып көріңіз.
         </p>
-
       </div>
-
     `;
 
     return;
   }
 
-
-  // Нәтижелер
-
-  resultsList.innerHTML =
-    results.map(
-      item => `
-
-      <a
-        href="
-          lesson.html?class=${item.classId}
-          &lesson=${item.lesson.id}
-        "
-        class="topic-card"
-        style="
-          display: block;
-          text-decoration: none;
-          color: inherit;
-          margin-bottom: 15px;
-        "
-      >
-
-        <div class="topic-top">
-
-          <span class="topic-number">
-            ${item.lesson.number}
-          </span>
-
-          <div>
-
-            <small>
-
-              ${item.classId}-сынып
-              →
-              ${item.subject}
-              →
-              ${item.quarter}
-
-            </small>
-
-            <h3>
-              ${item.lesson.title}
-            </h3>
-
-            <p>
-
-              <strong>
-                Оқу мақсаты:
-              </strong>
-
-              ${item.lesson.objective}
-
-            </p>
-
+  resultsList.innerHTML = results
+    .map(
+      lesson => `
+        <a
+          href="lesson.html?class=7&lesson=${lesson.id}"
+          class="lesson-card"
+        >
+          <div class="lesson-number">
+            ${lesson.number}
           </div>
 
-        </div>
+          <div class="lesson-info">
+            <h3>${lesson.title}</h3>
+            <p>${lesson.objective || ""}</p>
+          </div>
 
-      </a>
+          <div class="lesson-arrow">
+            →
+          </div>
+        </a>
+      `
+    )
+    .join("");
 
-    `
-    ).join("");
-
+  resultsSection.scrollIntoView({
+    behavior: "smooth"
+  });
 }
 
 
-// ============================================
-// ENTER БАСҚАНДА ІЗДЕУ
-// ============================================
+// ==========================================
+// Enter арқылы іздеу
+// ==========================================
 
-const searchInput =
-  document.getElementById(
-    "searchInput"
-  );
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput =
+    document.getElementById("searchInput");
 
-
-if (searchInput) {
-
-  searchInput.addEventListener(
-    "keydown",
-    function(event) {
-
-      if (
-        event.key === "Enter"
-      ) {
-
-        searchLessons();
-
+  if (searchInput) {
+    searchInput.addEventListener(
+      "keydown",
+      event => {
+        if (event.key === "Enter") {
+          searchLessons();
+        }
       }
-
-    }
-  );
-
-}
+    );
+  }
+});
 
 
-// ============================================
-// ⭐ ТАҢДАУЛЫЛАР
-// ============================================
+// ==========================================
+// Таңдаулылар
+// ==========================================
 
 function getFavorites() {
-
-  return JSON.parse(
-
-    localStorage.getItem(
-      "mathTeacherFavorites"
-    ) || "[]"
-
-  );
-
+  try {
+    return JSON.parse(
+      localStorage.getItem(
+        "mathTeacherFavorites"
+      )
+    ) || [];
+  } catch (error) {
+    return [];
+  }
 }
 
 
-// ============================================
-// ⭐ ТАҢДАУЛЫЛАРДЫ САҚТАУ
-// ============================================
-
-function saveFavorites(
-  favorites
-) {
-
+function saveFavorites(favorites) {
   localStorage.setItem(
-
     "mathTeacherFavorites",
-
-    JSON.stringify(
-      favorites
-    )
-
+    JSON.stringify(favorites)
   );
-
 }
 
 
-// ============================================
-// ⭐ ТАҢДАУЛЫҒА ҚОСУ / ӨШІРУ
-// ============================================
+function toggleFavorite(lessonId) {
+  const id = String(lessonId);
 
-function toggleFavorite(
-  lessonId
-) {
+  let favorites = getFavorites();
 
-  let favorites =
-    getFavorites();
-
-
-  lessonId =
-    String(lessonId);
-
-
-  // Егер бар болса — өшіреміз
-
-  if (
-    favorites.includes(
-      lessonId
-    )
-  ) {
-
-    favorites =
-      favorites.filter(
-        id => id !== lessonId
-      );
-
-  }
-
-  // Егер жоқ болса — қосамыз
-
-  else {
-
-    favorites.push(
-      lessonId
+  if (favorites.includes(id)) {
+    favorites = favorites.filter(
+      item => item !== id
     );
-
+  } else {
+    favorites.push(id);
   }
 
+  saveFavorites(favorites);
 
-  saveFavorites(
-    favorites
-  );
-
-
-  updateFavoriteButton(
-    lessonId
-  );
-
-
+  updateFavoriteButton();
   renderFavorites();
-
 }
 
 
-// ============================================
-// ⭐ БАТЫРМАНЫ ЖАҢАРТУ
-// ============================================
-
-function updateFavoriteButton(
-  lessonId
-) {
-
+function updateFavoriteButton() {
   const button =
-    document.getElementById(
-      "favoriteButton"
-    );
+    document.getElementById("favoriteButton");
 
-
-  if (!button) return;
-
-
-  const favorites =
-    getFavorites();
-
-
-  lessonId =
-    String(lessonId);
-
-
-  if (
-    favorites.includes(
-      lessonId
-    )
-  ) {
-
-    button.innerHTML =
-      "⭐ Таңдаулыдан алып тастау";
-
+  if (!button) {
+    return;
   }
 
-  else {
+  const lessonId = getLessonId();
 
+  const favorites = getFavorites();
+
+  if (
+    favorites.includes(String(lessonId))
+  ) {
+    button.innerHTML =
+      "⭐ Таңдаулыдан өшіру";
+  } else {
     button.innerHTML =
       "☆ Таңдаулыға қосу";
-
   }
-
 }
 
 
-// ============================================
-// ⭐ ТАҢДАУЛЫЛАРДЫ КӨРСЕТУ
-// ============================================
-
 function renderFavorites() {
+  const container =
+    document.getElementById("favoritesList");
 
-  const box =
-    document.getElementById(
-      "favoritesList"
-    );
+  if (!container) {
+    return;
+  }
 
-
-  if (!box) return;
-
-
-  const favorites =
-    getFavorites();
-
-
-  // Таңдаулы жоқ
+  const favorites = getFavorites();
 
   if (
     favorites.length === 0
   ) {
-
-    box.innerHTML = `
-
+    container.innerHTML = `
       <div class="admin-box">
-
-        <h3>
-          Әзірге таңдаулы сабақ жоқ
-        </h3>
+        <h3>Әзірге таңдаулы сабақ жоқ</h3>
 
         <p>
-          Ұнаған сабақтың ішінен
-          ⭐ батырмасын басып сақтаңыз.
+          Ұнаған сабақтың ішінен ⭐ батырмасын
+          басып, оны осы жерге сақтай аласыз.
         </p>
-
       </div>
-
     `;
 
     return;
   }
 
-
-  let lessons = [];
-
-
-  // 7-сынып
-
   if (
-    typeof grade7AlgebraQ1 !==
-    "undefined"
+    typeof grade7AlgebraQ1 === "undefined"
   ) {
-
-    lessons =
-      grade7AlgebraQ1.lessons.filter(
-        lesson =>
-          favorites.includes(
-            String(lesson.id)
-          )
-      );
-
+    return;
   }
 
+  const lessons =
+    grade7AlgebraQ1.lessons.filter(
+      lesson =>
+        favorites.includes(
+          String(lesson.id)
+        )
+    );
 
-  // Сабақтар табылмаса
-
-  if (
-    lessons.length === 0
-  ) {
-
-    box.innerHTML = `
-
+  if (lessons.length === 0) {
+    container.innerHTML = `
       <div class="admin-box">
-
-        <h3>
-          Таңдаулы сабақтар
-        </h3>
-
-        <p>
-          Сақталған сабақтар
-          осы жерде шығады.
-        </p>
-
+        <h3>Таңдаулы сабақтар жоқ</h3>
       </div>
-
     `;
 
     return;
   }
 
-
-  // Таңдаулы сабақтарды көрсету
-
-  box.innerHTML =
-    lessons.map(
+  container.innerHTML = lessons
+    .map(
       lesson => `
-
-      <a
-        href="
-          lesson.html?class=7&lesson=${lesson.id}
-        "
-        class="topic-card"
-        style="
-          display: block;
-          text-decoration: none;
-          color: inherit;
-          margin-bottom: 15px;
-        "
-      >
-
-        <div class="topic-top">
-
-          <span class="topic-number">
+        <a
+          href="lesson.html?class=7&lesson=${lesson.id}"
+          class="lesson-card"
+        >
+          <div class="lesson-number">
             ${lesson.number}
-          </span>
-
-          <div>
-
-            <h3>
-              ⭐ ${lesson.title}
-            </h3>
-
-            <p>
-              7-сынып
-              →
-              Алгебра
-              →
-              1-тоқсан
-            </p>
-
           </div>
 
-        </div>
+          <div class="lesson-info">
+            <h3>${lesson.title}</h3>
+            <p>${lesson.objective || ""}</p>
+          </div>
 
-      </a>
-
-    `
-    ).join("");
-
+          <div class="lesson-arrow">
+            →
+          </div>
+        </a>
+      `
+    )
+    .join("");
 }
 
 
-// ============================================
-// БАСТАПҚЫДА ТАҢДАУЛЫЛАРДЫ КӨРСЕТУ
-// ============================================
+// ==========================================
+// Барлық функцияларды іске қосу
+// ==========================================
 
 renderFavorites();
 
-
-// ============================================
-// БАРЛЫҚ ФУНКЦИЯЛАРДЫ ІСКЕ ҚОСУ
-// ============================================
-
 renderClasses();
+
+renderCurriculumClassPage();
+
+renderSubjectPage();
+
+renderQuarterPage();
 
 renderClassPage();
 
