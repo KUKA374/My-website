@@ -133,8 +133,10 @@
 
   <script>
     // script.js-тегі бұрынғы барлық функциялар сақталады.
-    // Бұл тек тақырып ашылғандағы көріністі жинақы етеді.
-    (function renderCompactLessonPage() {
+    // DOMContentLoaded кезінде орындалуы маңызды:
+    // script.js өзінің бастапқы render функциясын орындағаннан кейін
+    // жинақы сабақ беті қайта көрсетіледі.
+    function renderCompactLessonPage() {
       const container = document.getElementById("lessonPage");
 
       if (!container || typeof grade7AlgebraQ1 === "undefined") {
@@ -237,7 +239,9 @@
       if (typeof updateFavoriteButton === "function") {
         updateFavoriteButton();
       }
-    })();
+    }
+
+    document.addEventListener("DOMContentLoaded", renderCompactLessonPage);
   </script>
 
 </body>
