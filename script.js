@@ -1,20 +1,17 @@
+```javascript
 // ==========================================
-// Math Teacher — Main Script
+// Math Teacher
+// Main Script
 // ==========================================
 
 
 // ==========================================
-// URL параметрлері
+// URL PARAMETERS
 // ==========================================
 
 function getClassId() {
   const params = new URLSearchParams(window.location.search);
   return params.get("class");
-}
-
-function getLessonId() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("lesson");
 }
 
 function getSubjectId() {
@@ -27,50 +24,56 @@ function getQuarterId() {
   return params.get("quarter");
 }
 
-
-// ==========================================
-// Файлға сілтеме
-// ==========================================
-
-function fileLink(file, title) {
-  if (!file) {
-    return `<span class="empty-content">${title} әзірге қосылмаған</span>`;
-  }
-
-  return `
-    <a href="${file}" target="_blank" class="button">
-      ${title}
-    </a>
-  `;
+function getLessonId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("lesson");
 }
 
 
 // ==========================================
-// Басты бет — сыныптар
+// MAIN PAGE
 // ==========================================
 
 function renderClasses() {
-  const container = document.getElementById("classGrid");
 
-  if (!container || typeof curriculum === "undefined") {
+  const container =
+    document.getElementById("classGrid");
+
+  if (!container) {
+    return;
+  }
+
+  if (typeof curriculum === "undefined") {
     return;
   }
 
   container.innerHTML = "";
 
   Object.keys(curriculum).forEach(classId => {
-    const classData = curriculum[classId];
 
-    const card = document.createElement("a");
+    const classData =
+      curriculum[classId];
 
-    card.href = `class.html?class=${classId}`;
-    card.className = "class-card";
+    const card =
+      document.createElement("a");
+
+    card.href =
+      `class.html?class=${classId}`;
+
+    card.className =
+      "class-card";
 
     card.innerHTML = `
-      <div class="class-number">${classId}</div>
+
+      <div class="class-number">
+        ${classId}
+      </div>
 
       <div class="class-info">
-        <h3>${classData.title}</h3>
+
+        <h3>
+          ${classData.title}
+        </h3>
 
         <p>
           ${
@@ -79,416 +82,27 @@ function renderClasses() {
               : "Алгебра және Геометрия"
           }
         </p>
-      </div>
-
-      <div class="class-arrow">→</div>
-    `;
-
-    container.appendChild(card);
-  });
-}
-
-
-// ==========================================
-// Сынып беті
-// Сынып → Пән → Тоқсан
-// ==========================================
-
-function renderCurriculumClassPage() {
-  const container = document.getElementById("classPage");
-
-  if (!container || typeof curriculum === "undefined") {
-    return;
-  }
-
-  const classId = getClassId();
-
-  if (!classId || !curriculum[classId]) {
-    return;
-  }
-
-  const classData = curriculum[classId];
-
-  container.innerHTML = `
-    <a href="index.html#classes" class="back-link">
-      ← Сыныптарға қайту
-    </a>
-
-    <div class="page-heading class-heading">
-      <span class="badge">${classData.title}</span>
-
-      <h1>${classData.title}</h1>
-
-      <p>
-        Пәнді және қажетті тоқсанды таңдаңыз.
-      </p>
-    </div>
-
-    <div class="subjects-container" id="subjectsContainer"></div>
-  `;
-
-  const subjectsContainer =
-    document.getElementById("subjectsContainer");
-
-  classData.subjects.forEach(subject => {
-
-    const subjectBlock = document.createElement("div");
-
-    subjectBlock.className = "subject-block";
-
-    subjectBlock.innerHTML = `
-      <div class="subject-header">
-
-        <div class="subject-icon">
-          ${
-            subject.id === "algebra"
-              ? "📐"
-              : subject.id === "geometry"
-              ? "📏"
-              : "🔢"
-          }
-        </div>
-
-        <div>
-          <h2>${subject.title}</h2>
-          <p>4 тоқсан</p>
-        </div>
 
       </div>
 
-      <div class="quarters-grid"></div>
-    `;
-
-    const quartersGrid =
-      subjectBlock.querySelector(".quarters-grid");
-
-    subject.quarters.forEach(quarter => {
-
-      const quarterCard =
-        document.createElement("a");
-
-      if (quarter.available) {
-
-        quarterCard.href =
-          `class.html?class=${classId}&subject=${subject.id}&quarter=${quarter.id}`;
-
-        quarterCard.className =
-          "quarter-card available";
-
-        quarterCard.innerHTML = `
-          <span class="quarter-number">
-            ${quarter.id}
-          </span>
-
-          <div>
-            <strong>${quarter.title}</strong>
-            <small>Материалдар бар →</small>
-          </div>
-        `;
-
-      } else {
-
-        quarterCard.href = "#";
-
-        quarterCard.className =
-          "quarter-card disabled";
-
-        quarterCard.addEventListener("click", event => {
-          event.preventDefault();
-        });
-
-        quarterCard.innerHTML = `
-          <span class="quarter-number">
-            ${quarter.id}
-          </span>
-
-          <div>
-            <strong>${quarter.title}</strong>
-            <small>Жақында қосылады</small>
-          </div>
-        `;
-      }
-
-      quartersGrid.appendChild(quarterCard);
-    });
-
-    subjectsContainer.appendChild(subjectBlock);
-  });
-}
-
-
-// ==========================================
-// Пән беті
-// Пән → Тоқсан
-// ==========================================
-
-function renderSubjectPage() {
-  const container = document.getElementById("classPage");
-
-  if (!container || typeof curriculum === "undefined") {
-    return;
-  }
-
-  const classId = getClassId();
-  const subjectId = getSubjectId();
-
-  if (
-    !classId ||
-    !subjectId ||
-    !curriculum[classId]
-  ) {
-    return;
-  }
-
-  const classData = curriculum[classId];
-
-  const subject = classData.subjects.find(
-    item => item.id === subjectId
-  );
-
-  if (!subject) {
-    return;
-  }
-
-  container.innerHTML = `
-    <a
-      href="class.html?class=${classId}"
-      class="back-link"
-    >
-      ← ${classData.title}
-    </a>
-
-    <div class="page-heading">
-
-      <span class="badge">
-        ${subject.title}
-      </span>
-
-      <h1>${subject.title}</h1>
-
-      <p>
-        ${classData.title} бойынша тоқсанды таңдаңыз.
-      </p>
-
-    </div>
-
-    <div
-      class="quarter-grid"
-      id="quarterGrid"
-    ></div>
-  `;
-
-  const quarterGrid =
-    document.getElementById("quarterGrid");
-
-  subject.quarters.forEach(quarter => {
-
-    const card =
-      document.createElement("a");
-
-    if (quarter.available) {
-
-      card.href =
-        `class.html?class=${classId}&subject=${subjectId}&quarter=${quarter.id}`;
-
-      card.className =
-        "quarter-card";
-
-    } else {
-
-      card.href = "#";
-
-      card.className =
-        "quarter-card disabled";
-
-      card.addEventListener("click", event => {
-        event.preventDefault();
-      });
-    }
-
-    card.innerHTML = `
-      <div class="quarter-number">
-        ${quarter.id}
-      </div>
-
-      <div>
-        <h3>${quarter.title}</h3>
-
-        ${
-          quarter.available
-            ? `<p class="available-label">Материалдар бар →</p>`
-            : `<p>Жақында қосылады</p>`
-        }
-      </div>
-    `;
-
-    quarterGrid.appendChild(card);
-  });
-}
-
-
-// ==========================================
-// ТОҚСАН БЕТІ
-// 7-сынып → Алгебра → 1-тоқсан
-// ==========================================
-
-function renderQuarterPage() {
-
-  const container =
-    document.getElementById("classPage");
-
-  if (!container) {
-    return;
-  }
-
-  const classId = getClassId();
-  const subjectId = getSubjectId();
-  const quarterId = getQuarterId();
-
-  // Тек 7-сынып Алгебра 1-тоқсан
-  if (
-    classId !== "7" ||
-    subjectId !== "algebra" ||
-    quarterId !== "1"
-  ) {
-    return;
-  }
-
-  // Мәліметтер бар ма?
-  if (
-    typeof grade7AlgebraQ1 === "undefined" ||
-    !grade7AlgebraQ1.lessons
-  ) {
-
-    container.innerHTML = `
-      <div class="admin-box">
-
-        <h3>
-          Материал табылмады
-        </h3>
-
-        <p>
-          Бұл тоқсанның материалдары әзірге қосылмаған.
-        </p>
-
-      </div>
-    `;
-
-    return;
-  }
-
-  const lessons =
-    grade7AlgebraQ1.lessons;
-
-
-  // ========================================
-  // Бетті салу
-  // ========================================
-
-  container.innerHTML = `
-
-    <a
-      href="class.html?class=7&subject=algebra"
-      class="back-link"
-    >
-      ← Алгебра
-    </a>
-
-
-    <div class="quarter-page-header">
-
-      <span class="quarter-page-badge">
-        7-сынып • Алгебра • 1-тоқсан
-      </span>
-
-      <h1>
-        Алгебра
-      </h1>
-
-      <p>
-        ${lessons.length} сабақ
-      </p>
-
-    </div>
-
-
-    <div
-      class="quarter-lesson-list"
-      id="quarterLessonList"
-    ></div>
-
-  `;
-
-
-  const lessonList =
-    document.getElementById(
-      "quarterLessonList"
-    );
-
-
-  // ========================================
-  // Сабақтарды шығару
-  // ========================================
-
-  lessons.forEach(lesson => {
-
-    const card =
-      document.createElement("a");
-
-
-    card.href =
-      `lesson.html?class=7&lesson=${lesson.id}`;
-
-
-    card.className =
-      "quarter-lesson-card";
-
-
-    card.innerHTML = `
-
-      <div class="quarter-lesson-number">
-        ${String(lesson.number).padStart(2, "0")}
-      </div>
-
-
-      <div class="quarter-lesson-info">
-
-        <h3>
-          ${lesson.title}
-        </h3>
-
-        ${
-          lesson.objective
-            ? `
-              <p>
-                ${lesson.objective}
-              </p>
-            `
-            : ""
-        }
-
-      </div>
-
-
-      <div class="quarter-lesson-arrow">
+      <div class="class-arrow">
         →
       </div>
 
     `;
 
-
-    lessonList.appendChild(card);
+    container.appendChild(card);
 
   });
-
 }
 
 
 // ==========================================
-// Ескі сынып беті
+// CLASS PAGE
+// Сынып → Пән → Тоқсан
 // ==========================================
 
-function renderClassPage() {
+function renderClassPageNew() {
 
   const container =
     document.getElementById("classPage");
@@ -497,32 +111,19 @@ function renderClassPage() {
     return;
   }
 
-
-  // Жаңа curriculum жүйесі бар болса
-  if (
-    typeof curriculum !== "undefined" &&
-    getClassId() &&
-    curriculum[getClassId()]
-  ) {
+  if (typeof curriculum === "undefined") {
     return;
   }
 
-
-  if (typeof classes === "undefined") {
-    return;
-  }
-
-
-  const id =
+  const classId =
     getClassId();
 
+  if (!classId) {
+    return;
+  }
 
   const classData =
-    classes.find(
-      item =>
-        String(item.id) === String(id)
-    );
-
+    curriculum[classId];
 
   if (!classData) {
     return;
@@ -535,9 +136,8 @@ function renderClassPage() {
       href="index.html#classes"
       class="back-link"
     >
-      ← Артқа
+      ← Сыныптарға қайту
     </a>
-
 
     <div class="page-heading">
 
@@ -550,83 +150,157 @@ function renderClassPage() {
       </h1>
 
       <p>
-        ${classData.description || ""}
+        Пәнді және қажетті тоқсанды таңдаңыз.
       </p>
 
     </div>
 
+    <div
+      class="subjects-container"
+      id="subjectsContainer"
+    ></div>
 
-    ${
-      classData.textbook
-        ? `
-          <div class="admin-box">
+  `;
 
-            <h3>
-              📚 Оқулық
-            </h3>
 
-            <p>
-              ${classData.textbook.title || ""}
-            </p>
+  const subjectsContainer =
+    document.getElementById(
+      "subjectsContainer"
+    );
+
+
+  classData.subjects.forEach(
+    subject => {
+
+      const subjectBlock =
+        document.createElement("div");
+
+      subjectBlock.className =
+        "subject-block";
+
+
+      subjectBlock.innerHTML = `
+
+        <div class="subject-header">
+
+          <div class="subject-icon">
 
             ${
-              classData.textbook.file
-                ? fileLink(
-                    classData.textbook.file,
-                    "Оқулықты ашу"
-                  )
-                : ""
+              subject.id === "algebra"
+                ? "📐"
+                : subject.id === "geometry"
+                ? "📏"
+                : "🔢"
             }
 
           </div>
-        `
-        : ""
+
+          <div>
+
+            <h2>
+              ${subject.title}
+            </h2>
+
+            <p>
+              4 тоқсан
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="quarters-grid"
+        ></div>
+
+      `;
+
+
+      const quartersGrid =
+        subjectBlock.querySelector(
+          ".quarters-grid"
+        );
+
+
+      subject.quarters.forEach(
+        quarter => {
+
+          const card =
+            document.createElement("a");
+
+
+          if (quarter.available) {
+
+            card.href =
+              `class.html?class=${classId}&subject=${subject.id}&quarter=${quarter.id}`;
+
+            card.className =
+              "quarter-card available";
+
+          } else {
+
+            card.href = "#";
+
+            card.className =
+              "quarter-card disabled";
+
+            card.addEventListener(
+              "click",
+              event => {
+                event.preventDefault();
+              }
+            );
+
+          }
+
+
+          card.innerHTML = `
+
+            <span class="quarter-number">
+              ${quarter.id}
+            </span>
+
+            <div>
+
+              <strong>
+                ${quarter.title}
+              </strong>
+
+              <small>
+                ${
+                  quarter.available
+                    ? "Материалдар бар →"
+                    : "Жақында қосылады"
+                }
+              </small>
+
+            </div>
+
+          `;
+
+
+          quartersGrid.appendChild(card);
+
+        }
+      );
+
+
+      subjectsContainer.appendChild(
+        subjectBlock
+      );
+
     }
+  );
 
-
-    <div class="lesson-list">
-
-      ${
-        (classData.topics || [])
-          .map(
-            (topic, index) => `
-
-              <div class="lesson-card">
-
-                <div class="lesson-number">
-                  ${index + 1}
-                </div>
-
-                <div class="lesson-info">
-
-                  <h3>
-                    ${topic.title}
-                  </h3>
-
-                  <p>
-                    ${topic.objective || ""}
-                  </p>
-
-                </div>
-
-              </div>
-
-            `
-          )
-          .join("")
-      }
-
-    </div>
-
-  `;
 }
 
 
 // ==========================================
-// 7-сынып ескі беті
+// SUBJECT PAGE
 // ==========================================
 
-function renderNewGrade7Page() {
+function renderSubjectPage() {
 
   const container =
     document.getElementById("classPage");
@@ -635,29 +309,372 @@ function renderNewGrade7Page() {
     return;
   }
 
+  if (typeof curriculum === "undefined") {
+    return;
+  }
+
   const classId =
     getClassId();
 
-  if (classId !== "7") {
+  const subjectId =
+    getSubjectId();
+
+
+  if (!classId || !subjectId) {
     return;
   }
 
-  if (
-    typeof curriculum !== "undefined"
-  ) {
+
+  const classData =
+    curriculum[classId];
+
+  if (!classData) {
     return;
   }
+
+
+  const subject =
+    classData.subjects.find(
+      item =>
+        item.id === subjectId
+    );
+
+
+  if (!subject) {
+    return;
+  }
+
+
+  container.innerHTML = `
+
+    <a
+      href="class.html?class=${classId}"
+      class="back-link"
+    >
+      ← ${classData.title}
+    </a>
+
+
+    <div class="page-heading">
+
+      <span class="badge">
+        ${subject.title}
+      </span>
+
+      <h1>
+        ${subject.title}
+      </h1>
+
+      <p>
+        ${classData.title}
+        бойынша тоқсанды таңдаңыз.
+      </p>
+
+    </div>
+
+
+    <div
+      class="quarter-grid"
+      id="quarterGrid"
+    ></div>
+
+  `;
+
+
+  const quarterGrid =
+    document.getElementById(
+      "quarterGrid"
+    );
+
+
+  subject.quarters.forEach(
+    quarter => {
+
+      const card =
+        document.createElement("a");
+
+
+      if (quarter.available) {
+
+        card.href =
+          `class.html?class=${classId}&subject=${subjectId}&quarter=${quarter.id}`;
+
+        card.className =
+          "quarter-card";
+
+      } else {
+
+        card.href = "#";
+
+        card.className =
+          "quarter-card disabled";
+
+        card.addEventListener(
+          "click",
+          event => {
+            event.preventDefault();
+          }
+        );
+
+      }
+
+
+      card.innerHTML = `
+
+        <div class="quarter-number">
+          ${quarter.id}
+        </div>
+
+        <div>
+
+          <h3>
+            ${quarter.title}
+          </h3>
+
+          <p>
+            ${
+              quarter.available
+                ? "Материалдар бар →"
+                : "Жақында қосылады"
+            }
+          </p>
+
+        </div>
+
+      `;
+
+
+      quarterGrid.appendChild(card);
+
+    }
+  );
+
 }
 
 
 // ==========================================
-// САБАҚ БЕТІ
+// QUARTER PAGE
+// 7-сынып → Алгебра → 1-тоқсан
+// ==========================================
+
+function renderQuarterPage() {
+
+  const container =
+    document.getElementById("classPage");
+
+  if (!container) {
+    return;
+  }
+
+
+  const classId =
+    getClassId();
+
+  const subjectId =
+    getSubjectId();
+
+  const quarterId =
+    getQuarterId();
+
+
+  console.log(
+    "QUARTER PAGE:",
+    classId,
+    subjectId,
+    quarterId
+  );
+
+
+  if (
+    classId !== "7" ||
+    subjectId !== "algebra" ||
+    quarterId !== "1"
+  ) {
+
+    console.log(
+      "Quarter condition failed"
+    );
+
+    return;
+  }
+
+
+  if (
+    typeof grade7AlgebraQ1 ===
+      "undefined"
+  ) {
+
+    container.innerHTML = `
+
+      <div class="admin-box">
+
+        <h3>
+          Мәлімет табылмады
+        </h3>
+
+        <p>
+          grade7AlgebraQ1 табылмады.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  const lessons =
+    grade7AlgebraQ1.lessons;
+
+
+  if (!lessons) {
+
+    container.innerHTML = `
+
+      <div class="admin-box">
+
+        <h3>
+          Сабақтар табылмады
+        </h3>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+
+  // ========================================
+  // HEADER
+  // ========================================
+
+  container.innerHTML = `
+
+    <a
+      href="class.html?class=7&subject=algebra"
+      class="back-link"
+    >
+      ← Алгебра
+    </a>
+
+
+    <div
+      class="quarter-page-header"
+    >
+
+      <span
+        class="quarter-page-badge"
+      >
+        7-сынып • Алгебра • 1-тоқсан
+      </span>
+
+
+      <h1>
+        Алгебра
+      </h1>
+
+
+      <p>
+        ${lessons.length} сабақ
+      </p>
+
+    </div>
+
+
+    <div
+      id="quarterLessonList"
+      class="quarter-lesson-list"
+    ></div>
+
+  `;
+
+
+  // ========================================
+  // LESSON LIST
+  // ========================================
+
+  const list =
+    document.getElementById(
+      "quarterLessonList"
+    );
+
+
+  lessons.forEach(
+    lesson => {
+
+      const card =
+        document.createElement("a");
+
+
+      card.href =
+        `lesson.html?class=7&lesson=${lesson.id}`;
+
+
+      card.className =
+        "quarter-lesson-card";
+
+
+      card.innerHTML = `
+
+        <div
+          class="quarter-lesson-number"
+        >
+          ${String(
+            lesson.number
+          ).padStart(2, "0")}
+        </div>
+
+
+        <div
+          class="quarter-lesson-info"
+        >
+
+          <h3>
+            ${lesson.title}
+          </h3>
+
+          ${
+            lesson.objective
+              ? `
+                <p>
+                  ${lesson.objective}
+                </p>
+              `
+              : ""
+          }
+
+        </div>
+
+
+        <div
+          class="quarter-lesson-arrow"
+        >
+          →
+        </div>
+
+      `;
+
+
+      list.appendChild(card);
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// LESSON PAGE
 // ==========================================
 
 function renderLessonPage() {
 
   const container =
-    document.getElementById("lessonPage");
+    document.getElementById(
+      "lessonPage"
+    );
 
   if (!container) {
     return;
@@ -669,17 +686,15 @@ function renderLessonPage() {
 
 
   if (
-    typeof grade7AlgebraQ1 === "undefined" ||
-    !grade7AlgebraQ1.lessons
+    typeof grade7AlgebraQ1 ===
+      "undefined"
   ) {
 
     container.innerHTML = `
       <div class="admin-box">
-
         <h3>
           Сабақ табылмады
         </h3>
-
       </div>
     `;
 
@@ -705,7 +720,8 @@ function renderLessonPage() {
         </h3>
 
         <p>
-          Бұл сабақтың материалы әзірге жоқ.
+          Бұл сабақтың материалы
+          әзірге жоқ.
         </p>
 
       </div>
@@ -715,8 +731,12 @@ function renderLessonPage() {
   }
 
 
+  const favorites =
+    getFavorites();
+
+
   const isFavorite =
-    getFavorites().includes(
+    favorites.includes(
       String(lesson.id)
     );
 
@@ -755,15 +775,17 @@ function renderLessonPage() {
 
 
       <button
+        id="favoriteButton"
         class="favorite-button"
         onclick="toggleFavorite('${lesson.id}')"
-        id="favoriteButton"
       >
+
         ${
           isFavorite
             ? "⭐ Таңдаулыдан өшіру"
             : "☆ Таңдаулыға қосу"
         }
+
       </button>
 
     </div>
@@ -833,7 +855,6 @@ function renderLessonPage() {
           ⏱️ 45 минуттық сабақ жоспары
         </h2>
 
-
         <div class="timeline">
 
           <div class="timeline-item">
@@ -841,14 +862,13 @@ function renderLessonPage() {
             <span>Ұйымдастыру</span>
           </div>
 
-
           <div class="timeline-item">
             <strong>05–10 мин</strong>
             <span>
-              Өткенді қайталау / Қызығушылықты ояту
+              Өткенді қайталау /
+              Қызығушылықты ояту
             </span>
           </div>
-
 
           <div class="timeline-item">
             <strong>10–20 мин</strong>
@@ -857,14 +877,12 @@ function renderLessonPage() {
             </span>
           </div>
 
-
           <div class="timeline-item">
             <strong>20–28 мин</strong>
             <span>
               Жұптық жұмыс
             </span>
           </div>
-
 
           <div class="timeline-item">
             <strong>28–35 мин</strong>
@@ -873,7 +891,6 @@ function renderLessonPage() {
             </span>
           </div>
 
-
           <div class="timeline-item">
             <strong>35–40 мин</strong>
             <span>
@@ -881,14 +898,12 @@ function renderLessonPage() {
             </span>
           </div>
 
-
           <div class="timeline-item">
             <strong>40–43 мин</strong>
             <span>
               Бағалау
             </span>
           </div>
-
 
           <div class="timeline-item">
             <strong>43–45 мин</strong>
@@ -908,7 +923,7 @@ function renderLessonPage() {
 
 
 // ==========================================
-// Сабақ бөлімін жасау
+// LESSON SECTION
 // ==========================================
 
 function renderLessonSection(
@@ -920,6 +935,7 @@ function renderLessonSection(
   if (!content) {
 
     return `
+
       <div class="lesson-section">
 
         <h2>
@@ -931,7 +947,9 @@ function renderLessonSection(
         </p>
 
       </div>
+
     `;
+
   }
 
 
@@ -940,6 +958,7 @@ function renderLessonSection(
   ) {
 
     return `
+
       <div class="lesson-section">
 
         <h2>
@@ -947,15 +966,22 @@ function renderLessonSection(
         </h2>
 
         <pre class="lesson-text">
-${JSON.stringify(content, null, 2)}
+${JSON.stringify(
+  content,
+  null,
+  2
+)}
         </pre>
 
       </div>
+
     `;
+
   }
 
 
   return `
+
     <div class="lesson-section">
 
       <h2>
@@ -967,188 +993,14 @@ ${JSON.stringify(content, null, 2)}
       </div>
 
     </div>
+
   `;
+
 }
 
 
 // ==========================================
-// ІЗДЕУ
-// ==========================================
-
-function searchLessons() {
-
-  const input =
-    document.getElementById(
-      "searchInput"
-    );
-
-  const resultsSection =
-    document.getElementById(
-      "searchResults"
-    );
-
-  const resultsList =
-    document.getElementById(
-      "searchResultsList"
-    );
-
-
-  if (
-    !input ||
-    !resultsSection ||
-    !resultsList
-  ) {
-    return;
-  }
-
-
-  const query =
-    input.value
-      .trim()
-      .toLowerCase();
-
-
-  if (!query) {
-
-    resultsSection.style.display =
-      "none";
-
-    return;
-  }
-
-
-  let results = [];
-
-
-  if (
-    typeof grade7AlgebraQ1 !==
-      "undefined" &&
-    grade7AlgebraQ1.lessons
-  ) {
-
-    results =
-      grade7AlgebraQ1.lessons.filter(
-        lesson =>
-          lesson.title
-            .toLowerCase()
-            .includes(query) ||
-
-          (
-            lesson.objective || ""
-          )
-            .toLowerCase()
-            .includes(query)
-      );
-
-  }
-
-
-  resultsSection.style.display =
-    "block";
-
-
-  if (results.length === 0) {
-
-    resultsList.innerHTML = `
-
-      <div class="admin-box">
-
-        <h3>
-          Нәтиже табылмады
-        </h3>
-
-        <p>
-          Басқа тақырып атауын жазып көріңіз.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  resultsList.innerHTML =
-    results
-      .map(
-        lesson => `
-
-          <a
-            href="lesson.html?class=7&lesson=${lesson.id}"
-            class="lesson-card"
-          >
-
-            <div class="lesson-number">
-              ${lesson.number}
-            </div>
-
-
-            <div class="lesson-info">
-
-              <h3>
-                ${lesson.title}
-              </h3>
-
-              <p>
-                ${lesson.objective || ""}
-              </p>
-
-            </div>
-
-
-            <div class="lesson-arrow">
-              →
-            </div>
-
-          </a>
-
-        `
-      )
-      .join("");
-
-
-  resultsSection.scrollIntoView({
-    behavior: "smooth"
-  });
-}
-
-
-// ==========================================
-// Enter арқылы іздеу
-// ==========================================
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    const searchInput =
-      document.getElementById(
-        "searchInput"
-      );
-
-
-    if (searchInput) {
-
-      searchInput.addEventListener(
-        "keydown",
-        event => {
-
-          if (event.key === "Enter") {
-            searchLessons();
-          }
-
-        }
-      );
-
-    }
-
-  }
-);
-
-
-// ==========================================
-// ТАҢДАУЛЫЛАР
+// FAVORITES
 // ==========================================
 
 function getFavorites() {
@@ -1168,6 +1020,7 @@ function getFavorites() {
     return [];
 
   }
+
 }
 
 
@@ -1177,7 +1030,9 @@ function saveFavorites(
 
   localStorage.setItem(
     "mathTeacherFavorites",
-    JSON.stringify(favorites)
+    JSON.stringify(
+      favorites
+    )
   );
 
 }
@@ -1189,7 +1044,6 @@ function toggleFavorite(
 
   const id =
     String(lessonId);
-
 
   let favorites =
     getFavorites();
@@ -1218,8 +1072,6 @@ function toggleFavorite(
 
   updateFavoriteButton();
 
-  renderFavorites();
-
 }
 
 
@@ -1230,7 +1082,6 @@ function updateFavoriteButton() {
       "favoriteButton"
     );
 
-
   if (!button) {
     return;
   }
@@ -1239,246 +1090,133 @@ function updateFavoriteButton() {
   const lessonId =
     getLessonId();
 
-
   const favorites =
     getFavorites();
 
 
-  if (
+  button.innerHTML =
     favorites.includes(
       String(lessonId)
     )
-  ) {
-
-    button.innerHTML =
-      "⭐ Таңдаулыдан өшіру";
-
-  } else {
-
-    button.innerHTML =
-      "☆ Таңдаулыға қосу";
-
-  }
+      ? "⭐ Таңдаулыдан өшіру"
+      : "☆ Таңдаулыға қосу";
 
 }
 
 
-function renderFavorites() {
-
-  const container =
-    document.getElementById(
-      "favoritesList"
-    );
-
-
-  if (!container) {
-    return;
-  }
-
-
-  const favorites =
-    getFavorites();
-
-
-  if (
-    favorites.length === 0
-  ) {
-
-    container.innerHTML = `
-
-      <div class="admin-box">
-
-        <h3>
-          Әзірге таңдаулы сабақ жоқ
-        </h3>
-
-        <p>
-          Ұнаған сабақтың ішінен ⭐
-          батырмасын басып,
-          оны осы жерге сақтай аласыз.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  if (
-    typeof grade7AlgebraQ1 ===
-      "undefined"
-  ) {
-    return;
-  }
-
-
-  const lessons =
-    grade7AlgebraQ1.lessons.filter(
-      lesson =>
-        favorites.includes(
-          String(lesson.id)
-        )
-    );
-
-
-  if (
-    lessons.length === 0
-  ) {
-
-    container.innerHTML = `
-
-      <div class="admin-box">
-
-        <h3>
-          Таңдаулы сабақтар жоқ
-        </h3>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-
-  container.innerHTML =
-    lessons
-      .map(
-        lesson => `
-
-          <a
-            href="lesson.html?class=7&lesson=${lesson.id}"
-            class="lesson-card"
-          >
-
-            <div class="lesson-number">
-              ${lesson.number}
-            </div>
-
-
-            <div class="lesson-info">
-
-              <h3>
-                ${lesson.title}
-              </h3>
-
-              <p>
-                ${lesson.objective || ""}
-              </p>
-
-            </div>
-
-
-            <div class="lesson-arrow">
-              →
-            </div>
-
-          </a>
-
-        `
-      )
-      .join("");
-}
-
-
 // ==========================================
-// БЕТТІ ІСКЕ ҚОСУ
+// INITIALIZATION
 // ==========================================
 
-function initPage() {
+function init() {
 
-  // Басты бет
-  renderClasses();
+  console.log(
+    "Math Teacher started"
+  );
 
-  renderFavorites();
 
-
-  const currentClassId =
+  const classId =
     getClassId();
 
-  const currentSubjectId =
+  const subjectId =
     getSubjectId();
 
-  const currentQuarterId =
+  const quarterId =
     getQuarterId();
 
 
-  // ----------------------------------------
-  // Тоқсан
-  // ----------------------------------------
+  console.log(
+    "URL:",
+    classId,
+    subjectId,
+    quarterId
+  );
 
+
+  // lesson.html
   if (
-    currentClassId &&
-    currentSubjectId &&
-    currentQuarterId
+    document.getElementById(
+      "lessonPage"
+    )
   ) {
 
-    renderQuarterPage();
+    renderLessonPage();
 
+    return;
   }
 
 
-  // ----------------------------------------
-  // Пән
-  // ----------------------------------------
-
-  else if (
-    currentClassId &&
-    currentSubjectId
+  // class.html
+  if (
+    document.getElementById(
+      "classPage"
+    )
   ) {
 
-    renderSubjectPage();
+    if (
+      classId &&
+      subjectId &&
+      quarterId
+    ) {
+
+      renderQuarterPage();
+
+      return;
+    }
+
+
+    if (
+      classId &&
+      subjectId
+    ) {
+
+      renderSubjectPage();
+
+      return;
+    }
+
+
+    if (classId) {
+
+      renderClassPageNew();
+
+      return;
+    }
 
   }
 
 
-  // ----------------------------------------
-  // Сынып
-  // ----------------------------------------
-
-  else if (
-    currentClassId
+  // index.html
+  if (
+    document.getElementById(
+      "classGrid"
+    )
   ) {
 
-    renderCurriculumClassPage();
+    renderClasses();
 
   }
-
-
-  // ----------------------------------------
-  // Ескі жүйе
-  // ----------------------------------------
-
-  else {
-
-    renderClassPage();
-
-  }
-
-
-  // Сабақ беті
-  renderLessonPage();
 
 }
 
 
 // ==========================================
-// DOM толық жүктелгеннен кейін іске қосу
+// START
 // ==========================================
 
 if (
-  document.readyState === "loading"
+  document.readyState ===
+  "loading"
 ) {
 
   document.addEventListener(
     "DOMContentLoaded",
-    initPage
+    init
   );
 
 } else {
 
-  initPage();
+  init();
 
 }
+```
