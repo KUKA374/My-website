@@ -10,15 +10,42 @@
   const SESSION_KEY = "mathTeacherUser";
   const LOGIN_DOMAIN = "mathteacher.kz";
   let roleCache = null;
+  let firebasePromise = null;
 
-  function firebaseReady() {
-    return typeof firebase !== "undefined" && typeof FIREBASE_CONFIG !== "undefined";
+  function loadScript(src) {
+    return new Promise(function(resolve, reject) {
+      const existing = document.querySelector('script[src="' + src + '"]');
+      if (existing) {
+        if (existing.dataset.loaded === "true") return resolve();
+        existing.addEventListener("load", resolve, { once: true });
+        existing.addEventListener("error", reject, { once: true });
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = function() { script.dataset.loaded = "true"; resolve(); };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
   }
 
-  function initAuth() {
-    if (!firebaseReady()) return null;
-    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-    return firebase.auth();
+  async function ensureFirebase() {
+    if (typeof firebase !== "undefined" && typeof FIREBASE_CONFIG !== "undefined") {
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+      return firebase;
+    }
+
+    if (!firebasePromise) {
+      firebasePromise = (async function() {
+        await loadScript("firebase-config.js");
+        await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js");
+        await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js");
+        await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js");
+        if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+        return firebase;
+      })();
+    }
+    return firebasePromise;
   }
 
   function usernameToEmail(login) {
@@ -31,6 +58,7 @@
     if (!user) return null;
     if (roleCache && roleCache.uid === user.uid) return roleCache.profile;
 
+    await ensureFirebase();
     const db = firebase.firestore();
     const snap = await db.collection("users").doc(user.uid).get();
     if (!snap.exists) return null;
@@ -62,9 +90,8 @@
 
   async function loginUser(login, password) {
     try {
-      const auth = initAuth();
-      if (!auth) return { success: false, message: "Firebase Authentication қосылмаған." };
-
+      await ensureFirebase();
+      const auth = firebase.auth();
       const credential = await auth.signInWithEmailAndPassword(usernameToEmail(login), password);
       const profile = await getRole(credential.user);
 
@@ -83,8 +110,8 @@
 
   async function logoutUser() {
     try {
-      const auth = initAuth();
-      if (auth) await auth.signOut();
+      await ensureFirebase();
+      await firebase.auth().signOut();
     } catch (error) {
       console.error(error);
     }
@@ -103,64 +130,55 @@
   }
 
   function requireAuth() {
-    const auth = initAuth();
-    if (!auth) {
-      window.location.href = "login.html";
-      return null;
-    }
-
-    auth.onAuthStateChanged(async function (firebaseUser) {
-      if (!firebaseUser) {
-        sessionStorage.removeItem(SESSION_KEY);
-        if (!window.location.pathname.endsWith("login.html")) window.location.href = "login.html";
-        return;
-      }
-
-      try {
+    ensureFirebase().then(function() {
+      firebase.auth().onAuthStateChanged(async function(firebaseUser) {
+        if (!firebaseUser) {
+          sessionStorage.removeItem(SESSION_KEY);
+          if (!window.location.pathname.endsWith("login.html")) window.location.href = "login.html";
+          return;
+        }
         const profile = await getRole(firebaseUser);
         if (!profile) {
-          await auth.signOut();
+          await firebase.auth().signOut();
           sessionStorage.removeItem(SESSION_KEY);
           window.location.href = "login.html";
           return;
         }
         saveSession(firebaseUser, profile);
-      } catch (error) {
-        console.error(error);
-      }
+      });
+    }).catch(function(error) {
+      console.error(error);
+      window.location.href = "login.html";
     });
-
     return getCurrentUser();
   }
 
   function requireRole(allowedRoles) {
-    const auth = initAuth();
-    if (!auth) {
-      window.location.href = "login.html";
-      return null;
-    }
-
-    auth.onAuthStateChanged(async function (firebaseUser) {
-      if (!firebaseUser) {
-        window.location.href = "login.html";
-        return;
-      }
-
-      try {
-        const profile = await getRole(firebaseUser);
-        if (!profile || !allowedRoles.includes(profile.role)) {
-          const sessionUser = profile ? saveSession(firebaseUser, profile) : null;
-          if (sessionUser) routeAfterLogin(sessionUser);
-          else window.location.href = "login.html";
+    ensureFirebase().then(function() {
+      firebase.auth().onAuthStateChanged(async function(firebaseUser) {
+        if (!firebaseUser) {
+          window.location.href = "login.html";
           return;
         }
-        saveSession(firebaseUser, profile);
-      } catch (error) {
-        console.error(error);
-        window.location.href = "login.html";
-      }
-    });
 
+        try {
+          const profile = await getRole(firebaseUser);
+          if (!profile || !allowedRoles.includes(profile.role)) {
+            const sessionUser = profile ? saveSession(firebaseUser, profile) : null;
+            if (sessionUser) routeAfterLogin(sessionUser);
+            else window.location.href = "login.html";
+            return;
+          }
+          saveSession(firebaseUser, profile);
+        } catch (error) {
+          console.error(error);
+          window.location.href = "login.html";
+        }
+      });
+    }).catch(function(error) {
+      console.error(error);
+      window.location.href = "login.html";
+    });
     return getCurrentUser();
   }
 
