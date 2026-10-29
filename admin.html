@@ -41,7 +41,7 @@
         <div class="admin-cards"><div class="admin-stat"><span>7–11</span><small>Қолданылатын сыныптар</small></div><div class="admin-stat"><span>2</span><small>Негізгі пәндер</small></div><div class="admin-stat"><span>8</span><small>Материал түрі</small></div></div>
 
         <div class="admin-section" id="materialEditor">
-          <h2>📚 Сабақ материалдарын басқару</h2><p>Сынып → пән → тоқсан → сабақ таңдап, материалды енгізіңіз. Қазір бұл алғашқы жұмыс нұсқасы браузердің жергілікті сақтауында сақталады.</p>
+          <h2>📚 Сабақ материалдарын басқару</h2><p>Сынып → пән → тоқсан → сабақ таңдап, материалды енгізіңіз. Материал ортақ Firebase Database-ке қосылғанда барлық қолданушыға көрінеді.</p>
           <div class="editor-grid">
             <div class="field"><label for="classSelect">Сынып</label><select id="classSelect"><option value="7">7-сынып</option><option value="5" disabled>5-сынып — кейін қосылады</option><option value="6" disabled>6-сынып — кейін қосылады</option><option value="8" disabled>8-сынып — кейін қосылады</option><option value="9" disabled>9-сынып — кейін қосылады</option><option value="10" disabled>10-сынып — кейін қосылады</option><option value="11" disabled>11-сынып — кейін қосылады</option></select></div>
             <div class="field"><label for="subjectSelect">Пән</label><select id="subjectSelect"><option value="algebra">Алгебра</option><option value="geometry" disabled>Геометрия — кейін қосылады</option></select></div>
@@ -59,8 +59,8 @@
             <div class="field"><label for="homework">🏠 Үй тапсырмасы</label><textarea id="homework" placeholder="Үй тапсырмасы..."></textarea></div>
           </div>
           <div class="editor-actions"><button class="primary-btn" id="saveMaterial" type="button">💾 Сақтау</button><button class="secondary-btn" id="clearMaterial" type="button">Тазалау</button></div>
-          <div class="save-message" id="saveMessage">Материал сақталды. Сабақ бетін қайта ашқанда жаңа нұсқа көрсетіледі.</div>
-          <div class="editor-help">Ескерту: HTML форматындағы қарапайым тегтерді (мысалы, &lt;p&gt;, &lt;strong&gt;, &lt;ul&gt;) қолдануға болады. Бұл кезеңде мәлімет осы браузерде сақталады; кейін ортақ Database + File Storage қосамыз.</div>
+          <div class="save-message" id="saveMessage">Материал сақталды.</div>
+          <div class="editor-help">☁️ Ортақ база үшін Firebase конфигурациясын бір рет қосу керек. Конфигурация қосылмаған болса, бұрынғы localStorage режимі сақталады.</div>
         </div>
 
         <div class="admin-section"><h2>📌 Соңғы материалдар</h2><p>Таңдалған сабақтың сақталған контенті туралы ақпарат.</p><div class="material-list" id="materialStatusList"></div></div>
@@ -120,5 +120,6 @@
     document.getElementById("logoutButton").addEventListener("click",logoutUser); document.getElementById("logoutButton2").addEventListener("click",logoutUser);
     loadLessons();
   </script>
+  <script src="cloud-admin.js"></script>
 </body>
 </html>
