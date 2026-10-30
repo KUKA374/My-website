@@ -43,8 +43,6 @@ const mathGames = [
   }
 ];
 
-// Тест үшін бастапқы шағын банк. Кейін кітап пен сабақ материалдары келгенде
-// бұл құрылым әр тақырыпқа арналған есептермен толықтырылады.
 const gameQuestionBank = {
   "7-algebra-1-1": {
     topic: "Қатынастар және пропорция. Рационал сандар және оларға амалдар қолдану",
@@ -92,7 +90,7 @@ function getGameQuestions(gameId, lessonKey) {
 (function loadExtraGamesAfterCore(){
   setTimeout(() => {
     const script = document.createElement('script');
-    script.src = 'games-extra-v3.js?v=1';
+    script.src = 'games-extra-v4.js?v=1';
     document.head.appendChild(script);
   }, 0);
 })();
