@@ -15,20 +15,11 @@
   <script src="script.js?v=5"></script>
   <script src="ktp-data.js?v=5"></script>
   <script>
-    // Жалпы КТП беттерін ескі script.js renderer-і қайта жазбасын.
-    // 7-сынып Алгебра 1-тоқсанның ескі беті ғана бұрынғы renderer-мен қалады.
-    (function () {
-      const p = new URLSearchParams(location.search);
-      const isLegacy =
-        p.get("class") === "7" &&
-        p.get("subject") === "algebra" &&
-        p.get("quarter") === "1";
-
-      if (!isLegacy) {
-        window.renderQuarterPage = function () {};
-      }
-    })();
+    // КТП беттерін script.js-тегі ескі арнайы renderer емес, жаңа ортақ renderer басқарады.
+    window.renderQuarterPage = function () {};
   </script>
-  <script src="ktp-render.js?v=10"></script>
+  <script src="ktp-d-5.js?v=5"></script>
+  <script src="ktp-d-all.js?v=2"></script>
+  <script src="ktp-render.js?v=11"></script>
 </body>
 </html>
