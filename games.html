@@ -3,59 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ойындар | Math Teacher</title>
+  <title>Math Games | Math Teacher</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .games-page{padding:35px 0 70px}.games-intro{margin-bottom:28px}.games-intro h1{font-size:clamp(30px,5vw,44px);margin:12px 0 8px}.games-intro p{color:#687386;max-width:780px}.games-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.game-card{display:flex;text-align:left;gap:16px;padding:20px;border:1px solid #e4e8f0;border-radius:17px;background:#fff;cursor:pointer;font:inherit;color:inherit;transition:.2s}.game-card:hover,.game-card.selected{border-color:#a5b4fc;box-shadow:0 10px 28px rgba(30,40,70,.08);transform:translateY(-2px)}.game-icon{font-size:38px;min-width:50px}.game-card h3{margin:0 0 6px;font-size:19px}.game-card p{margin:0 0 10px;color:#687386;font-size:14px;line-height:1.5}.game-tags{display:flex;gap:6px;flex-wrap:wrap}.game-tags span{padding:4px 8px;border-radius:999px;background:#eef2ff;color:#4338ca;font-size:11px;font-weight:700}.game-setup,.game-area{margin-top:28px;background:#fff;border:1px solid #e4e8f0;border-radius:18px;padding:24px}.game-setup h2{margin:0 0 6px}.game-setup p{color:#687386}.setup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.setup-field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.setup-field select{width:100%;padding:11px;border:1px solid #d8deea;border-radius:9px;background:#fff;font:inherit}.game-primary{border:0;border-radius:10px;background:#3157d5;color:#fff;padding:11px 16px;font-weight:700;cursor:pointer}.game-primary:hover{opacity:.92}.game-message{display:none;margin-top:14px;padding:13px;border-radius:10px;background:#fff7ed;color:#9a3412}.game-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.game-progress{padding:6px 10px;background:#eef2ff;color:#4338ca;border-radius:8px;font-weight:700;font-size:13px}.game-task{padding:22px;border:1px solid #edf0f5;border-radius:14px;background:#fafbfc}.game-task h3{margin-top:0}.game-prompt{font-size:23px;font-weight:700;margin:20px 0}.answer-buttons{display:flex;gap:10px;flex-wrap:wrap}.answer-buttons button{padding:11px 15px;border:1px solid #d8deea;background:#fff;border-radius:9px;cursor:pointer;font:inherit}.game-task input,.game-task textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #d8deea;border-radius:9px;font:inherit;margin:8px 0 12px}.game-task textarea{min-height:110px;resize:vertical}.code-progress{color:#687386;font-size:13px}.game-finish{text-align:center;padding:30px}.finish-icon{font-size:55px}.game-finish h2{margin:8px 0}.game-finish p{font-size:18px}.game-result{margin-top:12px;color:#4338ca;font-weight:700}@media(max-width:750px){.games-grid,.setup-grid{grid-template-columns:1fr}.games-page{padding-top:22px}}
+    :root{--game-bg:#07111f;--game-panel:#0d1b2e;--game-panel2:#12243c;--game-line:rgba(255,255,255,.09);--game-text:#f7fbff;--game-muted:#9fb1c7;--game-accent:#5ee7ff;--game-accent2:#8b7cff;}
+    body.games-body{margin:0;background:radial-gradient(circle at 15% 0%,rgba(94,231,255,.14),transparent 30%),radial-gradient(circle at 90% 10%,rgba(139,124,255,.16),transparent 30%),linear-gradient(135deg,#050b14,#0a1627 55%,#07111f);color:var(--game-text);min-height:100vh;overflow-x:hidden}
+    .games-shell{min-height:100vh}.games-nav{height:68px;border-bottom:1px solid var(--game-line);background:rgba(5,11,20,.76);backdrop-filter:blur(16px);display:flex;align-items:center;position:sticky;top:0;z-index:20}.games-nav-inner{width:min(1180px,calc(100% - 34px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}.games-logo{color:#fff;text-decoration:none;font-weight:900;letter-spacing:.3px}.games-logo span{color:var(--game-accent)}.games-nav-links{display:flex;gap:8px;flex-wrap:wrap}.games-nav-links a{color:#b9c8da;text-decoration:none;padding:8px 11px;border-radius:9px;font-size:13px}.games-nav-links a:hover{background:rgba(255,255,255,.07);color:#fff}
+    .games-hero{width:min(1180px,calc(100% - 34px));margin:0 auto;padding:62px 0 35px;position:relative}.games-hero:after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:3%;top:25px;background:rgba(94,231,255,.08);filter:blur(35px);pointer-events:none}.game-kicker{display:inline-flex;gap:8px;align-items:center;padding:7px 11px;border:1px solid rgba(94,231,255,.24);border-radius:999px;background:rgba(94,231,255,.08);color:var(--game-accent);font-size:12px;font-weight:800}.games-hero h1{font-size:clamp(40px,7vw,74px);line-height:.98;margin:20px 0 14px;letter-spacing:-2.5px}.games-hero h1 em{font-style:normal;background:linear-gradient(90deg,#fff,var(--game-accent),#b09cff);-webkit-background-clip:text;background-clip:text;color:transparent}.games-hero p{max-width:690px;color:var(--game-muted);font-size:16px;line-height:1.7;margin:0}.games-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.game-stat{padding:10px 13px;border:1px solid var(--game-line);border-radius:12px;background:rgba(255,255,255,.035);color:#c9d6e5;font-size:12px}.game-stat strong{color:#fff;font-size:15px;margin-right:4px}
+    .games-main{width:min(1180px,calc(100% - 34px));margin:0 auto;padding-bottom:80px}.game-section-title{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:22px 0 16px}.game-section-title h2{margin:0;font-size:25px}.game-section-title span{color:var(--game-muted);font-size:12px}.games-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.game-card{position:relative;display:flex;align-items:stretch;gap:17px;min-height:174px;text-align:left;padding:20px;border:1px solid var(--game-line);border-radius:20px;background:linear-gradient(145deg,rgba(18,36,60,.9),rgba(8,18,32,.95));color:#fff;cursor:pointer;font:inherit;overflow:hidden;transition:transform .22s,border-color .22s,box-shadow .22s}.game-card:before{content:"";position:absolute;inset:-1px;background:linear-gradient(120deg,transparent 25%,rgba(94,231,255,.11),transparent 70%);transform:translateX(-100%);transition:.55s}.game-card:hover:before,.game-card.selected:before{transform:translateX(100%)}.game-card:hover,.game-card.selected{transform:translateY(-4px);border-color:rgba(94,231,255,.4);box-shadow:0 18px 45px rgba(0,0,0,.25),0 0 30px rgba(94,231,255,.06)}.game-icon{width:68px;height:68px;display:grid;place-items:center;flex:none;border-radius:18px;background:linear-gradient(135deg,rgba(94,231,255,.16),rgba(139,124,255,.18));font-size:36px;box-shadow:inset 0 0 25px rgba(255,255,255,.03)}.game-card-content{position:relative;z-index:1}.game-card h3{margin:2px 0 7px;font-size:21px}.game-card p{margin:0 0 14px;color:#9fb1c7;font-size:13px;line-height:1.55}.game-tags{display:flex;gap:6px;flex-wrap:wrap}.game-tags span{padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:#c6d5e6;font-size:10px;font-weight:800;border:1px solid rgba(255,255,255,.06)}
+    .game-setup,.game-area{margin-top:22px;border:1px solid var(--game-line);border-radius:22px;background:linear-gradient(145deg,rgba(13,27,46,.97),rgba(8,18,32,.98));box-shadow:0 20px 60px rgba(0,0,0,.2);padding:25px}.game-setup h2{margin:0 0 7px;font-size:27px}.game-setup p{color:var(--game-muted);margin:0}.setup-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}.setup-field label{display:block;color:#b9c8da;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}.setup-field select{width:100%;box-sizing:border-box;padding:12px;border:1px solid var(--game-line);border-radius:10px;background:#09182a;color:#fff;font:inherit;outline:none}.setup-field select:focus{border-color:rgba(94,231,255,.5);box-shadow:0 0 0 3px rgba(94,231,255,.08)}.game-primary{border:0;border-radius:11px;background:linear-gradient(90deg,#20b8d4,#6657dc);color:#fff;padding:12px 17px;font-weight:900;cursor:pointer;box-shadow:0 8px 25px rgba(56,128,220,.22)}.game-primary:hover{transform:translateY(-1px)}.game-message{display:none;margin-top:14px;padding:13px;border-radius:11px;background:rgba(251,146,60,.09);color:#ffc58e;border:1px solid rgba(251,146,60,.15)}
+    .game-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:17px}.game-top h2{margin:0}.game-progress{padding:7px 11px;border-radius:9px;background:rgba(94,231,255,.08);border:1px solid rgba(94,231,255,.15);color:var(--game-accent);font-weight:900;font-size:12px}.game-task{padding:30px;border:1px solid var(--game-line);border-radius:18px;background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.015));text-align:center}.game-task h3{margin:0;color:#aab9ff;font-size:13px;text-transform:uppercase;letter-spacing:1.2px}.game-prompt{font-size:clamp(25px,5vw,42px);font-weight:900;letter-spacing:-1px;margin:27px 0}.answer-buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.answer-buttons button{min-width:120px;padding:13px 17px;border:1px solid var(--game-line);background:#10233b;color:#fff;border-radius:11px;cursor:pointer;font:inherit;font-weight:800;transition:.18s}.answer-buttons button:hover{border-color:rgba(94,231,255,.45);background:#14304e;transform:translateY(-2px)}.game-task input,.game-task textarea{width:100%;max-width:650px;box-sizing:border-box;padding:13px;border:1px solid var(--game-line);background:#08172a;color:#fff;border-radius:10px;font:inherit;margin:8px 0 13px;outline:none}.game-task input:focus,.game-task textarea:focus{border-color:rgba(94,231,255,.5)}.game-task textarea{min-height:120px;resize:vertical}.code-progress{color:#7f94ad;font-size:12px}.game-finish{text-align:center;padding:30px}.finish-icon{font-size:65px}.game-finish h2{font-size:30px;margin:8px 0}.game-finish p{font-size:18px;color:#b9c8da}.game-result{margin-top:12px;color:var(--game-accent);font-weight:800}
+    .platform-note{margin-top:25px;padding:15px 17px;border:1px solid var(--game-line);border-radius:14px;background:rgba(255,255,255,.025);color:#8fa3bb;font-size:12px;line-height:1.6}.platform-note strong{color:#dce8f5}
+    @media(max-width:760px){.games-nav{height:auto;padding:11px 0}.games-nav-inner{align-items:flex-start}.games-nav-links{display:none}.games-hero{padding:45px 0 28px}.games-hero h1{letter-spacing:-1.5px}.games-grid,.setup-grid{grid-template-columns:1fr}.game-card{min-height:145px}.game-prompt{font-size:29px}.game-task{padding:22px}.games-main,.games-hero,.games-nav-inner{width:min(100% - 24px,1180px)}}
   </style>
 </head>
-<body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="index.html" class="logo">📐 Math Teacher</a>
-      <nav class="main-nav">
-        <a href="index.html">Басты бет</a>
-        <a href="class.html?class=7&subject=algebra&quarter=1">Сабақтар</a>
-        <a href="qmj.html">📄 ҚМЖ</a>
-        <a href="games.html">🎮 Ойындар</a>
-        <a href="index.html#favorites">⭐ Таңдаулылар</a>
-        <a href="index.html#my-lessons">📚 Менің сабақтарым</a>
-        <a href="admin.html">⚙️ Басқару</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="container games-page">
-    <section class="games-intro">
-      <span class="badge">🎮 Қайта қолданылатын ойындар базасы</span>
-      <h1>Математикалық ойындар</h1>
-      <p>Ойын механизмі бір рет жасалады. Кейін оған кез келген сыныптың, пәннің және тақырыптың есептерін қосуға болады.</p>
-    </section>
-
-    <section>
-      <h2>Ойын түрін таңдаңыз</h2>
-      <div id="gamesGrid" class="games-grid"></div>
-    </section>
-
-    <section id="gameSetup" class="game-setup" style="display:none;">
-      <h2 id="selectedGameTitle"></h2>
-      <p id="selectedGameDescription"></p>
-      <div class="setup-grid">
-        <div class="setup-field"><label>Сынып</label><select id="gradeSelect"><option value="7">7-сынып</option></select></div>
-        <div class="setup-field"><label>Пән</label><select id="subjectSelect"><option value="algebra">Алгебра</option></select></div>
-        <div class="setup-field"><label>Тоқсан</label><select id="quarterSelect"><option value="1">1-тоқсан</option></select></div>
-        <div class="setup-field" style="grid-column:1/-1;"><label>Тақырып / сабақ</label><select id="lessonSelect"></select></div>
+<body class="games-body">
+  <div class="games-shell">
+    <header class="games-nav">
+      <div class="games-nav-inner">
+        <a href="index.html" class="games-logo">📐 Math <span>Games</span></a>
+        <nav class="games-nav-links">
+          <a href="index.html">← Негізгі платформа</a>
+          <a href="games.html">🎮 Ойындар</a>
+          <a href="qmj.html">📄 ҚМЖ</a>
+        </nav>
       </div>
-      <button id="startGameButton" class="game-primary">▶️ Ойынды бастау</button>
-      <div id="gameMessage" class="game-message"></div>
+    </header>
+
+    <section class="games-hero">
+      <span class="game-kicker">⚡ INTERACTIVE MATH PLATFORM</span>
+      <h1>Математиканы<br><em>ойнап үйрен.</em></h1>
+      <p>Бұл бөлім — негізгі Math Teacher платформасынан бөлек жасалған интерактивті ойын кеңістігі. Ойын механизмдері бір рет жасалып, кейін әр сынып пен әр тақырыпқа жаңа есептермен толтырылады.</p>
+      <div class="games-stats">
+        <div class="game-stat"><strong>5</strong> ойын механизмі</div>
+        <div class="game-stat"><strong>7–11</strong> сыныпқа дайын архитектура</div>
+        <div class="game-stat"><strong>∞</strong> тапсырма қосуға болады</div>
+      </div>
     </section>
 
-    <section id="gameArea" class="game-area" style="display:none;">
-      <div class="game-top"><h2>Ойын</h2><span id="gameProgress" class="game-progress"></span></div>
-      <div id="gameQuestion"></div>
-      <div id="gameResult" class="game-result"></div>
-    </section>
-  </main>
+    <main class="games-main">
+      <div class="game-section-title"><h2>Ойын таңда</h2><span>Өзіңе немесе сыныппен бірге ойна</span></div>
+      <div id="gamesGrid" class="games-grid"></div>
+
+      <section id="gameSetup" class="game-setup" style="display:none;">
+        <h2 id="selectedGameTitle"></h2>
+        <p id="selectedGameDescription"></p>
+        <div class="setup-grid">
+          <div class="setup-field"><label>Сынып</label><select id="gradeSelect"><option value="7">7-сынып</option></select></div>
+          <div class="setup-field"><label>Пән</label><select id="subjectSelect"><option value="algebra">Алгебра</option></select></div>
+          <div class="setup-field"><label>Тоқсан</label><select id="quarterSelect"><option value="1">1-тоқсан</option></select></div>
+          <div class="setup-field" style="grid-column:1/-1;"><label>Тақырып / сабақ</label><select id="lessonSelect"></select></div>
+        </div>
+        <button id="startGameButton" class="game-primary">▶ Ойынды бастау</button>
+        <div id="gameMessage" class="game-message"></div>
+      </section>
+
+      <section id="gameArea" class="game-area" style="display:none;">
+        <div class="game-top"><h2>🎮 Ойын алаңы</h2><span id="gameProgress" class="game-progress"></span></div>
+        <div id="gameQuestion"></div>
+        <div id="gameResult" class="game-result"></div>
+      </section>
+
+      <div class="platform-note"><strong>Келесі кезең:</strong> ойындардың визуалдық механикасын одан әрі күшейтіп, командалық режим, таймер, дыбыстық кері байланыс, деңгейлер және нақты тақырыптарға арналған есептер базасын қосамыз.</div>
+    </main>
+  </div>
 
   <script src="auth.js"></script>
   <script>requireRole(["teacher","admin","super_admin"]);</script>
