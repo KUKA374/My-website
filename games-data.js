@@ -90,7 +90,7 @@ function getGameQuestions(gameId, lessonKey) {
 (function loadExtraGamesAfterCore(){
   setTimeout(() => {
     const script = document.createElement('script');
-    script.src = 'games-extra-v4.js?v=1';
+    script.src = 'games-extra-v5.js?v=1';
     document.head.appendChild(script);
   }, 0);
 })();
