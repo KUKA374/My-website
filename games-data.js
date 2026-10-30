@@ -88,3 +88,12 @@ function getGameQuestions(gameId, lessonKey) {
   const lesson = gameQuestionBank[lessonKey];
   return lesson && lesson[gameId] ? lesson[gameId] : [];
 }
+
+// Қосымша ойындардың интерфейстерін games.js-тен кейін жүктейміз.
+// Бұл негізгі ойын кодын өзгертпей, жаңа механизмдерді бөлек кеңейтуге мүмкіндік береді.
+(function loadExtraGames(){
+  const script = document.createElement('script');
+  script.src = 'games-extra-v3.js?v=1';
+  script.defer = true;
+  document.head.appendChild(script);
+})();
