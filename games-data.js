@@ -82,6 +82,9 @@ const gameQuestionBank = {
   }
 };
 
+// Make the question bank visible to the separately loaded extra-games module.
+window.gameQuestionBank = gameQuestionBank;
+
 function getGameQuestions(gameId, lessonKey) {
   const lesson = gameQuestionBank[lessonKey];
   return lesson && lesson[gameId] ? lesson[gameId] : [];
