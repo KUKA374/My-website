@@ -12,10 +12,12 @@
 
   async function boot() {
     try {
-      await loadScript("firebase-config.js");
-      await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js");
-      await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js");
-      await loadScript("database.js");
+      // auth.js already initializes Firebase for this page.
+      // Only load the database wrapper here to avoid declaring FIREBASE_CONFIG
+      // and the Firebase SDK more than once.
+      if (!window.MathTeacherDB) {
+        await loadScript("database.js");
+      }
     } catch (error) {
       console.warn("Cloud database loader failed; local storage remains available.", error);
       return;
