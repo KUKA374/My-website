@@ -39,6 +39,7 @@ function selectGame(gameId) {
   selectedGameId = gameId;
   const game = mathGames.find(x => x.id === gameId);
   document.getElementById("selectedGameTitle").textContent = game ? game.title : "";
+  document.getElementById("selectedGameHeading").textContent = game ? game.title : "Ойынды баптау";
   document.getElementById("selectedGameDescription").textContent = game ? game.description : "";
   document.getElementById("gamesLibrary").style.display = "none";
   document.getElementById("gameStage").style.display = "block";
@@ -46,6 +47,7 @@ function selectGame(gameId) {
   document.getElementById("gameArea").style.display = "none";
   document.getElementById("gameMessage").style.display = "none";
   document.body.classList.add("presentation-mode");
+  document.body.dataset.game = gameId;
 }
 
 function backToGames() {
@@ -53,6 +55,7 @@ function backToGames() {
   selectedGameId = null;
   currentQuestions = [];
   document.body.classList.remove("presentation-mode");
+  delete document.body.dataset.game;
   document.getElementById("gameStage").style.display = "none";
   document.getElementById("gamesLibrary").style.display = "block";
 }
@@ -117,25 +120,73 @@ function renderCurrentQuestion() {
   }
 
   if (currentGameMode === "match") {
-    box.innerHTML = `<div class="game-task"><h3>Сәйкес жұбын тап</h3><p class="game-prompt">${escapeGameHtml(q.left)}</p><div class="answer-buttons"><button type="button" data-answer="${escapeGameHtml(q.right)}">${escapeGameHtml(q.right)}</button><button type="button" data-answer="Қате жауап">Қате жауап</button></div></div>`;
+    box.innerHTML = `
+      <div class="match-board">
+        <div class="match-heading"><span>🧩 СӘЙКЕСТЕНДІР</span><b>Жұп ${currentIndex + 1}</b></div>
+        <div class="match-stage">
+          <div class="match-card match-question-card"><small>СҰРАҚ</small><strong>${escapeGameHtml(q.left)}</strong></div>
+          <div class="match-arrow">→</div>
+          <div class="match-answer-zone">
+            <button class="match-option" type="button" data-answer="${escapeGameHtml(q.right)}"><span>✓</span>${escapeGameHtml(q.right)}</button>
+            <button class="match-option" type="button" data-answer="Қате жауап"><span>?</span>Басқа жауап</button>
+          </div>
+        </div>
+        <div class="match-hint">Сол жақтағы тапсырмаға сәйкес келетін жауапты таңда.</div>
+      </div>`;
     bindAnswerButtons();
     return;
   }
 
   if (currentGameMode === "find-error") {
-    box.innerHTML = `<div class="game-task"><h3>Қатені тап</h3><p class="game-prompt">${escapeGameHtml(q.statement)}</p><textarea id="gameTextAnswer" placeholder="Қатені және дұрыс нұсқаны жазыңыз..."></textarea><button type="button" class="game-primary" id="textAnswerButton">Тексеру</button></div>`;
+    box.innerHTML = `
+      <div class="error-board">
+        <div class="error-heading"><span>❌ ҚАТЕНІ ТАП</span><b>Талдау ${currentIndex + 1}</b></div>
+        <div class="error-scene">
+          <div class="error-tape">⚠ МАТЕМАТИКАЛЫҚ ТЕКСЕРУ ⚠</div>
+          <div class="error-equation">${escapeGameHtml(q.statement)}</div>
+          <div class="error-question">Бұл шешімнің қай жерінде қате бар?</div>
+          <textarea id="gameTextAnswer" placeholder="Қатені көрсетіп, дұрыс нұсқаны жазыңыз..."></textarea>
+          <button type="button" class="game-primary" id="textAnswerButton">🔎 Қатені тексеру</button>
+        </div>
+        <div class="error-hint">Дәлеліңде математикалық әрекетті көрсет.</div>
+      </div>`;
     bindTextAnswer();
     return;
   }
 
   if (currentGameMode === "math-code") {
-    box.innerHTML = `<div class="game-task"><h3>Математикалық код</h3><p class="game-prompt">${escapeGameHtml(q.question)}</p><input id="gameTextAnswer" inputmode="numeric" autocomplete="off" placeholder="Жауабыңыз"><button type="button" class="game-primary" id="textAnswerButton">Кодқа қосу</button><p class="code-progress">Қазіргі код: ${"_ ".repeat(currentIndex + 1)}</p></div>`;
+    const codeSlots = Array.from({length: total}, (_, i) => `<span class="code-slot ${i < currentIndex ? "filled" : i === currentIndex ? "active" : ""}">${i < currentIndex ? "✓" : "_"}</span>`).join("");
+    box.innerHTML = `
+      <div class="code-board">
+        <div class="code-heading"><span>🔐 МАТЕМАТИКАЛЫҚ КОД</span><b>Құлып ${currentIndex + 1}/${total}</b></div>
+        <div class="code-lock">
+          <div class="lock-icon">🔒</div>
+          <div class="code-label">ҚҰПИЯ КОД</div>
+          <div class="code-slots">${codeSlots}</div>
+          <div class="code-question">${escapeGameHtml(q.question)}</div>
+          <input id="gameTextAnswer" inputmode="numeric" autocomplete="off" placeholder="Жауабыңызды енгізіңіз">
+          <button type="button" class="game-primary code-button" id="textAnswerButton">🔓 Кодқа қосу</button>
+        </div>
+        <div class="code-hint">Әр дұрыс жауап құпия кодтың бір бөлігін ашады.</div>
+      </div>`;
     bindTextAnswer();
     return;
   }
 
   if (currentGameMode === "detective") {
-    box.innerHTML = `<div class="game-task"><h3>Математикалық детектив</h3><p class="game-prompt">${escapeGameHtml(q.clue)}</p><input id="gameTextAnswer" inputmode="numeric" autocomplete="off" placeholder="Дәлелдің жауабы"><button type="button" class="game-primary" id="textAnswerButton">Дәлелді тексеру</button></div>`;
+    box.innerHTML = `
+      <div class="detective-board">
+        <div class="detective-heading"><span>🕵️ МАТЕМАТИКАЛЫҚ ДЕТЕКТИВ</span><b>Іс №${String(currentIndex + 1).padStart(2, "0")}</b></div>
+        <div class="detective-case">
+          <div class="detective-stamp">EVIDENCE</div>
+          <div class="detective-clue"><span>🔍 ДӘЛЕЛ</span><p>${escapeGameHtml(q.clue)}</p></div>
+          <div class="detective-line"></div>
+          <label>Тергеу жауабы</label>
+          <input id="gameTextAnswer" inputmode="numeric" autocomplete="off" placeholder="Дәлелден шыққан жауап">
+          <button type="button" class="game-primary detective-button" id="textAnswerButton">🕵️ Дәлелді тексеру</button>
+        </div>
+        <div class="detective-hint">Барлық дәлелдерді дұрыс шешсең, математикалық істің шешімі табылады.</div>
+      </div>`;
     bindTextAnswer();
   }
 }
