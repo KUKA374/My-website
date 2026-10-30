@@ -82,7 +82,6 @@ const gameQuestionBank = {
   }
 };
 
-// Make the question bank visible to the separately loaded extra-games module.
 window.gameQuestionBank = gameQuestionBank;
 
 function getGameQuestions(gameId, lessonKey) {
@@ -92,8 +91,13 @@ function getGameQuestions(gameId, lessonKey) {
 
 (function loadExtraGamesAfterCore(){
   setTimeout(() => {
-    const script = document.createElement('script');
-    script.src = 'games-extra-v5.js?v=1';
-    document.head.appendChild(script);
+    const extra = document.createElement('script');
+    extra.src = 'games-extra-v5.js?v=2';
+    document.head.appendChild(extra);
+    setTimeout(() => {
+      const team = document.createElement('script');
+      team.src = 'games-team-mode.js?v=1';
+      document.head.appendChild(team);
+    }, 150);
   }, 0);
 })();
