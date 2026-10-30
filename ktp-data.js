@@ -1,1 +1,1 @@
-window.ktpPlans = PLACEHOLDER
+window.ktpPlans = window.ktpPlans || {};
