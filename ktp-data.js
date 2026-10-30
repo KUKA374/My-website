@@ -1,2 +1,1 @@
-window.ktpPlans=window.ktpPlans||{};
-(function(){const s=document.createElement('script');s.src='ktp-5.js?v=1';document.head.appendChild(s);})();
+window.ktpPlans = {"5_math":{"grade":5,"subject":"math","lessons":[{"number":1,"quarter":1,"section":"Натурал сандар және нөл саны","title":"Натурал сандар және нөл","objective":"5.1.1.1 натурал сандар жиыны ұғымын меңгеру; 5.1.1.2 тақ және жұп сандар ұғымдарын меңгеру;","hours":1}]};
