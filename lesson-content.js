@@ -78,25 +78,27 @@ const lessonContent = {
   }
 };
 
-/* Cloud integration: after the page renders, replace demo content with
-   the latest shared material when Firebase is configured. */
+/*
+ * Firestore is the shared source of truth for lesson materials.
+ * auth.js already provides ensureFirebase(), so this file does not
+ * load Firebase SDK/config a second time.
+ */
 (function loadSharedLessonContent() {
-  function loadScript(src) {
-    return new Promise(function(resolve, reject) {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
-
   async function run() {
     try {
-      await loadScript("firebase-config.js");
-      await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js");
-      await loadScript("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js");
-      await loadScript("database.js");
+      if (typeof window.ensureFirebase === "function") {
+        await window.ensureFirebase();
+      }
+
+      if (!window.MathTeacherDB) {
+        const script = document.createElement("script");
+        script.src = "database.js";
+        await new Promise(function(resolve, reject) {
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
     } catch (error) {
       console.warn("Shared database is not available yet.", error);
       return;
@@ -109,13 +111,21 @@ const lessonContent = {
     try {
       const saved = await window.MathTeacherDB.getLessonMaterial(lessonId);
       if (!saved) return;
+
+      // Update the actual lessonContent object used by lesson.html.
       lessonContent[lessonId] = Object.assign({}, lessonContent[lessonId] || {}, saved);
-      if (typeof renderCompactLessonPage === "function") renderCompactLessonPage();
+
+      if (typeof renderCompactLessonPage === "function") {
+        renderCompactLessonPage();
+      }
     } catch (error) {
       console.error("Shared lesson content could not be loaded.", error);
     }
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
-  else run();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
 })();
