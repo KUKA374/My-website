@@ -2,9 +2,16 @@
 (function () {
   function loadScript(src) {
     return new Promise(function (resolve, reject) {
+      const existing = document.querySelector('script[src="' + src + '"]');
+      if (existing) {
+        if (existing.dataset.loaded === "true") return resolve();
+        existing.addEventListener("load", resolve, { once: true });
+        existing.addEventListener("error", reject, { once: true });
+        return;
+      }
       const script = document.createElement("script");
       script.src = src;
-      script.onload = resolve;
+      script.onload = function () { script.dataset.loaded = "true"; resolve(); };
       script.onerror = reject;
       document.head.appendChild(script);
     });
@@ -12,9 +19,12 @@
 
   async function boot() {
     try {
-      // auth.js already initializes Firebase for this page.
-      // Only load the database wrapper here to avoid declaring FIREBASE_CONFIG
-      // and the Firebase SDK more than once.
+      // auth.js exposes ensureFirebase(), so wait until Auth + Firestore SDKs
+      // are fully ready before loading the database wrapper.
+      if (typeof window.ensureFirebase === "function") {
+        await window.ensureFirebase();
+      }
+
       if (!window.MathTeacherDB) {
         await loadScript("database.js");
       }
