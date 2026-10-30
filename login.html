@@ -46,29 +46,13 @@
   <script src="auth.js"></script>
   <script>
     if (!firebase.apps.length) {
-  firebase.initializeApp(FIREBASE_CONFIG);
-}
-    const auth = firebase.auth();
-    auth.onAuthStateChanged(async function(firebaseUser) {
-      if (!firebaseUser) return;
-      try {
-        const profile = await firebase.firestore().collection("users").doc(firebaseUser.uid).get();
-        if (profile.exists) {
-          const data = profile.data();
-          const sessionUser = {
-            uid: firebaseUser.uid,
-            login: String(firebaseUser.email || "").split("@")[0],
-            email: firebaseUser.email || "",
-            role: data.role,
-            name: data.name || firebaseUser.email || "Қолданушы"
-          };
-          sessionStorage.setItem("mathTeacherUser", JSON.stringify(sessionUser));
-          routeAfterLogin(sessionUser);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    });
+      firebase.initializeApp(FIREBASE_CONFIG);
+    }
+
+    // The login page uses the submitted credentials as the single source of truth.
+    // Do not run a second auth-state router here, because it can race with loginUser()
+    // and briefly route using a previous session's role.
+    sessionStorage.removeItem("mathTeacherUser");
 
     document.getElementById("loginForm").addEventListener("submit", async function(event) {
       event.preventDefault();
