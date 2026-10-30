@@ -97,6 +97,7 @@
 
       if (!profile || !["teacher", "admin", "super_admin"].includes(profile.role)) {
         await auth.signOut();
+        sessionStorage.removeItem(SESSION_KEY);
         return { success: false, message: "Бұл аккаунтқа жүйеде рөл берілмеген." };
       }
 
@@ -137,14 +138,23 @@
           if (!window.location.pathname.endsWith("login.html")) window.location.href = "login.html";
           return;
         }
-        const profile = await getRole(firebaseUser);
-        if (!profile) {
+        try {
+          const profile = await getRole(firebaseUser);
+          if (!profile || !["teacher", "admin", "super_admin"].includes(profile.role)) {
+            await firebase.auth().signOut();
+            roleCache = null;
+            sessionStorage.removeItem(SESSION_KEY);
+            window.location.href = "login.html";
+            return;
+          }
+          saveSession(firebaseUser, profile);
+        } catch (error) {
+          console.error(error);
           await firebase.auth().signOut();
+          roleCache = null;
           sessionStorage.removeItem(SESSION_KEY);
           window.location.href = "login.html";
-          return;
         }
-        saveSession(firebaseUser, profile);
       });
     }).catch(function(error) {
       console.error(error);
@@ -157,26 +167,37 @@
     ensureFirebase().then(function() {
       firebase.auth().onAuthStateChanged(async function(firebaseUser) {
         if (!firebaseUser) {
+          sessionStorage.removeItem(SESSION_KEY);
           window.location.href = "login.html";
           return;
         }
 
         try {
           const profile = await getRole(firebaseUser);
-          if (!profile || !allowedRoles.includes(profile.role)) {
-            const sessionUser = profile ? saveSession(firebaseUser, profile) : null;
-            if (sessionUser) routeAfterLogin(sessionUser);
-            else window.location.href = "login.html";
+          if (!profile || !["teacher", "admin", "super_admin"].includes(profile.role)) {
+            roleCache = null;
+            sessionStorage.removeItem(SESSION_KEY);
+            await firebase.auth().signOut();
+            window.location.href = "login.html";
             return;
           }
-          saveSession(firebaseUser, profile);
+
+          const sessionUser = saveSession(firebaseUser, profile);
+          if (!allowedRoles.includes(profile.role)) {
+            routeAfterLogin(sessionUser);
+            return;
+          }
         } catch (error) {
           console.error(error);
+          roleCache = null;
+          sessionStorage.removeItem(SESSION_KEY);
+          await firebase.auth().signOut();
           window.location.href = "login.html";
         }
       });
     }).catch(function(error) {
       console.error(error);
+      sessionStorage.removeItem(SESSION_KEY);
       window.location.href = "login.html";
     });
     return getCurrentUser();
@@ -188,6 +209,7 @@
     return "Мұғалім";
   }
 
+  window.ensureFirebase = ensureFirebase;
   window.getCurrentUser = getCurrentUser;
   window.loginUser = loginUser;
   window.logoutUser = logoutUser;
