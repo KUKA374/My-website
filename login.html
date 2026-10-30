@@ -31,14 +31,14 @@
       <p class="login-subtitle">Платформаға кіру</p>
 
       <form id="loginForm" class="login-form">
-        <label>Логин<input id="login" type="text" autocomplete="username" required></label>
+        <label>Логин<input id="login" type="text" autocomplete="username" placeholder="teacher немесе admin" required></label>
         <label>Пароль<input id="password" type="password" autocomplete="current-password" required></label>
         <div id="loginError" class="login-error"></div>
         <button class="login-button" type="submit">Кіру</button>
       </form>
 
       <div class="login-info">
-        Қолданушының рөлі логин арқылы автоматты анықталады. Admin немесе Super Admin таңдау қажет емес.
+        Teacher аккаунты үшін <strong>teacher</strong>, Admin аккаунты үшін <strong>admin</strong> деп енгізіңіз. Рөл автоматты анықталады.
       </div>
     </section>
   </main>
@@ -49,9 +49,6 @@
       firebase.initializeApp(FIREBASE_CONFIG);
     }
 
-    // The login page uses the submitted credentials as the single source of truth.
-    // Do not run a second auth-state router here, because it can race with loginUser()
-    // and briefly route using a previous session's role.
     sessionStorage.removeItem("mathTeacherUser");
 
     document.getElementById("loginForm").addEventListener("submit", async function(event) {
