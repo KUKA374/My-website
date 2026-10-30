@@ -9,6 +9,7 @@
 (function () {
   const SESSION_KEY = "mathTeacherUser";
   const LOGIN_DOMAIN = "mathteacher.kz";
+  const LOGIN_DOMAINS = ["sdu.edu.kz", "gmail.com", LOGIN_DOMAIN];
   let roleCache = null;
   let firebasePromise = null;
 
@@ -48,10 +49,16 @@
     return firebasePromise;
   }
 
-  function usernameToEmail(login) {
+  function getLoginEmails(login) {
     const clean = String(login || "").trim().toLowerCase();
-    if (!clean) return "";
-    return clean.includes("@") ? clean : clean + "@" + LOGIN_DOMAIN;
+    if (!clean) return [];
+    if (clean.includes("@")) return [clean];
+
+    // One login can exist in more than one Firebase account.
+    // Try the known email domains until the password matches.
+    return LOGIN_DOMAINS.map(function(domain) {
+      return clean + "@" + domain;
+    });
   }
 
   async function getRole(user) {
@@ -92,12 +99,44 @@
     try {
       await ensureFirebase();
       const auth = firebase.auth();
-      const credential = await auth.signInWithEmailAndPassword(usernameToEmail(login), password);
+      const emails = getLoginEmails(login);
+
+      if (!emails.length) {
+        return { success: false, message: "Логинді енгізіңіз." };
+      }
+
+      roleCache = null;
+      sessionStorage.removeItem(SESSION_KEY);
+
+      let lastError = null;
+      let credential = null;
+
+      for (const email of emails) {
+        try {
+          credential = await auth.signInWithEmailAndPassword(email, password);
+          break;
+        } catch (error) {
+          lastError = error;
+
+          // If the email exists but the password is wrong, there is no reason
+          // to continue trying another account with the same password.
+          if (error && error.code === "auth/wrong-password") {
+            break;
+          }
+        }
+      }
+
+      if (!credential) {
+        console.error(lastError);
+        return { success: false, message: "Логин немесе пароль қате." };
+      }
+
       const profile = await getRole(credential.user);
 
       if (!profile || !["teacher", "admin", "super_admin"].includes(profile.role)) {
         await auth.signOut();
         sessionStorage.removeItem(SESSION_KEY);
+        roleCache = null;
         return { success: false, message: "Бұл аккаунтқа жүйеде рөл берілмеген." };
       }
 
