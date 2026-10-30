@@ -19,15 +19,8 @@
 
   async function boot() {
     try {
-      // auth.js exposes ensureFirebase(), so wait until Auth + Firestore SDKs
-      // are fully ready before loading the database wrapper.
-      if (typeof window.ensureFirebase === "function") {
-        await window.ensureFirebase();
-      }
-
-      if (!window.MathTeacherDB) {
-        await loadScript("database.js");
-      }
+      if (typeof window.ensureFirebase === "function") await window.ensureFirebase();
+      if (!window.MathTeacherDB) await loadScript("database.js");
     } catch (error) {
       console.warn("Cloud database loader failed; local storage remains available.", error);
       return;
@@ -38,49 +31,62 @@
     if (!select || !saveButton || !window.MathTeacherDB) return;
 
     const fields = ["videoUrl","theory","examples","commonMistakes","pairWork","groupWork","individualWork","game","assessment","homework"];
+    const help = document.querySelector(".editor-help");
+    const message = document.getElementById("saveMessage");
+
+    function setMessage(text, ok) {
+      if (!message) return;
+      message.textContent = text;
+      message.style.display = "block";
+      message.style.background = ok ? "#ecfdf3" : "#fff7ed";
+      message.style.color = ok ? "#166534" : "#9a3412";
+    }
 
     async function cloudLoad() {
+      if (help) help.textContent = "☁️ Материал жүктелуде...";
       const material = await window.MathTeacherDB.getLessonMaterial(select.value);
-      if (!material) return;
       fields.forEach(function (field) {
         const element = document.getElementById(field);
-        if (element) element.value = material[field] || "";
+        if (element) element.value = material && material[field] ? material[field] : "";
       });
-      if (typeof updateStatus === "function") updateStatus();
-      const help = document.querySelector(".editor-help");
-      if (help && window.MathTeacherDB.isCloudConfigured()) {
-        help.textContent = "☁️ Материал ортақ Firebase Database-тан жүктелді. Admin енгізген өзгеріс басқа қолданушыларға да беріледі.";
-      }
+      if (help) help.textContent = window.MathTeacherDB.isCloudConfigured()
+        ? "☁️ Firebase ортақ базасы қосылған. Бұл материалды барлық рөлдер көре алады."
+        : "💾 Firebase қосылмаған: материал тек осы браузерде сақталады.";
     }
 
     select.addEventListener("change", function (event) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      cloudLoad().catch(console.error);
+      cloudLoad().catch(function (error) { console.error(error); if (help) help.textContent = "⚠️ Материалды жүктеу мүмкін болмады."; });
     }, true);
 
     saveButton.addEventListener("click", async function (event) {
       event.preventDefault();
       event.stopImmediatePropagation();
+      if (saveButton.dataset.saving === "true") return;
       const material = {};
       fields.forEach(function (field) {
         const element = document.getElementById(field);
         material[field] = element ? element.value.trim() : "";
       });
+      saveButton.dataset.saving = "true";
+      saveButton.disabled = true;
+      const oldText = saveButton.textContent;
+      saveButton.textContent = "⏳ Сақталуда...";
+      if (message) message.style.display = "none";
       try {
         await window.MathTeacherDB.saveLessonMaterial(select.value, material);
-        const msg = document.getElementById("saveMessage");
-        if (msg) {
-          msg.textContent = window.MathTeacherDB.isCloudConfigured()
-            ? "☁️ Материал ортақ базаға сақталды."
-            : "💾 Firebase әлі қосылмаған, сондықтан материал осы браузерде сақталды.";
-          msg.style.display = "block";
-          setTimeout(function () { msg.style.display = "none"; }, 3500);
-        }
-        if (typeof updateStatus === "function") updateStatus();
+        setMessage(window.MathTeacherDB.isCloudConfigured() ? "☁️ Материал ортақ базаға сақталды!" : "💾 Материал осы браузерге сақталды.", true);
+        if (help) help.textContent = window.MathTeacherDB.isCloudConfigured()
+          ? "✓ Сақталды. Teacher аккаунты да осы материалды көре алады."
+          : "💾 Firebase қосылмаған: материал тек осы браузерде сақталды.";
       } catch (error) {
         console.error(error);
-        alert("Материалды сақтау кезінде қате шықты. Firebase баптауын тексеріңіз.");
+        setMessage("⚠️ Материалды сақтау мүмкін болмады. Firebase баптауын тексеріңіз.", false);
+      } finally {
+        saveButton.dataset.saving = "false";
+        saveButton.disabled = false;
+        saveButton.textContent = oldText;
       }
     }, true);
 
