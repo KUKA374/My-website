@@ -11,8 +11,8 @@
   const LOGIN_DOMAIN = "mathteacher.kz";
   const LOGIN_DOMAINS = ["sdu.edu.kz", "gmail.com", LOGIN_DOMAIN];
   const LOGIN_ALIASES = {
-    teacher: "240105009@sdu.edu.kz",
-    мұғалім: "240105009@sdu.edu.kz",
+    teacher: "240105090@sdu.edu.kz",
+    мұғалім: "240105090@sdu.edu.kz",
     admin: "240105009@gmail.com"
   };
   let roleCache = null;
@@ -58,10 +58,7 @@
     const clean = String(login || "").trim().toLowerCase();
     if (!clean) return [];
 
-    // Explicit account aliases remove ambiguity when two Firebase users
-    // share the same numeric login part.
     if (LOGIN_ALIASES[clean]) return [LOGIN_ALIASES[clean]];
-
     if (clean.includes("@")) return [clean];
 
     return LOGIN_DOMAINS.map(function(domain) {
@@ -103,6 +100,18 @@
     }
   }
 
+  function applyRoleUi(role) {
+    const adminLinks = document.querySelectorAll('a[href="admin.html"]');
+    adminLinks.forEach(function(link) {
+      link.style.display = (role === "admin" || role === "super_admin") ? "" : "none";
+    });
+
+    const roleLabel = document.getElementById("roleLabel");
+    if (roleLabel && role !== "admin" && role !== "super_admin") {
+      roleLabel.textContent = "Тексерілуде...";
+    }
+  }
+
   async function loginUser(login, password) {
     try {
       await ensureFirebase();
@@ -116,9 +125,6 @@
       roleCache = null;
       sessionStorage.removeItem(SESSION_KEY);
 
-      // Always clear a previous Firebase account before a new login.
-      // Firebase normally replaces the current user on sign-in, but an explicit
-      // sign-out prevents a stale persisted account from racing with routing.
       if (auth.currentUser) {
         await auth.signOut();
       }
@@ -196,7 +202,8 @@
             window.location.href = "login.html";
             return;
           }
-          saveSession(firebaseUser, profile);
+          const sessionUser = saveSession(firebaseUser, profile);
+          applyRoleUi(sessionUser.role);
         } catch (error) {
           console.error(error);
           await firebase.auth().signOut();
@@ -213,6 +220,9 @@
   }
 
   function requireRole(allowedRoles) {
+    const initialUser = getCurrentUser();
+    applyRoleUi(initialUser ? initialUser.role : null);
+
     ensureFirebase().then(function() {
       firebase.auth().onAuthStateChanged(async function(firebaseUser) {
         if (!firebaseUser) {
@@ -232,6 +242,7 @@
           }
 
           const sessionUser = saveSession(firebaseUser, profile);
+          applyRoleUi(sessionUser.role);
           if (!allowedRoles.includes(profile.role)) {
             routeAfterLogin(sessionUser);
             return;
@@ -249,7 +260,7 @@
       sessionStorage.removeItem(SESSION_KEY);
       window.location.href = "login.html";
     });
-    return getCurrentUser();
+    return initialUser && allowedRoles.includes(initialUser.role) ? initialUser : null;
   }
 
   function getRoleName(role) {
