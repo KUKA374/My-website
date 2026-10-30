@@ -30,6 +30,40 @@ function saveMyLessons(lessonIds) {
   );
 }
 
+// Firebase Auth кейде бетті ашқан сәтте currentUser-ді бірден бермейді.
+// Сондықтан қонақ ретінде уақытша сақталған сабақтарды кейін нақты
+// қолданушының жеке тізіміне көшіреміз.
+function syncMyLessonsUserStorage(user) {
+  if (!user || !user.uid) return;
+
+  try {
+    const guestKey = "mathTeacherMyLessons_guest";
+    const userKey = "mathTeacherMyLessons_" + user.uid;
+
+    const guestLessons = JSON.parse(localStorage.getItem(guestKey) || "[]");
+    const userLessons = JSON.parse(localStorage.getItem(userKey) || "[]");
+
+    const merged = userLessons.concat(
+      guestLessons.filter(function (id) {
+        return !userLessons.includes(String(id));
+      })
+    ).map(function (id) {
+      return String(id);
+    });
+
+    localStorage.setItem(userKey, JSON.stringify(merged));
+
+    if (guestLessons.length > 0) {
+      localStorage.removeItem(guestKey);
+    }
+
+    renderMyLessons();
+    updateMyLessonButton();
+  } catch (error) {
+    console.warn("My lessons sync failed:", error);
+  }
+}
+
 function isMyLesson(lessonId) {
   return getMyLessons().includes(String(lessonId));
 }
@@ -127,4 +161,16 @@ function renderMyLessons() {
 document.addEventListener("DOMContentLoaded", function () {
   renderMyLessons();
   updateMyLessonButton();
+
+  // Firebase Auth қолданушыны анықтаған сәтте уақытша сақталған
+  // сабақтарды оның жеке тізіміне ауыстырамыз.
+  try {
+    if (typeof firebase !== "undefined" && firebase.auth) {
+      firebase.auth().onAuthStateChanged(function (user) {
+        syncMyLessonsUserStorage(user);
+      });
+    }
+  } catch (error) {
+    console.warn("Firebase Auth listener could not be attached:", error);
+  }
 });
