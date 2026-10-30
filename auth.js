@@ -10,6 +10,11 @@
   const SESSION_KEY = "mathTeacherUser";
   const LOGIN_DOMAIN = "mathteacher.kz";
   const LOGIN_DOMAINS = ["sdu.edu.kz", "gmail.com", LOGIN_DOMAIN];
+  const LOGIN_ALIASES = {
+    teacher: "240105009@sdu.edu.kz",
+    мұғалім: "240105009@sdu.edu.kz",
+    admin: "240105009@gmail.com"
+  };
   let roleCache = null;
   let firebasePromise = null;
 
@@ -52,10 +57,13 @@
   function getLoginEmails(login) {
     const clean = String(login || "").trim().toLowerCase();
     if (!clean) return [];
+
+    // Explicit account aliases remove ambiguity when two Firebase users
+    // share the same numeric login part.
+    if (LOGIN_ALIASES[clean]) return [LOGIN_ALIASES[clean]];
+
     if (clean.includes("@")) return [clean];
 
-    // One login can exist in more than one Firebase account.
-    // Try the known email domains until the password matches.
     return LOGIN_DOMAINS.map(function(domain) {
       return clean + "@" + domain;
     });
@@ -108,6 +116,13 @@
       roleCache = null;
       sessionStorage.removeItem(SESSION_KEY);
 
+      // Always clear a previous Firebase account before a new login.
+      // Firebase normally replaces the current user on sign-in, but an explicit
+      // sign-out prevents a stale persisted account from racing with routing.
+      if (auth.currentUser) {
+        await auth.signOut();
+      }
+
       let lastError = null;
       let credential = null;
 
@@ -117,12 +132,7 @@
           break;
         } catch (error) {
           lastError = error;
-
-          // If the email exists but the password is wrong, there is no reason
-          // to continue trying another account with the same password.
-          if (error && error.code === "auth/wrong-password") {
-            break;
-          }
+          if (error && error.code === "auth/wrong-password") break;
         }
       }
 
