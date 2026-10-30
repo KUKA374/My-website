@@ -6,35 +6,35 @@
   const root=document.getElementById('classPage');
   const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#039;');
   function subjectTitle(){const c=window.curriculum&&window.curriculum[classId];const s=c&&c.subjects&&c.subjects.find(x=>String(x.id)===String(subjectId));return s?s.title:subjectId;}
-  function getPlan(){const p=window.ktpPlans||{};const c=window.curriculum&&window.curriculum[classId];const key=(c&&c.subjects&&c.subjects.find(x=>String(x.id)===String(subjectId))||{}).planKey||`${classId}_${subjectId}`;return p[key]||p[`${classId}_${subjectId}`]||null;}
-  function render(){if(!root||!quarterId)return false;const plan=getPlan();if(!plan||!Array.isArray(plan.lessons)||!plan.lessons.length)return false;const lessons=plan.lessons.filter(x=>Number(x.quarter)===quarterId);let last='';let h=`<a href="class.html?class=${encodeURIComponent(classId)}" class="back-link">← ${esc(classId)}-сынып</a><div class="quarter-page-header"><span class="quarter-page-badge">${esc(classId)}-сынып • ${esc(subjectTitle())} • ${quarterId}-тоқсан</span><h1>${esc(subjectTitle())}</h1><p>${lessons.length} сабақ</p></div><div class="ktp-note"><strong>2026–2027 оқу жылы</strong><br>КТП-дағы күндер сайтқа енгізілмейді. Оқу мақсаттары кейін ҚМЖ жасау кезінде пайдаланылады.</div><div class="quarter-lesson-list">`;
+  function planKey(){const c=window.curriculum&&window.curriculum[classId];return (c&&c.subjects&&c.subjects.find(x=>String(x.id)===String(subjectId))||{}).planKey||`${classId}_${subjectId}`;}
+  function unpack(){
+    const packed=window.ktpD&&window.ktpD[String(classId)];
+    if(!packed||!packed.d||!packed.r)return;
+    const keys=packed.d[0]||[], sections=packed.d[1]||[], strings=packed.d[2]||[];
+    window.ktpPlans=window.ktpPlans||{};
+    packed.r.forEach(r=>{
+      const key=keys[r[0]], p=window.ktpPlans[key]||(window.ktpPlans[key]={lessons:[]});
+      p.lessons.push({number:r[1],quarter:r[2],section:sections[r[3]]||'',title:strings[r[4]]||'',objective:strings[r[5]]||'',hours:r[6]});
+    });
+    delete window.ktpD[String(classId)];
+  }
+  function getPlan(){unpack();const p=window.ktpPlans||{};return p[planKey()]||null;}
+  function render(){if(!root||!quarterId)return false;const plan=getPlan();if(!plan||!Array.isArray(plan.lessons)||!plan.lessons.length)return false;const lessons=plan.lessons.filter(x=>Number(x.quarter)===quarterId);if(!lessons.length)return false;let last='';let h=`<a href="class.html?class=${encodeURIComponent(classId)}" class="back-link">← ${esc(classId)}-сынып</a><div class="quarter-page-header"><span class="quarter-page-badge">${esc(classId)}-сынып • ${esc(subjectTitle())} • ${quarterId}-тоқсан</span><h1>${esc(subjectTitle())}</h1><p>${lessons.length} сабақ</p></div><div class="ktp-note"><strong>2026–2027 оқу жылы</strong><br>КТП-дағы күндер сайтқа енгізілмейді. Оқу мақсаттары кейін ҚМЖ жасау кезінде пайдаланылады.</div><div class="quarter-lesson-list>`;
     lessons.forEach(l=>{if(l.section&&l.section!==last){last=l.section;h+=`<div class="ktp-section-title">${esc(last)}</div>`;}h+=`<a href="lesson.html?class=${encodeURIComponent(classId)}&subject=${encodeURIComponent(subjectId)}&quarter=${quarterId}&lesson=${encodeURIComponent(l.number)}" class="quarter-lesson-card"><div class="quarter-lesson-number">${String(l.number).padStart(2,'0')}</div><div class="quarter-lesson-info"><h3>${esc(l.title)}</h3>${l.objective?`<p>${esc(l.objective)}</p>`:''}<small>${esc(l.hours)} сағат</small></div><div class="quarter-lesson-arrow">→</div></a>`;});
     root.innerHTML=h+'</div>';return true;}
-  function showLoading(){if(root)root.innerHTML=`<div class="admin-box"><h3>КТП жүктелуде...</h3><p>${esc(classId)}-сынып • ${esc(subjectId)} • ${quarterId}-тоқсан</p><p id="ktpStatus">КТП файлы іске қосылуда...</p></div>`;}
+  function showLoading(){if(root)root.innerHTML=`<div class="admin-box"><h3>КТП жүктелуде...</h3><p>${esc(classId)}-сынып • ${esc(subjectId)} • ${quarterId}-тоқсан</p><p id="ktpStatus">КТП мәліметтері дайындалуда...</p></div>`;}
   function showError(msg){if(root)root.innerHTML=`<div class="admin-box"><h3>КТП жүктелмеді</h3><p>${esc(msg)}</p><p><strong>Сынып:</strong> ${esc(classId)} | <strong>Пән:</strong> ${esc(subjectId)} | <strong>Тоқсан:</strong> ${quarterId}</p></div>`;}
   function load(){
     if(!classId||!subjectId||!quarterId)return;
     showLoading();
-    const src=`ktp-${classId}.js?v=7`;
+    const src=String(classId)==='5'?'ktp-d-5.js?v=1':`ktp-${classId}.js?v=8`;
     const status=()=>document.getElementById('ktpStatus');
-    if(window.ktpPlans && getPlan()){
-      if(status())status().textContent='КТП мәліметтері дайын.';
-      if(render())return;
-    }
-    const script=document.createElement('script');
-    script.src=src;
-    script.async=true;
-    script.onload=()=>{
-      if(status())status().textContent='КТП файлы іске қосылды, мәліметтер дайындалуда...';
-    };
+    if(render())return;
+    const script=document.createElement('script');script.src=src;script.async=true;
+    script.onload=()=>{if(status())status().textContent='КТП файлы іске қосылды, мәліметтер тексерілуде...';if(render())return;};
     script.onerror=()=>showError(`КТП файлын жүктеу мүмкін болмады: ${src}`);
     document.head.appendChild(script);
-    let tries=0;
-    const timer=setInterval(()=>{
-      tries++;
-      if(render()){clearInterval(timer);return;}
-      if(tries>=120){clearInterval(timer);showError('КТП файлы іске қосылды, бірақ оның ішіндегі мәліметтер сайтқа тіркелмеді.');}
-    },250);
+    let tries=0;const timer=setInterval(()=>{tries++;if(render()){clearInterval(timer);return;}if(tries>=240){clearInterval(timer);showError('КТП файлы іске қосылды, бірақ мәліметтер сайтқа тіркелмеді.');}},250);
   }
   const st=document.createElement('style');st.textContent='.ktp-note{margin:16px 0;padding:14px 16px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#667085;line-height:1.6}.ktp-section-title{margin:24px 0 10px;padding:10px 14px;border-radius:10px;background:#eef2ff;color:#3730a3;font-weight:800}.quarter-lesson-info p{margin:6px 0;color:#7a8495;font-size:12px;line-height:1.45}.quarter-lesson-info small{display:block;margin-top:6px;color:#667085}';document.head.appendChild(st);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load);else load();
