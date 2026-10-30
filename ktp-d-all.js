@@ -1,0 +1,1 @@
+window.ktpD="+__CONTENT__+";
