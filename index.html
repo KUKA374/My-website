@@ -20,6 +20,7 @@
         <a href="#classes">Сыныптар</a>
         <a href="#favorites">⭐ Таңдаулылар</a>
         <a href="admin.html">⚙️ Басқару</a>
+        <button id="logoutButton" type="button" style="border:1px solid #e4e8f0;background:#fff;border-radius:9px;padding:8px 12px;cursor:pointer;font:inherit;font-weight:700;">🚪 Шығу</button>
       </nav>
     </div>
   </header>
@@ -70,6 +71,10 @@
 
   <script>
     requireRole(["teacher", "admin", "super_admin"]);
+    document.addEventListener("DOMContentLoaded", function () {
+      const button = document.getElementById("logoutButton");
+      if (button) button.addEventListener("click", function () { logoutUser(); });
+    });
   </script>
   <script src="data.js"></script>
   <script src="curriculum-data.js"></script>
