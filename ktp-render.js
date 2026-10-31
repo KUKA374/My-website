@@ -23,6 +23,9 @@
   }
   function error(){if(root)root.innerHTML=`<div class="admin-box"><h3>КТП жүктелмеді</h3><p>КТП деректері табылмады немесе осы тоқсанға сабақтар табылмады.</p><p><strong>Сынып:</strong> ${esc(classId)} | <strong>Пән:</strong> ${esc(subjectId)} | <strong>Тоқсан:</strong> ${quarterId}</p></div>`}
   const st=document.createElement('style');st.textContent='.ktp-note{margin:16px 0;padding:14px 16px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#667085;line-height:1.6}.ktp-section-title{margin:24px 0 10px;padding:10px 14px;border-radius:10px;background:#eef2ff;color:#3730a3;font-weight:800}.quarter-lesson-info p{margin:6px 0;color:#7a8495;font-size:12px;line-height:1.45}.quarter-lesson-info small{display:block;margin-top:6px;color:#667085}';document.head.appendChild(st);
-  async function start(){try{if(window.ktpReady)await window.ktpReady;setTimeout(()=>{if(!render())error()},0)}catch(e){console.error(e);error()}}
+  async function start(){
+    if(!classId||!subjectId||!quarterId)return;
+    try{if(window.ktpReady)await window.ktpReady;setTimeout(()=>{if(!render())error()},0)}catch(e){console.error(e);error()}
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
