@@ -23,7 +23,7 @@
       if(i<0)return [];
       return g.r.filter(r=>Number(r?.[0])===Number(i)&&Number(r?.[2])===quarterId).map(r=>({number:r[1],section:sec[r[3]]||'',title:str[r[4]]||'',objective:str[r[5]]||'',hours:r[6]||''})).filter(x=>x.title);
     }
-    if(Array.isArray(source))return source.filter(x=>Number(x.quarter)===quarterId&&x.title);
+    if(Array.isArray(source))return source.filter(x=>Number(x.quarter)===quarterId&&x.title).map(x=>({number:x.number??x.lesson??'',section:x.section||'',title:x.title||'',objective:x.objective||'',hours:x.hours??1}));
     return [];
   }
   function render(){
