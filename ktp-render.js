@@ -4,9 +4,10 @@
   function subject(){const c=window.curriculum&&window.curriculum[classId],s=c&&c.subjects&&c.subjects.find(x=>String(x.id)===String(subjectId));return s||null}
   function key(){const s=subject();return s&&s.planKey?s.planKey:`${classId}_${subjectId}`}
   function planSource(){
-    const all=window.ktpD||{},g=all[String(classId)]||all[classId]||null,k=key();
+    const all=window.ktpD||{},g=all[String(classId)]||all[classId]||null,k=key(),quarterKey=`${k}_q${quarterId}`;
     if(g&&g[k])return g[k];
     if(all[k])return all[k];
+    if(all[quarterKey])return all[quarterKey];
     if(g&&Array.isArray(g.rows))return g;
     return null;
   }
