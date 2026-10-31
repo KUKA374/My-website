@@ -49,6 +49,3 @@ document.addEventListener("DOMContentLoaded", function () {
   renderMyLessons(); updateMyLessonButton();
   try { if (typeof firebase !== "undefined" && firebase.auth) firebase.auth().onAuthStateChanged(function (user) { syncMyLessonsUserStorage(user); }); } catch (error) { console.warn("Firebase Auth listener could not be attached:", error); }
 });
-
-// KTP деректері сабақ бетіне де қолжетімді болсын.
-(function(){const files=['ktp-data.js','ktp-6.js','ktp-7.js','ktp-8.js','ktp-9.js','ktp-10.js','ktp-11.js','ktp-render.js'];files.forEach(function(src){const s=document.createElement('script');s.src=src+'?v=1';document.head.appendChild(s);});})();
