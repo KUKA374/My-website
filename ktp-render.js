@@ -7,9 +7,9 @@
     const g=window.ktpD&&window.ktpD[String(classId)],k=key();
     if(!g)return [];
     if(Array.isArray(g.r)){
-      const ks=g.d?.[0]||[],sec=g.d?.[1]||[],str=g.d?.[2]||[],i=ks.indexOf(k);
+      const ks=g.d?.[0]||[],sec=g.d?.[1]||[],str=g.d?.[2]||[],i=ks.findIndex(x=>String(x)===String(k));
       if(i<0)return [];
-      return g.r.filter(r=>r[0]===i&&Number(r[2])===quarterId).map(r=>({number:r[1],section:sec[r[3]]||'',title:str[r[4]]||'',objective:str[r[5]]||'',hours:r[6]||''})).filter(x=>x.title);
+      return g.r.filter(r=>Number(r?.[0])===Number(i)&&Number(r?.[2])===quarterId).map(r=>({number:r[1],section:sec[r[3]]||'',title:str[r[4]]||'',objective:str[r[5]]||'',hours:r[6]||''})).filter(x=>x.title);
     }
     if(Array.isArray(g[k]))return g[k].filter(x=>Number(x.quarter)===quarterId&&x.title);
     return [];
