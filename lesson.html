@@ -7,7 +7,7 @@
 </style>
 </head>
 <body><main class="container"><div id="lessonPage"></div></main>
-<script src="auth.js"></script><script>requireRole(["teacher","admin","super_admin"]);</script><script src="curriculum-data.js?v=5"></script><script src="ktp-data.js?v=5"></script><script src="ktp-5-q1.js?v=1"></script><script src="ktp-5-q2.js?v=1"></script><script src="ktp-5-q2-loader.js?v=1"></script><script src="ktp-5-q3.js?v=1"></script><script src="ktp-5-q4.js?v=1"></script><script src="lesson-content.js"></script><script src="my-lessons.js"></script>
+<script src="auth.js"></script><script>requireRole(["teacher","admin","super_admin"]);</script><script src="curriculum-data.js?v=5"></script><script src="ktp-data.js?v=5"></script><script src="ktp-5-q1.js?v=1"></script><script src="ktp-5-q2.js?v=1"></script><script src="ktp-5-q2-loader.js?v=1"></script><script src="ktp-5-q3.js?v=1"></script><script src="ktp-5-q4.js?v=1"></script><script src="ktp-6-q1.js?v=1"></script><script src="ktp-6-q2.js?v=1"></script><script src="ktp-6-q3.js?v=1"></script><script src="ktp-6-q4-topics.js?v=1"></script><script src="lesson-content.js"></script><script src="lesson-content-6.js?v=1"></script><script src="my-lessons.js"></script>
 <script>
 function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#039;')}
 function params(){const p=new URLSearchParams(location.search);return{classId:String(p.get('class')||''),subjectId:String(p.get('subject')||''),quarter:Number(p.get('quarter')),lesson:String(p.get('lesson')||'')}}
