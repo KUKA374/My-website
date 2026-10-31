@@ -3,20 +3,27 @@
   const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#039;');
   function subject(){const c=window.curriculum&&window.curriculum[classId],s=c&&c.subjects&&c.subjects.find(x=>String(x.id)===String(subjectId));return s||null}
   function key(){const s=subject();return s&&s.planKey?s.planKey:`${classId}_${subjectId}`}
+  function planSource(){
+    const all=window.ktpD||{},g=all[String(classId)]||all[classId]||null,k=key();
+    if(g&&g[k])return g[k];
+    if(all[k])return all[k];
+    if(g&&Array.isArray(g.rows))return g;
+    return null;
+  }
   function lessons(){
-    const g=window.ktpD&&window.ktpD[String(classId)],k=key();
-    if(!g)return [];
-    const source=g[k];
-    if(source&&Array.isArray(source.rows)){
+    const source=planSource();
+    if(!source)return [];
+    if(Array.isArray(source.rows)){
       const sections=source.sections||[],titles=source.titles||[],objectives=source.objectives||[];
       return source.rows.filter(r=>Number(r?.[1])===quarterId).map(r=>({number:r[0],section:sections[r[2]]||'',title:titles[r[3]]||'',objective:objectives[r[4]]||'',hours:1})).filter(x=>x.title);
     }
-    if(Array.isArray(g.r)){
-      const ks=g.d?.[0]||[],sec=g.d?.[1]||[],str=g.d?.[2]||[],i=ks.findIndex(x=>String(x)===String(k));
+    const g=window.ktpD&&window.ktpD[String(classId)],k=key();
+    if(g&&Array.isArray(g.r)){
+      const ks=g.d?.[0]||[],sec=g.d?.[1]||[],str=g.d?.[2]||'',i=ks.findIndex(x=>String(x)===String(k));
       if(i<0)return [];
       return g.r.filter(r=>Number(r?.[0])===Number(i)&&Number(r?.[2])===quarterId).map(r=>({number:r[1],section:sec[r[3]]||'',title:str[r[4]]||'',objective:str[r[5]]||'',hours:r[6]||''})).filter(x=>x.title);
     }
-    if(Array.isArray(g[k]))return g[k].filter(x=>Number(x.quarter)===quarterId&&x.title);
+    if(Array.isArray(source))return source.filter(x=>Number(x.quarter)===quarterId&&x.title);
     return [];
   }
   function render(){
