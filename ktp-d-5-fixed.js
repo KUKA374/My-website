@@ -1,0 +1,1 @@
+(async()=>{try{const r=await fetch('https://raw.githubusercontent.com/KUKA374/My-website/3cfeba034e49475f3bcdc9ac7ce48af59d03938c/ktp-d-5.js');const t=await r.text();(0,eval)(t);console.log('5th grade KTP loaded')}catch(e){console.error('5th grade KTP load error',e)}})();
