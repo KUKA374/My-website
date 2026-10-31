@@ -1,0 +1,1 @@
+window.ktpD=window.ktpD||{}; window.ktpD["6_math_q4"]=[]; window.ktpReady=Promise.resolve(window.ktpD);
