@@ -203,6 +203,7 @@
       .scene-feedback{min-height:24px;margin-top:14px;font-weight:800;color:#b9cfe2}
       .scene-code span.done{border-color:#64f0ba;color:#83f4cc;box-shadow:0 0 20px #46e9c455}.scene-target-options button.target-hit{animation:targetHit .65s ease;background:#2e987e;border-color:#70e3b8}.scene-target-options button.target-miss{animation:targetMiss .45s ease;border-color:#ff879a}.scene-card-revealed{animation:cardReveal .5s ease}.scene-vehicle{will-change:left}@keyframes targetHit{0%{transform:scale(1)}45%{transform:scale(1.16);box-shadow:0 0 28px #5ee7ff99}100%{transform:scale(1)}}@keyframes targetMiss{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes cardReveal{0%{transform:rotateY(90deg);opacity:.3}100%{transform:rotateY(0deg);opacity:1}}
       .scene-space{position:relative;height:260px;border-radius:18px;overflow:hidden;background:radial-gradient(circle at 15% 25%,#fff 0 1px,transparent 2px),radial-gradient(circle at 78% 16%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 45% 56%,#bbe0ff 0 1px,transparent 2px),linear-gradient(180deg,#090e28,#132b57 72%,#14495e)}.rocket-ship{position:absolute;bottom:12%;left:45%;font-size:55px;transform:rotate(-40deg);transition:bottom .75s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 12px 12px #fa8e4277)}.scene-moon{position:absolute;right:13%;top:6%;font-size:48px}.scene-earth{position:absolute;bottom:-22px;left:10%;font-size:65px}.scene-car-track{height:140px}.scene-car-track .scene-vehicle{top:12px}.scene-rival{position:absolute;top:72px;transform:translateX(-20%);font-size:40px;transition:left .55s ease}
+      .scene-king{max-width:620px;margin:12px auto}.king-steps{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.king-steps span{font-size:23px;border:2px solid #625a8a;border-radius:12px;background:#1b2644;padding:9px 13px}.king-steps span.won{border-color:#ffe49d;background:#59442b}.king-steps span.current{border-color:#9fdaff;box-shadow:0 0 22px #5ee7ff66}
       .scene-bids{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}.scene-bids button{border:2px solid #637088;color:#fff;background:#1a314b;border-radius:12px;padding:10px 17px;font-weight:900;cursor:pointer}.scene-bids button.selected{border-color:#ffcb75;background:#6b5032}.scene-bids button:disabled{opacity:.4}.scene-help{color:#b4cbd9;font-size:13px}.scene-code{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:25px 0}.scene-code span{min-width:35px;min-height:45px;display:grid;place-items:center;border:2px solid #5ee7ff66;background:#0c1c30;border-radius:10px;font-size:23px;font-weight:900}.scene-target-options button{border-radius:45%;min-height:85px;background:radial-gradient(circle,#17344b 0 19%,#e9edef 20% 34%,#e4636e 35% 52%,#e9edef 53% 69%,#15334c 70%);text-shadow:0 2px 5px #111;box-shadow:0 8px 22px #0004}.scene-puzzle .scene-piece.done{background:linear-gradient(140deg,#345c9f,#648f68);border-color:#d5d6a2;font-size:30px}
       .scene-done{text-align:center;padding:38px 20px;border:1px solid rgba(255,255,255,.13);border-radius:23px;background:#0e2239}
       .scene-done h2{font-size:30px}.scene-done p{color:#b9cfe2}
@@ -233,9 +234,10 @@
     }else if(id==="puzzle"){
       const cells=Array.from({length:9},(_,n)=>`<div class="scene-piece ${n<Math.round(correct/total*9)?"done":""}">${n<Math.round(correct/total*9)?["☀️","☁️","🕊️","🏔️","🌳","🌲","🌷","🌼","🍀"][n]:"?"}</div>`).join("");
       stage=`<h3>Дұрыс жауаппен табиғат суретін жина</h3><div class="scene-puzzle">${cells}</div>`;
-    }else if(id==="quest"||id==="math-king"){
-      const icon=id==="quest"?"🗺️":"👑";
-      stage=`<h3>${icon} Кезеңдер картасы</h3><div class="scene-path">${Array.from({length:Math.min(total,8)},(_,n)=>`<div class="scene-node ${special.scene.correct[n]?"done":n===i?"current":""}">${special.scene.correct[n]?"✓":n===i?"📍":"🔒"}</div>`).join("")}</div>`;
+    }else if(id==="quest"){
+      stage=`<h3>🗺️ Квест картасы · ${i+1}-бекет</h3><div class="scene-path">${Array.from({length:Math.min(total,8)},(_,n)=>`<div class="scene-node ${special.scene.correct[n]?"done":n===i?"current":""}">${special.scene.correct[n]?"✓":n===i?"📍":"🔒"}</div>`).join("")}</div><p class="scene-help">Әр бекетте дұрыс шешім жаңа бағытты ашады</p>`;
+    }else if(id==="math-king"){
+      stage=`<h3>👑 ${i===total-1?"СОҢҒЫ СЫНАҚ — ТӘЖГЕ ЖЕТ!":`${i+1}-деңгей: Патшалық сынақ`}</h3><div class="scene-king"><span class="king-steps">${Array.from({length:total},(_,n)=>`<span class="${special.scene.correct[n]?"won":n===i?"current":""}">${n===total-1?"👑":special.scene.correct[n]?"⭐":"◆"}</span>`).join("")}</span><div class="scene-visual">${i===total-1?"🏰 👑":"🛡️ ⚔️ 🏰"}</div></div>`;
     }else if(id==="auction"){
       stage=`<h3>Лот №${i+1} — ұпайыңды тік!</h3><div class="scene-auction"><span class="scene-money">💰 ${special.scene.capital} ұпай</span><span class="scene-chip">Таңдалған ставка: ${special.scene.bid}</span></div><div class="scene-bids">${[10,20,30].map(n=>`<button type="button" data-bid="${n}" ${n>special.scene.capital?"disabled":""} class="${n===special.scene.bid?"selected":""}">${n} ұпай</button>`).join("")}</div><div class="scene-visual">🔨</div>`;
     }else if(id==="castle"){
@@ -247,7 +249,7 @@
     }else if(id==="cards"){
       stage=`<h3>Карточка №${i+1}</h3><div class="scene-visual">${special.scene.cardOpen?"🃏✨":"🂠 🂠 🂠"}</div>${special.scene.cardOpen?"<p>Карточка ашылды — тапсырманы шеш!</p>":'<button type="button" id="scene-flip" class="game-primary">🃏 Карточканы аудару</button>'}`;
     }else if(id==="secret-number"){
-      stage=`<h3>Құпия кодтың цифрларын аш</h3><div class="scene-code">${Array.from({length:total},(_,n)=>`<span>${special.scene.correct[n]?String((n+3)%10):"?"}</span>`).join("")}</div><p class="scene-help">Әр дұрыс жауап бір цифрды ашады</p>`;
+      stage=`<h3>Құпия кодтың цифрларын аш</h3><div class="scene-code">${Array.from({length:total},(_,n)=>`<span>${special.scene.correct[n]?String((String(qs[n].answer).match(/\d/g)||[String(n+1)]).slice(-1)[0]):"?"}</span>`).join("")}</div><p class="scene-help">Әр дұрыс жауап бір цифрды ашады</p>`;
     }else if(id==="blitz"){
       stage=`<h3>Блиц — 12 секундта жауап бер!</h3><div class="scene-visual">⚡ <span id="scene-seconds">12</span> c</div><div class="scene-progress"><span id="scene-timer-fill" style="width:100%"></span></div>`;
     }else{
@@ -284,7 +286,7 @@
         if(id==="car-race"){const vehicle=b.querySelector(".scene-vehicle");if(vehicle)vehicle.style.setProperty("--pos",Math.min(85,wins/total*85)+"%");}
         if(id==="bridge"){const plank=b.querySelectorAll(".scene-plank")[Math.min(wins-1,total-1)];if(plank)plank.classList.add("done");}
         if(id==="puzzle"){b.querySelectorAll(".scene-piece").forEach((tile,n)=>{if(n<Math.round(wins/total*9)){tile.classList.add("done");tile.textContent=["☀️","☁️","🕊️","🏔️","🌳","🌲","🌷","🌼","🍀"][n];}});}
-        if(id==="secret-number"){const cell=b.querySelectorAll(".scene-code span")[i];if(cell){cell.textContent=String((i+3)%10);cell.classList.add("done");}}
+        if(id==="secret-number"){const cell=b.querySelectorAll(".scene-code span")[i];if(cell){cell.textContent=String((String(q.answer).match(/\d/g)||[String(i+1)]).slice(-1)[0]);cell.classList.add("done");}}
       }
       if(id==="target")btn.classList.add(correctAnswer?"target-hit":"target-miss");
       if(id==="auction"){
