@@ -32,7 +32,7 @@
   <script src="ktp-upper-tools.js?v=1"></script>
   <script src="ktp-upper-loader.js?v=1"></script>
   <script>
-    window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
+    if (!['9','10','11'].includes(new URLSearchParams(location.search).get('class'))) window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
       const classId=new URLSearchParams(location.search).get('class');
       const subjectId=new URLSearchParams(location.search).get('subject');
       const quarter=Number(new URLSearchParams(location.search).get('quarter'));
