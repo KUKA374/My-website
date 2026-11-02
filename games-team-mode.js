@@ -46,8 +46,9 @@
       const number=Number(answer.replace(",","."));
       const others=Number.isFinite(number)?[number+1,number-1,number+2,number-2].map(String):["0","1","2","3","5","8","10","1/2"];
       for(const v of others){if(!choices.includes(v))choices.push(v);if(choices.length>=4)break;}
-      const four=choices.slice(0,4),offset=(i+1)%four.length;
-      return {question:q.question,answer,options:four.slice(offset).concat(four.slice(0,offset))};
+      const four=choices.slice(0,4);
+      for(let n=four.length-1;n>0;n--){const j=Math.floor(Math.random()*(n+1));[four[n],four[j]]=[four[j],four[n]];}
+      return {question:q.question,answer,options:four};
     });
   }
 
