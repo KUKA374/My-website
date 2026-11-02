@@ -202,6 +202,7 @@
       .scene-auction{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.scene-money{font-size:26px;font-weight:900;color:#f8cc73}
       .scene-feedback{min-height:24px;margin-top:14px;font-weight:800;color:#b9cfe2}
       .scene-code span.done{border-color:#64f0ba;color:#83f4cc;box-shadow:0 0 20px #46e9c455}.scene-target-options button.target-hit{animation:targetHit .65s ease;background:#2e987e;border-color:#70e3b8}.scene-target-options button.target-miss{animation:targetMiss .45s ease;border-color:#ff879a}.scene-card-revealed{animation:cardReveal .5s ease}.scene-vehicle{will-change:left}@keyframes targetHit{0%{transform:scale(1)}45%{transform:scale(1.16);box-shadow:0 0 28px #5ee7ff99}100%{transform:scale(1)}}@keyframes targetMiss{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes cardReveal{0%{transform:rotateY(90deg);opacity:.3}100%{transform:rotateY(0deg);opacity:1}}
+      .scene-space{position:relative;height:260px;border-radius:18px;overflow:hidden;background:radial-gradient(circle at 15% 25%,#fff 0 1px,transparent 2px),radial-gradient(circle at 78% 16%,#fff 0 1.5px,transparent 2px),radial-gradient(circle at 45% 56%,#bbe0ff 0 1px,transparent 2px),linear-gradient(180deg,#090e28,#132b57 72%,#14495e)}.rocket-ship{position:absolute;bottom:12%;left:45%;font-size:55px;transform:rotate(-40deg);transition:bottom .75s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 12px 12px #fa8e4277)}.scene-moon{position:absolute;right:13%;top:6%;font-size:48px}.scene-earth{position:absolute;bottom:-22px;left:10%;font-size:65px}.scene-car-track{height:140px}.scene-car-track .scene-vehicle{top:12px}.scene-rival{position:absolute;top:72px;transform:translateX(-20%);font-size:40px;transition:left .55s ease}
       .scene-bids{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}.scene-bids button{border:2px solid #637088;color:#fff;background:#1a314b;border-radius:12px;padding:10px 17px;font-weight:900;cursor:pointer}.scene-bids button.selected{border-color:#ffcb75;background:#6b5032}.scene-bids button:disabled{opacity:.4}.scene-help{color:#b4cbd9;font-size:13px}.scene-code{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:25px 0}.scene-code span{min-width:35px;min-height:45px;display:grid;place-items:center;border:2px solid #5ee7ff66;background:#0c1c30;border-radius:10px;font-size:23px;font-weight:900}.scene-target-options button{border-radius:45%;min-height:85px;background:radial-gradient(circle,#17344b 0 19%,#e9edef 20% 34%,#e4636e 35% 52%,#e9edef 53% 69%,#15334c 70%);text-shadow:0 2px 5px #111;box-shadow:0 8px 22px #0004}.scene-puzzle .scene-piece.done{background:linear-gradient(140deg,#345c9f,#648f68);border-color:#d5d6a2;font-size:30px}
       .scene-done{text-align:center;padding:38px 20px;border:1px solid rgba(255,255,255,.13);border-radius:23px;background:#0e2239}
       .scene-done h2{font-size:30px}.scene-done p{color:#b9cfe2}
@@ -225,9 +226,10 @@
     }
     const progress=Math.round(i/total*100),label=sceneNames[id]||id;
     let stage="";
-    if(id==="rocket"||id==="car-race"){
-      const vehicle=id==="rocket"?"🚀":"🏎️";
-      stage=`<h3>${id==="rocket"?"Ғарышқа ұшу":"Мәре сызығына жету"}</h3><div class="scene-track"><span class="scene-vehicle" style="--pos:${Math.min(85,correct/total*85)}%">${vehicle}</span><span class="scene-finish">🏁</span></div><div class="scene-progress"><span style="width:${progress}%"></span></div>`;
+    if(id==="rocket"){
+      stage=`<h3>🚀 Ғарышқа көтерілу</h3><div class="scene-space"><span class="scene-moon">🌕</span><span class="rocket-ship" style="bottom:${12+correct/total*72}%">🚀</span><span class="scene-earth">🌎</span></div><div class="scene-progress"><span style="width:${correct/total*100}%"></span></div>`;
+    }else if(id==="car-race"){
+      stage=`<h3>🏁 Мәре сызығына жету</h3><div class="scene-track scene-car-track"><span class="scene-vehicle" style="--pos:${Math.min(85,correct/total*85)}%">🏎️</span><span class="scene-rival" style="left:${Math.min(85,i/total*65)}%">🚙</span><span class="scene-finish">🏁</span></div><div class="scene-progress"><span style="width:${correct/total*100}%"></span></div>`;
     }else if(id==="puzzle"){
       const cells=Array.from({length:9},(_,n)=>`<div class="scene-piece ${n<Math.round(correct/total*9)?"done":""}">${n<Math.round(correct/total*9)?["☀️","☁️","🕊️","🏔️","🌳","🌲","🌷","🌼","🍀"][n]:"?"}</div>`).join("");
       stage=`<h3>Дұрыс жауаппен табиғат суретін жина</h3><div class="scene-puzzle">${cells}</div>`;
@@ -278,9 +280,8 @@
       special.scene.correct[i]=correctAnswer;
       const wins=special.scene.correct.filter(Boolean).length;
       if(correctAnswer){
-        if(id==="rocket"||id==="car-race"){
-          const vehicle=b.querySelector(".scene-vehicle");if(vehicle)vehicle.style.setProperty("--pos",Math.min(85,wins/total*85)+"%");
-        }
+        if(id==="rocket"){const ship=b.querySelector(".rocket-ship");if(ship)ship.style.bottom=(12+wins/total*72)+"%";}
+        if(id==="car-race"){const vehicle=b.querySelector(".scene-vehicle");if(vehicle)vehicle.style.setProperty("--pos",Math.min(85,wins/total*85)+"%");}
         if(id==="bridge"){const plank=b.querySelectorAll(".scene-plank")[Math.min(wins-1,total-1)];if(plank)plank.classList.add("done");}
         if(id==="puzzle"){b.querySelectorAll(".scene-piece").forEach((tile,n)=>{if(n<Math.round(wins/total*9)){tile.classList.add("done");tile.textContent=["☀️","☁️","🕊️","🏔️","🌳","🌲","🌷","🌼","🍀"][n];}});}
         if(id==="secret-number"){const cell=b.querySelectorAll(".scene-code span")[i];if(cell){cell.textContent=String((i+3)%10);cell.classList.add("done");}}
