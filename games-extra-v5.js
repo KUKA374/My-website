@@ -22,7 +22,7 @@
   const specialIds = new Set(['math-race','wheel']);
   const coreGet = window.getGameQuestions;
   const coreRender = window.renderCurrentQuestion;
-  const special = { id:null, qs:[], i:0, score:0, wheelReady:false, timer:null, timeLeft:20, tugLeft:0, tugRight:0, tugTurn:'left', tugPos:0 };
+  const special = { id:null, qs:[], i:0, score:0, wheelReady:false, timer:null, timeLeft:20, tugLeft:0, tugRight:0, tugTurn:'left', tugPos:0, scene:{capital:100,bid:10,health:3,cardOpen:false,correct:[],seconds:12},sceneTimer:null,sceneToken:0 };
 
   const esc = v => String(v ?? '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -41,24 +41,31 @@
     document.head.appendChild(s);
   }
 
-  function getSource(key, gameId){
-    const bank = window.gameQuestionBank?.[key];
-    if(!bank) return [];
-    if(gameId === 'tug-of-war') return bank['tug-of-war'] || [];
-    return (bank.quickAnswer || []).map(q => ({
-      question:q.question,
-      answer:String(q.answer),
-      options:q.options || makeOptions(q.answer)
-    }));
+  function getSource(key,gameId){
+    const bank=window.gameQuestionBank?.[key];if(!bank)return [];
+    const base=Array.isArray(bank[gameId])?bank[gameId]:bank.quickAnswer||[];
+    return base.map((q,i)=>{
+      if(!q.question)return q;
+      const answer=String(q.answer);
+      let choices=Array.isArray(q.options)&&q.options.length?q.options.map(String):[];
+      if(!choices.includes(answer))choices.unshift(answer);
+      if(choices.length<4){
+        const numeric=Number(answer.replace(",","."));
+        const pool=Number.isFinite(numeric)?[numeric+1,numeric-1,numeric+2,numeric-2].map(String):["1/2","1/4","2/3","0","2","5","8","10"];
+        for(const v of pool){if(!choices.includes(v))choices.push(v);if(choices.length>=4)break;}
+      }
+      choices=[...new Set(choices)].slice(0,4);
+      const offset=(i+1)%choices.length;
+      return {...q,question:q.question,answer,options:choices.slice(offset).concat(choices.slice(0,offset))};
+    });
   }
-
-  function makeOptions(answer){
-    const a=Number(answer);
-    if(Number.isFinite(a)) return [String(a),String(a+2),String(a-2),String(a+4)].filter((v,i,a)=>a.indexOf(v)===i).slice(0,4);
-    return [String(answer),'5','8','10'];
+  function resetScene(){
+    clearInterval(special.sceneTimer);special.sceneTimer=null;
+    clearInterval(special.timer);special.timer=null;
+    special.sceneToken++;special.scene={capital:100,bid:10,health:3,cardOpen:false,correct:[],seconds:12};
   }
-
   window.getGameQuestions=function(id,key){
+    resetScene();
     if(id==='math-race' || id==='wheel'){
       special.id=id; special.qs=getSource(key,id); special.i=0; special.score=0; special.wheelReady=(id!=='wheel');
       return special.qs;
