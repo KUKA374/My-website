@@ -68,6 +68,8 @@ function selectGame(gameId) {
 
 function backToGames() {
   cancelGameActions();
+  if(typeof window.cancelGameExtra==="function")window.cancelGameExtra();
+  if(typeof window.cancelGameTeams==="function")window.cancelGameTeams();
   currentGameMode="";
   quickInputLocked=false;
   selectedGameId = null;
