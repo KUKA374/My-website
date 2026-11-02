@@ -201,6 +201,7 @@
       .scene-bridge{display:flex;gap:5px;justify-content:center;margin-top:28px}.scene-plank{height:27px;flex:1;max-width:60px;background:#244059;border:2px dashed #5a7892;border-radius:5px}.scene-plank.done{background:#8b6041;border:2px solid #d3a06a}
       .scene-auction{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.scene-money{font-size:26px;font-weight:900;color:#f8cc73}
       .scene-feedback{min-height:24px;margin-top:14px;font-weight:800;color:#b9cfe2}
+      .scene-bids{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}.scene-bids button{border:2px solid #637088;color:#fff;background:#1a314b;border-radius:12px;padding:10px 17px;font-weight:900;cursor:pointer}.scene-bids button.selected{border-color:#ffcb75;background:#6b5032}.scene-bids button:disabled{opacity:.4}.scene-help{color:#b4cbd9;font-size:13px}.scene-code{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:25px 0}.scene-code span{min-width:35px;min-height:45px;display:grid;place-items:center;border:2px solid #5ee7ff66;background:#0c1c30;border-radius:10px;font-size:23px;font-weight:900}.scene-target-options button{border-radius:45%;min-height:85px;background:radial-gradient(circle,#17344b 0 19%,#e9edef 20% 34%,#e4636e 35% 52%,#e9edef 53% 69%,#15334c 70%);text-shadow:0 2px 5px #111;box-shadow:0 8px 22px #0004}.scene-puzzle .scene-piece.done{background:linear-gradient(140deg,#345c9f,#648f68);border-color:#d5d6a2;font-size:30px}
       .scene-done{text-align:center;padding:38px 20px;border:1px solid rgba(255,255,255,.13);border-radius:23px;background:#0e2239}
       .scene-done h2{font-size:30px}.scene-done p{color:#b9cfe2}
       @media(max-width:600px){.scene-stage{padding:17px;min-height:130px}.scene-question{padding:18px}.scene-options{grid-template-columns:1fr}.scene-node{font-size:17px;padding:9px 2px}.scene-visual{font-size:38px}}
@@ -251,15 +252,41 @@
     }
     const options=Array.isArray(q.options)&&q.options.length?q.options:[String(q.answer)];
     b.innerHTML=`<div class="scene" data-kind="${esc(id)}"><div class="scene-header"><span class="scene-title">${esc(label)}</span><span class="scene-chip">Сұрақ ${i+1}/${total} · ⭐ ${special.score}</span></div><div class="scene-stage">${stage}</div><div class="scene-question" ${id==="cards"&&!special.scene.cardOpen?"style='display:none'":""}><h3>${esc(q.question)}</h3><div class="scene-options ${id==="target"?"scene-target-options":""}">${options.map(o=>`<button type="button" data-scene-answer="${esc(o)}">${id==="target"?"🎯 ":""}${esc(o)}</button>`).join("")}</div><div class="scene-feedback" aria-live="polite"></div></div></div>`;
+    const flip=b.querySelector("#scene-flip");
+    if(flip)flip.onclick=()=>{special.scene.cardOpen=true;renderFallback();};
+    b.querySelectorAll("[data-bid]").forEach(btn=>btn.onclick=()=>{
+      const amount=Number(btn.dataset.bid);
+      if(amount<=special.scene.capital){special.scene.bid=amount;renderFallback();}
+    });
+    const session=special.sceneToken;
+    if(id==="blitz"){
+      let remaining=12;
+      special.sceneTimer=setInterval(()=>{
+        if(session!==special.sceneToken||special.id!=="blitz"||special.i!==i){clearInterval(special.sceneTimer);special.sceneTimer=null;return;}
+        remaining--;
+        const timer=b.querySelector("#scene-seconds"),bar=b.querySelector("#scene-timer-fill");
+        if(timer)timer.textContent=String(remaining);if(bar)bar.style.width=Math.max(0,remaining/12*100)+"%";
+        if(remaining<=0){clearInterval(special.sceneTimer);special.sceneTimer=null;special.scene.correct[i]=false;special.i++;renderFallback();}
+      },1000);
+    }
     b.querySelectorAll("[data-scene-answer]").forEach(btn=>btn.onclick=()=>{
-      const correctAnswer=String(btn.dataset.sceneAnswer)===String(q.answer);
+      if(special.sceneToken!==session||special.i!==i)return;
+      clearInterval(special.sceneTimer);special.sceneTimer=null;
+      const correctAnswer=typeof answersMatch==="function"?answersMatch(btn.dataset.sceneAnswer,q.answer):String(btn.dataset.sceneAnswer)===String(q.answer);
       b.querySelectorAll("[data-scene-answer]").forEach(x=>x.disabled=true);
-      if(correctAnswer)special.score+=10;
+      special.scene.correct[i]=correctAnswer;
+      if(id==="auction"){
+        special.scene.capital=Math.max(0,special.scene.capital+(correctAnswer?special.scene.bid:-special.scene.bid));
+        if(correctAnswer)special.score+=special.scene.bid;
+      }else if(correctAnswer)special.score+=10;
+      if(id==="castle"&&!correctAnswer)special.scene.health=Math.max(0,special.scene.health-1);
       const feedback=b.querySelector(".scene-feedback");
-      feedback.textContent=correctAnswer?"✓ Дұрыс! +10 ұпай":"Дұрыс жауап: "+String(q.answer);
+      feedback.textContent=correctAnswer?(id==="auction"?"✓ Сауда сәтті өтті! +"+special.scene.bid:"✓ Дұрыс! +10 ұпай"):"Дұрыс жауап: "+String(q.answer);
       feedback.style.color=correctAnswer?"#73e7b3":"#ffb3a8";
-      const next=document.createElement("button");next.className="game-primary";next.type="button";next.textContent=i+1>=total?"Нәтижені көру":"Келесі тапсырма →";
-      next.style.marginTop="12px";next.onclick=()=>{special.i++;renderFallback();};
+      const next=document.createElement("button");next.className="game-primary";next.type="button";
+      next.textContent=i+1>=total||special.scene.health<=0?"Нәтижені көру":"Келесі тапсырма →";
+      next.style.marginTop="12px";
+      next.onclick=()=>{if(session!==special.sceneToken)return;special.i++;special.scene.cardOpen=false;renderFallback();};
       feedback.appendChild(document.createElement("div")).appendChild(next);
     });
   }
