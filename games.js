@@ -196,6 +196,25 @@ function normalizedAnswer(value) { return String(value ?? "").trim().toLowerCase
 function nextGameQuestion() { currentIndex++; renderCurrentQuestion(); }
 function finishGame() { clearInterval(timerId); const total = currentQuestions.length, percent = Math.round((currentScore / total) * 100); document.getElementById("gameProgress").textContent = "Нәтиже"; document.getElementById("gameQuestion").innerHTML = `<div class="game-finish"><div class="finish-icon">🏆</div><h2>Ойын аяқталды!</h2><p>Нәтиже: <strong>${currentScore} / ${total}</strong> (${percent}%)</p><button type="button" class="game-primary" id="replayGameButton">↻ Қайта ойнау</button></div>`; document.getElementById("replayGameButton").addEventListener("click", startSelectedGame); document.getElementById("gameResult").textContent = "Нәтиже сабақ материалымен байланысты сақталады."; }
 function showGameMessage(message) { const box = document.getElementById("gameMessage"); if (!box) return; box.textContent = message; box.style.display = "block"; }
-function populateLessonSelect() { const select = document.getElementById("lessonSelect"); if (!select || typeof grade7AlgebraQ1 === "undefined") return; select.innerHTML = grade7AlgebraQ1.lessons.map(lesson => `<option value="${escapeGameHtml(lesson.id)}">${lesson.number}. ${escapeGameHtml(lesson.title)}</option>`).join(""); }
+function populateLessonSelect() {
+ const gradeEl=document.getElementById("gradeSelect"),subjectEl=document.getElementById("subjectSelect"),quarterEl=document.getElementById("quarterSelect"),lessonEl=document.getElementById("lessonSelect");
+ if(!gradeEl||!subjectEl||!quarterEl||!lessonEl)return;
+ const subjects={5:[["math","Математика"]],6:[["math","Математика"]],7:[["algebra","Алгебра"]]};
+ const titles={"5-math-1-1":"Натурал сандармен амалдар","6-math-1-1":"Жай бөлшектерге амалдар","6-math-1-2":"Ондық бөлшектер","6-math-1-3":"Жиындар","6-math-1-4":"Пайыз және диаграмма","6-math-1-5":"Екі санның қатынасы","6-math-1-6":"Кері қатынас","6-math-1-7":"Пропорция","7-algebra-1-1":"Қатынастар және пропорция","7-algebra-1-2":"Сызықтық теңдеулер","7-algebra-1-3":"Сызықтық теңдеулер (жалғасы)","7-algebra-1-4":"Натурал көрсеткішті дәреже"};
+ gradeEl.innerHTML=[5,6,7].map(n=>'<option value="'+n+'">'+n+'-сынып</option>').join("");
+ gradeEl.value="6";
+ function updateSubjects(){subjectEl.innerHTML=(subjects[gradeEl.value]||[]).map(([id,title])=>'<option value="'+id+'">'+title+'</option>').join("");updateLessons();}
+ function updateLessons(){
+  const prefix=gradeEl.value+"-"+subjectEl.value+"-"+quarterEl.value+"-";
+  const keys=Object.keys(window.gameQuestionBank||{}).filter(k=>k.startsWith(prefix)).sort((a,b)=>Number(a.slice(prefix.length))-Number(b.slice(prefix.length)));
+  lessonEl.innerHTML=keys.length?keys.map(k=>'<option value="'+escapeGameHtml(k.slice(prefix.length))+'">'+escapeGameHtml(k.slice(prefix.length)+". "+(titles[k]||"Сабақ"))+'</option>').join(""):'<option value="">Бұл тоқсанға тапсырмалар әзірленуде</option>';
+  document.getElementById("startGameButton").disabled=!keys.length;
+ }
+ gradeEl.addEventListener("change",updateSubjects);
+ subjectEl.addEventListener("change",updateLessons);
+ quarterEl.addEventListener("change",updateLessons);
+ quarterEl.innerHTML=[1,2,3,4].map(n=>'<option value="'+n+'">'+n+'-тоқсан</option>').join("");
+ updateSubjects();
+}
 
 document.addEventListener("DOMContentLoaded", function () { injectGameModeStyles(); renderGameCards(); populateLessonSelect(); document.getElementById("gamesGrid").addEventListener("click", event => { const card = event.target.closest("[data-game-id]"); if (card) selectGame(card.dataset.gameId); }); document.getElementById("startGameButton").addEventListener("click", startSelectedGame); document.getElementById("backToGamesButton").addEventListener("click", backToGames); });
