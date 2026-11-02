@@ -203,7 +203,18 @@ function finishTugGame(winnerByPosition) { clearInterval(timerId); const winner 
 
 function submitGameAnswer(value) { const q=currentQuestions[currentIndex];if(!q)return;if(answersMatch(value,q.right))currentScore++;nextGameQuestion(); }
 function submitTextAnswer() { const input = document.getElementById("gameTextAnswer"); if (!input) return; const userAnswer = input.value.trim(), q = currentQuestions[currentIndex]; let correct = false; if (currentGameMode === "find-error") { const normalized = userAnswer.toLowerCase(); correct = normalized.includes(String(q.error).toLowerCase()) || normalized.includes(String(q.correction).toLowerCase()); } else correct = normalizedAnswer(userAnswer) === normalizedAnswer(q.answer); if (correct) currentScore++; nextGameQuestion(); }
-function normalizedAnswer(value) { return String(value ?? "").trim().toLowerCase().replace(/\s+/g, ""); }
+function normalizedAnswer(value){return String(value??"").trim().toLowerCase().replace(/\s+/g,"").replace(/,/g,".");}
+function numericAnswer(value){
+ const t=normalizedAnswer(value);
+ if(/^-?\d+(?:\.\d+)?$/.test(t))return Number(t);
+ const f=t.match(/^(-?\d+)\/(-?\d+)$/);
+ return f&&Number(f[2])!==0?Number(f[1])/Number(f[2]):null;
+}
+function answersMatch(a,b){
+ if(normalizedAnswer(a)===normalizedAnswer(b))return true;
+ const x=numericAnswer(a),y=numericAnswer(b);
+ return x!==null&&y!==null&&Math.abs(x-y)<1e-9;
+}
 function nextGameQuestion() { currentIndex++; renderCurrentQuestion(); }
 function finishGame() { cancelGameActions(); const total = currentQuestions.length, percent = Math.round((currentScore / total) * 100); document.getElementById("gameProgress").textContent = "Нәтиже"; document.getElementById("gameQuestion").innerHTML = `<div class="game-finish"><div class="finish-icon">🏆</div><h2>Ойын аяқталды!</h2><p>Нәтиже: <strong>${currentScore} / ${total}</strong> (${percent}%)</p><button type="button" class="game-primary" id="replayGameButton">↻ Қайта ойнау</button></div>`; document.getElementById("replayGameButton").addEventListener("click", startSelectedGame); document.getElementById("gameResult").textContent = "Бұл нәтиже тек осы ойын экранында көрсетіледі."; }
 function showGameMessage(message) { const box = document.getElementById("gameMessage"); if (!box) return; box.textContent = message; box.style.display = "block"; }
