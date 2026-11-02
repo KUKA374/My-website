@@ -90,3 +90,32 @@ function getGameQuestions(gameId, lessonKey) {
 }
 
 // Қосымша ойын скрипттері games.html ішінде ретімен жүктеледі.
+
+
+(function(){
+ const sets={
+ "5-math-1-1":[["48 + 27 = ?","75"],["96 - 38 = ?","58"],["12 × 7 = ?","84"],["144 : 12 = ?","12"]],
+ "6-math-1-1":[["1/2 + 1/4 = ?","3/4"],["3/4 - 1/2 = ?","1/4"],["2/3 + 1/6 = ?","5/6"],["1/2 : 1/4 = ?","2"]],
+ "6-math-1-2":[["0,5 + 0,25 = ?","0,75"],["1,2 × 3 = ?","3,6"],["4,8 : 2 = ?","2,4"],["2,5 + 1,75 = ?","4,25"]],
+ "6-math-1-3":[["A={1,2,3}, B={3,4}. A∩B = ?","{3}"],["A={1,2}, B={2,3}. A∪B = ?","{1,2,3}"],["A={2,4}, B={1,3}. A∩B = ?","∅"],["A={1,3}, B={3,5}. A∩B = ?","{3}"]],
+ "6-math-1-4":[["200 санының 10%-ы = ?","20"],["80 санының 25%-ы = ?","20"],["150 санының 20%-ы = ?","30"],["60 санының 50%-ы = ?","30"]],
+ "6-math-1-5":[["12 : 4 қатынасын қысқарт","3 : 1"],["8 : 12 қатынасын қысқарт","2 : 3"],["10 саны 50 санының неше пайызы?","20"],["15 саны 60 санының неше пайызы?","25"]],
+ "6-math-1-6":[["2 : 5 кері қатынасы","5 : 2"],["3 : 7 кері қатынасы","7 : 3"],["4 : 9 кері қатынасы","9 : 4"],["5 : 8 кері қатынасы","8 : 5"]],
+ "6-math-1-7":[["2 : 3 = x : 12. x = ?","8"],["4 : 5 = 8 : x. x = ?","10"],["3 : 7 = x : 21. x = ?","9"],["5 : 2 = 15 : x. x = ?","6"]],
+ "7-algebra-1-2":[["3x + 5 = 20. x = ?","5"],["2x - 4 = 10. x = ?","7"],["5x = 45. x = ?","9"],["4x + 3 = 19. x = ?","4"]],
+ "7-algebra-1-3":[["2x + 8 = 20. x = ?","6"],["5x - 7 = 18. x = ?","5"],["3x + 4 = 25. x = ?","7"],["8x - 4 = 28. x = ?","4"]],
+ "7-algebra-1-4":[["2³ = ?","8"],["3² = ?","9"],["5² = ?","25"],["2⁵ = ?","32"]]
+ };
+ const extras=["math-race","wheel","auction","blitz","cards","quest","secret-number","puzzle","rocket","castle","car-race","target","bridge","math-king"];
+ for(const [key,pairs] of Object.entries(sets)){
+  const bank=gameQuestionBank[key]||(gameQuestionBank[key]={});
+  const q=pairs.map(([question,answer],i)=>({question,answer,options:[answer,...pairs.map(p=>p[1]).filter(x=>x!==answer)].slice(0,4)}));
+  bank.match=bank.match||pairs.map(([left,right])=>({left,right}));
+  bank.findError=bank.findError||pairs.map(([question,answer])=>({statement:question+" Жауапты тексер.",error:"Есептеуді тексеру қажет",correction:"Дұрыс жауап: "+answer}));
+  bank.quickAnswer=bank.quickAnswer||q;
+  bank.mathCode=bank.mathCode||pairs.map(([question,answer],i)=>({question,answer,code:String(i+1)}));
+  bank.detective=bank.detective||pairs.map(([question,answer])=>({clue:question,answer}));
+  bank["tug-of-war"]=bank["tug-of-war"]||q;
+  for(const id of extras)bank[id]=q.map(x=>({...x}));
+ }
+})();
