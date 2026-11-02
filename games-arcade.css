@@ -55,3 +55,52 @@
 @media(max-width:640px){.matching-columns{gap:5px;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr)}.match-tile{padding:10px 8px;gap:5px;min-height:73px;font-size:12px;flex-wrap:wrap}.match-tile .match-num{width:22px;min-width:22px;height:22px}.match-connect{font-size:17px}.match-banner{padding:12px;align-items:flex-start}.match-banner b{font-size:15px}.match-total{font-size:14px}}
 
 .game-answer-feedback{max-width:750px;margin:18px auto 0;padding:18px;border-radius:17px;font-weight:850;text-align:center;border:1px solid #ffffff26;background:#13263c;color:#cfe6ff;line-height:1.55}.game-answer-feedback.good{border-color:#57d7a766;color:#72f0b7}.game-answer-feedback.bad{border-color:#ed859566;color:#ffc1ca}.game-answer-feedback .game-primary{margin-top:14px}.finish-secret{max-width:540px;margin:16px auto;padding:15px;background:#3b32684d;border:1px solid #aa9dff55;border-radius:15px;font-size:18px;line-height:1.6}.finish-secret strong{color:#80e5f2}
+
+/* Shared controls and feedback for all twenty games. */
+.games-body button,.games-body select,.games-body input,.games-body textarea{touch-action:manipulation}
+.games-body button:focus-visible,.games-body input:focus-visible,.games-body textarea:focus-visible{outline:3px solid #8ae9ff;outline-offset:3px}
+.games-body button:disabled{cursor:default;transform:none}
+.game-area button.answer-correct{background:#155747!important;border-color:#6ff2bd!important;color:#e7fff4!important;opacity:1;text-shadow:none}
+.game-area button.answer-wrong{background:#652d40!important;border-color:#ffa0b4!important;color:#fff!important;opacity:1;text-shadow:none}
+.game-area input,.game-area textarea{display:block;width:100%;max-width:650px;margin:16px auto;padding:15px;border:1px solid #5b7593;border-radius:12px;background:#09182a;color:#fff;font:inherit;min-height:50px}
+.game-area textarea{min-height:120px;resize:vertical}
+.game-area input:disabled,.game-area textarea:disabled{opacity:.75}
+.game-area .game-answer-feedback button,.game-area .scene-feedback button{margin-top:14px}
+.game-area .scene-vehicle{transform:translateX(0)}
+.game-area .scene-question h3,.game-area .race-question,.game-area .code-question,.game-area .detective-clue p,.game-area .error-equation{overflow-wrap:anywhere}
+.game-area .code-slot{width:auto;min-width:42px;padding:5px;height:auto;min-height:48px;overflow-wrap:anywhere}
+.game-area .scene-path{flex-wrap:wrap}.game-area .scene-node{min-width:36px}
+.game-area .game-finish h2,.game-area .scene-done h2{font-size:clamp(24px,5vw,38px);overflow-wrap:anywhere}
+.game-area .team-feedback:empty{display:none}
+@media(max-width:650px){
+ .games-hero::after{display:none}.game-stat{max-width:100%}
+ .presentation-back{min-height:48px;flex-shrink:0}.presentation-title{overflow-wrap:anywhere;min-width:0}
+ .game-area .scene-question,.game-area .scene-stage,.game-area .team-card{padding:16px}
+ .game-area .scene-options,.game-area .answer-grid{grid-template-columns:minmax(0,1fr)}
+ .game-area .scene-options button,.game-area .answer-grid button{min-height:52px;overflow-wrap:anywhere}
+ .game-area .scene-target-options button{border-radius:16px;background:#17334e;text-shadow:none;min-height:60px}
+ .game-area .scene-code span{min-width:30px}.game-area .code-lock,.game-area .error-scene,.game-area .detective-case{padding:16px}
+ .game-area .code-slot{min-width:30px;font-size:17px}.game-area .scene-visual{font-size:36px}
+ .game-area .match-banner{flex-wrap:wrap}.game-area .game-answer-feedback{padding:14px}
+ .game-area .scene-feedback .game-primary,.game-area .game-answer-feedback .game-primary{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+ .games-body *,.games-body *::before,.games-body *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+/* Keep the target circular on wide screens instead of stretching its rings. */
+@media(min-width:651px){
+ .game-area .scene-target-options{grid-template-columns:repeat(2,minmax(0,170px));justify-content:center;gap:20px}
+ .game-area .scene-target-options button{aspect-ratio:1;border-radius:50%;padding:24px;min-height:150px}
+}
+.scene-deck{display:flex;justify-content:center;gap:12px;margin:18px 0}
+.scene-card-back{display:grid;place-items:center;width:70px;height:96px;border:3px solid #d9e8ff;border-radius:10px;background:repeating-linear-gradient(45deg,#353273 0 7px,#51469e 7px 14px);color:#fff;font-size:30px;font-weight:900;box-shadow:0 8px 22px #0005}
+.scene-card-back:nth-child(2){transform:translateY(-5px)}
+@media(max-width:650px){
+ .game-area .teams{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .game-area .team-box{padding:12px 8px;min-width:0}.game-area .team-score{font-size:32px}
+ .game-area .teams .race-track{grid-column:1/-1;order:3}
+ .game-area .teams>div:empty{display:none}
+ .game-area .quick-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .game-area .quick-stats>div{flex-direction:column;padding:9px 5px;gap:3px;font-size:11px}
+ .game-area .quick-stats span{font-size:11px}.game-area .quick-stats strong{font-size:23px}
+}

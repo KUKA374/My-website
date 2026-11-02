@@ -65,7 +65,7 @@ function decorateStage(){
  if(!progress){progress=document.createElement("div");progress.className="arcade-progress";progress.innerHTML="<span></span>";banner.after(progress);}
  const label=area.querySelector("#gameProgress")?.textContent||"";
  const m=label.match(/(\d+)\s*\/\s*(\d+)/);
- const pct=m?Math.max(0,Math.min(100,(Number(m[1])-1)/Number(m[2])*100)):label.includes("Нәтиже")?100:0;
+ const pct=m?Math.max(0,Math.min(100,(Number(m[1])-(label.includes("жұп")?0:1))/Number(m[2])*100)):label.includes("Нәтиже")?100:0;
  if(progress.firstElementChild.style.width!==pct+"%")progress.firstElementChild.style.width=pct+"%";
 }
 let pending=false;
@@ -74,7 +74,7 @@ function queue(){if(pending)return;pending=true;requestAnimationFrame(refresh);}
 document.addEventListener("DOMContentLoaded",()=>{
  const root=document.querySelector(".games-shell")||document.body;
  const observer=new MutationObserver(queue);
- observer.observe(root,{childList:true,subtree:true,attributes:true,attributeFilter:["style","data-game"]});
+ observer.observe(root,{characterData:true,childList:true,subtree:true,attributes:true,attributeFilter:["style","data-game"]});
  queue();
 });
 })();

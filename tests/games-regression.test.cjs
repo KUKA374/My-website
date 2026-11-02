@@ -42,3 +42,21 @@ test("switching between a team, scene and core game resets the source",()=>{
 test("source files parse as JavaScript",()=>{
  for(const file of ["games-data.js","games.js","games-extra-v5.js","games-team-mode.js","games-arcade.js"])assert.doesNotThrow(()=>new Function(read(file)),file);
 });
+
+test("playing-source preparation preserves all 5–7 grade question data",()=>{
+ const {context,ids,topics,get}=fixture();
+ const before=vm.runInContext('JSON.stringify(gameQuestionBank)',context);
+ for(const topic of topics)for(const id of ids)get(id,topic);
+ assert.equal(vm.runInContext('JSON.stringify(gameQuestionBank)',context),before);
+});
+test("question choices always include the answer, including full distractor lists",()=>{
+ const {context,get}=fixture();
+ for(const options of [["3","4","5","6"],["3","4","5","6","2"]]){
+  context.choiceFixture=options;
+  vm.runInContext('gameQuestionBank["fixture"]={quickAnswer:[{question:"1 + 1",answer:"2",options:choiceFixture}]}',context);
+  for(const id of ['math-race','wheel','puzzle']){
+   const questions=get(id,'fixture');assert.equal(questions.length,1);
+   assert.ok(questions[0].options.includes('2'));assert.equal(questions[0].options.length,4);
+  }
+ }
+});

@@ -10,6 +10,7 @@ let quickInputLocked = false;
 let codeResults = [];
 let matchState={order:[],solved:new Set(),solvedRight:new Set(),selected:null,message:""};
 function cancelGameActions(){clearInterval(timerId);timerId=null;clearTimeout(pendingGameTimeout);pendingGameTimeout=null;gameSession++;}
+let quickDeadline = 0;
 let quickTimeLeft = 30;
 let quickStreak = 0;
 let bestStreak = 0;
@@ -53,6 +54,10 @@ function renderGameCards() {
 }
 
 function selectGame(gameId) {
+  cancelGameActions();
+  if(typeof window.cancelGameExtra==='function')window.cancelGameExtra();
+  if(typeof window.cancelGameTeams==='function')window.cancelGameTeams();
+  currentGameMode='';
   selectedGameId = gameId;
   const game = mathGames.find(x => x.id === gameId);
   document.getElementById("selectedGameTitle").textContent = game ? game.title : "";
@@ -65,6 +70,8 @@ function selectGame(gameId) {
   document.getElementById("gameMessage").style.display = "none";
   document.body.classList.add("presentation-mode");
   document.body.dataset.game = gameId;
+  const heading=document.getElementById("selectedGameHeading");heading.tabIndex=-1;heading.focus();
+  window.scrollTo(0,0);
 }
 
 function backToGames() {
@@ -73,12 +80,14 @@ function backToGames() {
   if(typeof window.cancelGameTeams==="function")window.cancelGameTeams();
   currentGameMode="";
   quickInputLocked=false;
+  const previousGame=selectedGameId;
   selectedGameId = null;
   currentQuestions = [];
   document.body.classList.remove("presentation-mode");
   delete document.body.dataset.game;
   document.getElementById("gameStage").style.display = "none";
   document.getElementById("gamesLibrary").style.display = "block";
+  document.querySelector(`[data-game-id="${previousGame}"]`)?.focus();
 }
 
 function getLessonKey() {
@@ -92,6 +101,7 @@ function getLessonKey() {
 function startSelectedGame() {
   if (!selectedGameId) return;
   const lessonKey = getLessonKey();
+  cancelGameActions();
   currentQuestions = getGameQuestions(selectedGameId, lessonKey);
   if (!currentQuestions.length) {
     showGameMessage("Бұл тақырыпқа ойын тапсырмалары әлі енгізілмеген. Ойын механизмі дайын, енді осы тақырыптың есептерін базаға қосуға болады.");
@@ -130,16 +140,16 @@ function renderCurrentQuestion() {
   if (currentGameMode === "tug-of-war") { renderTugOfWar(q); return; }
   if(currentGameMode==="match"){renderMatchingBoard();return;}
   if (currentGameMode === "find-error") {
-    box.innerHTML = `<div class="error-board"><div class="error-heading"><span>❌ ҚАТЕНІ ТАП</span><b>Талдау ${currentIndex + 1}</b></div><div class="error-scene"><div class="error-tape">⚠ МАТЕМАТИКАЛЫҚ ТЕКСЕРУ ⚠</div><div class="error-equation">${escapeGameHtml(q.statement)}</div><div class="error-question">Бұл шешімнің қай жерінде қате бар?</div><textarea id="gameTextAnswer" placeholder="Қатені көрсетіп, дұрыс нұсқаны жазыңыз..."></textarea><button type="button" class="game-primary" id="textAnswerButton">🔎 Қатені тексеру</button></div><div class="error-hint">Дәлеліңде математикалық әрекетті көрсет.</div></div>`;
+    box.innerHTML = `<div class="error-board"><div class="error-heading"><span>❌ ҚАТЕНІ ТАП</span><b>Талдау ${currentIndex + 1}</b></div><div class="error-scene"><div class="error-tape">⚠ МАТЕМАТИКАЛЫҚ ТЕКСЕРУ ⚠</div><div class="error-equation">${escapeGameHtml(q.statement)}</div><div class="error-question">Бұл шешімнің қай жерінде қате бар?</div><textarea aria-label="Қатенің түсіндірмесі" id="gameTextAnswer" placeholder="Қатені көрсетіп, дұрыс нұсқаны жазыңыз..."></textarea><button type="button" class="game-primary" id="textAnswerButton">🔎 Қатені тексеру</button></div><div class="error-hint">Дәлеліңде математикалық әрекетті көрсет.</div></div>`;
     bindTextAnswer(); return;
   }
   if (currentGameMode === "math-code") {
     const codeSlots = Array.from({length: total}, (_, i) => `<span class="code-slot ${i < currentIndex ? "filled" : i === currentIndex ? "active" : ""}">${i < currentIndex ? escapeGameHtml(codeResults[i] ?? "—") : "_"}</span>`).join("");
-    box.innerHTML = `<div class="code-board"><div class="code-heading"><span>🔐 МАТЕМАТИКАЛЫҚ КОД</span><b>Құлып ${currentIndex + 1}/${total}</b></div><div class="code-lock"><div class="lock-icon">🔒</div><div class="code-label">ҚҰПИЯ КОД</div><div class="code-slots">${codeSlots}</div><div class="code-question">${escapeGameHtml(q.question)}</div><input id="gameTextAnswer" inputmode="text" autocomplete="off" placeholder="Жауабыңызды енгізіңіз"><button type="button" class="game-primary code-button" id="textAnswerButton">🔓 Кодқа қосу</button></div><div class="code-hint">Әр дұрыс жауап құпия кодтың бір бөлігін ашады.</div></div>`;
+    box.innerHTML = `<div class="code-board"><div class="code-heading"><span>🔐 МАТЕМАТИКАЛЫҚ КОД</span><b>Құлып ${currentIndex + 1}/${total}</b></div><div class="code-lock"><div class="lock-icon">🔒</div><div class="code-label">ҚҰПИЯ КОД</div><div class="code-slots">${codeSlots}</div><div class="code-question">${escapeGameHtml(q.question)}</div><input id="gameTextAnswer" aria-label="Жауабыңыз" inputmode="text" autocomplete="off" placeholder="Жауабыңызды енгізіңіз"><button type="button" class="game-primary code-button" id="textAnswerButton">🔓 Кодқа қосу</button></div><div class="code-hint">Әр дұрыс жауап құпия кодтың бір бөлігін ашады.</div></div>`;
     bindTextAnswer(); return;
   }
   if (currentGameMode === "detective") {
-    box.innerHTML = `<div class="detective-board"><div class="detective-heading"><span>🕵️ МАТЕМАТИКАЛЫҚ ДЕТЕКТИВ</span><b>Іс №${String(currentIndex + 1).padStart(2, "0")}</b></div><div class="detective-case"><div class="detective-stamp">EVIDENCE</div><div class="detective-clue"><span>🔍 ДӘЛЕЛ</span><p>${escapeGameHtml(q.clue)}</p></div><div class="detective-line"></div><label>Тергеу жауабы</label><input id="gameTextAnswer" inputmode="text" autocomplete="off" placeholder="Дәлелден шыққан жауап"><button type="button" class="game-primary detective-button" id="textAnswerButton">🕵️ Дәлелді тексеру</button></div><div class="detective-hint">Барлық дәлелдерді дұрыс шешсең, математикалық істің шешімі табылады.</div></div>`;
+    box.innerHTML = `<div class="detective-board"><div class="detective-heading"><span>🕵️ МАТЕМАТИКАЛЫҚ ДЕТЕКТИВ</span><b>Іс №${String(currentIndex + 1).padStart(2, "0")}</b></div><div class="detective-case"><div class="detective-stamp">EVIDENCE</div><div class="detective-clue"><span>🔍 ДӘЛЕЛ</span><p>${escapeGameHtml(q.clue)}</p></div><div class="detective-line"></div><label for="gameTextAnswer">Тергеу жауабы</label><input id="gameTextAnswer" aria-label="Жауабыңыз" inputmode="text" autocomplete="off" placeholder="Дәлелден шыққан жауап"><button type="button" class="game-primary detective-button" id="textAnswerButton">🕵️ Дәлелді тексеру</button></div><div class="detective-hint">Барлық дәлелдерді дұрыс шешсең, математикалық істің шешімі табылады.</div></div>`;
     bindTextAnswer();
   }
 }
@@ -148,7 +158,7 @@ function renderMatchingBoard(){
  const box=document.getElementById("gameQuestion"),questions=currentQuestions,total=questions.length;
  const done=matchState.solved,solvedRight=matchState.solvedRight,selected=matchState.selected;
  document.getElementById("gameProgress").textContent=`${done.size} / ${total} жұп`;
- const left=questions.map((q,i)=>`<button type="button" data-match-left="${i}" class="match-tile ${done.has(i)?"solved":selected===i?"selected":""}" ${done.has(i)?"disabled":""}><span class="match-num">${i+1}</span>${escapeGameHtml(q.left)}</button>`).join("");
+ const left=questions.map((q,i)=>`<button type="button" data-match-left="${i}" aria-pressed="${selected===i}" class="match-tile ${done.has(i)?"solved":selected===i?"selected":""}" ${done.has(i)?"disabled":""}><span class="match-num">${i+1}</span>${escapeGameHtml(q.left)}</button>`).join("");
  const right=matchState.order.map((i,pos)=>`<button type="button" data-match-right="${pos}" class="match-tile ${solvedRight.has(i)?"solved":""}" ${solvedRight.has(i)?"disabled":""}><span class="match-num">${String.fromCharCode(65+pos)}</span>${escapeGameHtml(questions[i].right)}</button>`).join("");
  box.innerHTML=`<div class="matching-game"><div class="match-banner"><div><b>🧩 СӘЙКЕСТЕНДІР</b><p>Сол жақтағы тапсырманы таңдап, оң жақтағы сәйкес жауабын бас.</p></div><span class="match-total">${done.size} / ${total} ✓</span></div><div class="matching-columns"><div><h3>📘 Тапсырмалар</h3><div class="matching-list">${left}</div></div><div class="match-connect">↔</div><div><h3>✨ Жауаптар</h3><div class="matching-list">${right}</div></div></div><div class="match-status" role="status">${escapeGameHtml(matchState.message||"Жұптарды тауып, тақтаны толық аш!")}</div></div>`;
  box.querySelectorAll("[data-match-left]").forEach(btn=>btn.onclick=()=>{
@@ -168,18 +178,18 @@ function renderMatchingBoard(){
 }
 function renderQuickAnswer(q) {
   document.getElementById("gameProgress").textContent = `${currentIndex + 1} / ${currentQuestions.length}`;
-  document.getElementById("gameQuestion").innerHTML = `<div class="quick-board"><div class="quick-stats"><div><span>⏱️ Уақыт</span><strong id="quickTimer">30</strong> сек</div><div><span>⭐ Ұпай</span><strong id="quickScore">${currentScore}</strong></div><div><span>🔥 Серия</span><strong id="quickStreak">${quickStreak}</strong></div></div><div class="quick-timebar"><div id="quickTimebarFill"></div></div><div class="game-task quick-task"><div class="quick-label">⚡ ЖЫЛДАМ ЖАУАП</div><p class="game-prompt">${escapeGameHtml(q.question)}</p><input id="quickAnswerInput" inputmode="text" autocomplete="off" placeholder="Жауабыңызды енгізіңіз"><button type="button" class="game-primary quick-submit" id="quickAnswerButton">Жауап беру →</button><div id="quickFeedback" class="quick-feedback" aria-live="polite"></div></div></div>`;
+  document.getElementById("gameQuestion").innerHTML = `<div class="quick-board"><div class="quick-stats"><div><span>⏱️ Уақыт</span><strong id="quickTimer">30</strong> сек</div><div><span>⭐ Ұпай</span><strong id="quickScore">${currentScore}</strong></div><div><span>🔥 Серия</span><strong id="quickStreak">${quickStreak}</strong></div></div><div class="quick-timebar"><div id="quickTimebarFill"></div></div><div class="game-task quick-task"><div class="quick-label">⚡ ЖЫЛДАМ ЖАУАП</div><p class="game-prompt">${escapeGameHtml(q.question)}</p><input id="quickAnswerInput" aria-label="Жауабыңыз" inputmode="text" autocomplete="off" placeholder="Жауабыңызды енгізіңіз"><button type="button" class="game-primary quick-submit" id="quickAnswerButton">Жауап беру →</button><div id="quickFeedback" class="quick-feedback" aria-live="polite"></div></div></div>`;
   const input = document.getElementById("quickAnswerInput");
   document.getElementById("quickAnswerButton").addEventListener("click", submitQuickAnswer);
-  input.addEventListener("keydown", event => { if (event.key === "Enter") submitQuickAnswer(); });
+  input.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); submitQuickAnswer(); } });
   input.focus();
   if (currentIndex === 0 && !timerId && !quickInputLocked) startQuickTimer();
   updateQuickStats();
 }
 
 function startQuickTimer() {
-  quickTimeLeft = 30; updateQuickStats();
-  timerId = setInterval(() => { quickTimeLeft -= 0.1; if (quickTimeLeft <= 0) { quickTimeLeft = 0; updateQuickStats(); clearInterval(timerId); timerId = null; finishQuickGame(true); return; } updateQuickStats(); }, 100);
+  quickTimeLeft = 30; quickDeadline=performance.now()+30000; updateQuickStats();
+  timerId = setInterval(() => { quickTimeLeft = Math.max(0,(quickDeadline-performance.now())/1000); if (quickTimeLeft <= 0) { quickTimeLeft = 0; updateQuickStats(); clearInterval(timerId); timerId = null; finishQuickGame(true); return; } updateQuickStats(); }, 100);
 }
 
 function updateQuickStats() {
@@ -189,8 +199,10 @@ function updateQuickStats() {
 
 function submitQuickAnswer() {
   if (currentGameMode !== "quick-answer" || quickTimeLeft <= 0 || quickInputLocked || currentIndex >= currentQuestions.length) return;
-  quickInputLocked=true;
-  const input = document.getElementById("quickAnswerInput"); if (!input) return;
+  const input = document.getElementById("quickAnswerInput"); if (!input||!input.value.trim()) return;
+  quickTimeLeft=Math.max(0,(quickDeadline-performance.now())/1000);
+  if(quickTimeLeft<=0){finishQuickGame(true);return;}
+  quickInputLocked=true;input.disabled=true;
   const correct = answersMatch(input.value,currentQuestions[currentIndex].answer);
   const feedback = document.getElementById("quickFeedback"), button = document.getElementById("quickAnswerButton"); if (button) button.disabled = true;
   if (correct) { quickStreak++; bestStreak = Math.max(bestStreak, quickStreak); currentScore += 10 + Math.max(0, quickStreak - 1) * 2; if (feedback) feedback.textContent = `✓ Дұрыс! +${10 + Math.max(0, quickStreak - 1) * 2} ұпай`; }
@@ -207,7 +219,7 @@ function finishQuickGame(timeUp) {
 }
 
 function bindAnswerButtons() { document.querySelectorAll("#gameQuestion [data-answer]").forEach(button => button.addEventListener("click", () => submitGameAnswer(button.dataset.answer))); }
-function bindTextAnswer() { const button = document.getElementById("textAnswerButton"), input = document.getElementById("gameTextAnswer"); if (button) button.addEventListener("click", submitTextAnswer); if (input && input.tagName === "INPUT") { input.addEventListener("keydown", event => { if (event.key === "Enter") submitTextAnswer(); }); input.focus(); } }
+function bindTextAnswer() { const button = document.getElementById("textAnswerButton"), input = document.getElementById("gameTextAnswer"); if (button) button.addEventListener("click", submitTextAnswer); if (input && input.tagName === "INPUT") { input.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); submitTextAnswer(); } }); input.focus(); } }
 
 function renderTugOfWar(q) {
   const left = tugScores.left, right = tugScores.right, total = currentQuestions.length, ropePercent = 50 + tugPosition * 7, activeTeam = tugTurn === "left" ? "🔵 Көк команда" : "🔴 Қызыл команда";
@@ -229,7 +241,7 @@ function finishTugGame(winnerByPosition) { clearInterval(timerId); const winner 
 function submitGameAnswer(value) { const q=currentQuestions[currentIndex];if(!q)return;if(answersMatch(value,q.right))currentScore++;nextGameQuestion(); }
 function submitTextAnswer(){
  const input=document.getElementById("gameTextAnswer"),q=currentQuestions[currentIndex];
- if(!input||!q)return;
+ if(!input||!q||input.disabled)return;
  const value=input.value.trim();if(!value)return;
  const correct=currentGameMode==="find-error"
   ? (q.answer!==undefined ? answersMatch(value,q.answer)||normalizedAnswer(value).includes(normalizedAnswer(q.correction))
@@ -243,10 +255,11 @@ function submitTextAnswer(){
  panel.textContent=correct?"✓ Дұрыс!":("Дұрыс жауап: "+String(q.correction||q.answer||"Қатені қайта талда"));
  panel.classList.add(correct?"good":"bad");
  const next=document.createElement("button");next.type="button";next.className="game-primary";next.textContent=currentIndex+1>=currentQuestions.length?"Нәтижені көру":"Келесі тапсырма →";
- next.onclick=nextGameQuestion;panel.appendChild(document.createElement("div")).appendChild(next);
- const target=document.getElementById("gameQuestion");if(target)target.appendChild(panel);
+ const session=gameSession,index=currentIndex;let advanced=false;
+ next.onclick=()=>{if(advanced||session!==gameSession||index!==currentIndex)return;advanced=true;nextGameQuestion();};panel.appendChild(document.createElement("div")).appendChild(next);
+ const target=document.getElementById("gameQuestion");if(target)target.appendChild(panel);next.focus({preventScroll:true});
 }
-function normalizedAnswer(value){return String(value??"").trim().toLowerCase().replace(/\s+/g,"").replace(/,/g,".");}
+function normalizedAnswer(value){return String(value??"").trim().toLowerCase().replace(/[−–]/g,"-").replace(/\s+/g,"").replace(/,/g,".");}
 function numericAnswer(value){
  const t=normalizedAnswer(value);
  if(/^-?\d+(?:\.\d+)?$/.test(t))return Number(t);
