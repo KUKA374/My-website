@@ -11,7 +11,7 @@
   <main class="section"><div class="container" id="classPage"></div></main>
   <footer><div class="container">© 2026 Math Teacher Platform</div></footer>
   <script src="auth.js?v=3"></script><script>requireRole(["teacher", "admin", "super_admin"]);</script>
-  <script src="curriculum-data.js?v=5"></script>
+  <script src="curriculum-data.js?v=9-subjects-only"></script>
   <script src="script.js?v=5"></script>
   <script src="ktp-data.js?v=5"></script>
   <script>window.renderQuarterPage=function(){};</script>
@@ -29,8 +29,6 @@
   <script src="ktp-7-q3.js?v=1"></script>
   <script src="ktp-7-q4.js?v=1"></script>
   <script src="ktp-8-loader.js?v=1"></script>
-  <script src="ktp-9-algebra.js?v=1"></script>
-  <script src="ktp-9-geometry.js?v=2"></script>
   <script>
     window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
       const classId=new URLSearchParams(location.search).get('class');
