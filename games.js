@@ -8,6 +8,7 @@ let pendingGameTimeout = null;
 let gameSession = 0;
 let quickInputLocked = false;
 let codeResults = [];
+let matchState={order:[],solved:new Set(),selected:null,message:""};
 function cancelGameActions(){clearInterval(timerId);timerId=null;clearTimeout(pendingGameTimeout);pendingGameTimeout=null;gameSession++;}
 let quickTimeLeft = 30;
 let quickStreak = 0;
@@ -102,6 +103,9 @@ function startSelectedGame() {
   currentGameMode = selectedGameId;
   quickInputLocked=false;
   codeResults=[];
+  const order=currentQuestions.map((_,i)=>i);
+  for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];}
+  matchState={order,solved:new Set(),selected:null,message:""};
   quickTimeLeft = 30;
   quickStreak = 0;
   bestStreak = 0;
@@ -124,17 +128,7 @@ function renderCurrentQuestion() {
   document.getElementById("gameProgress").textContent = `${currentIndex + 1} / ${total}`;
   if (currentGameMode === "quick-answer") { renderQuickAnswer(q); return; }
   if (currentGameMode === "tug-of-war") { renderTugOfWar(q); return; }
-  if(currentGameMode==="match"){
-    const variants=[...new Set(currentQuestions.map(item=>String(item.right)).filter(v=>v!==String(q.right)))];
-    for(const v of ["x = 4","x = 5","x = 6","x = 7","x = 8","x = 9","x = 10","0","1","2","3","4","5","6","7","8","9","10","12"]){
-      if(variants.length>=3)break;if(v!==String(q.right)&&!variants.includes(v))variants.push(v);
-    }
-    const options=[String(q.right),...variants.slice(0,3)];
-    const n=(currentIndex+1)%options.length;
-    const mixed=options.slice(n).concat(options.slice(0,n));
-    box.innerHTML=`<div class="match-board"><div class="match-heading"><span>🧩 СӘЙКЕСТЕНДІР</span><b>Жұп ${currentIndex+1}</b></div><div class="match-stage"><div class="match-card match-question-card"><small>СҰРАҚ</small><strong>${escapeGameHtml(q.left)}</strong></div><div class="match-arrow">→</div><div class="match-answer-zone">${mixed.map((v,j)=>`<button class="match-option" type="button" data-answer="${escapeGameHtml(v)}"><span>${j+1}</span>${escapeGameHtml(v)}</button>`).join("")}</div></div><div class="match-hint">Төрт нұсқаның ішінен дұрыс жауапты таңда.</div></div>`;
-    bindAnswerButtons();return;
-  }
+  if(currentGameMode==="match"){renderMatchingBoard();return;}
   if (currentGameMode === "find-error") {
     box.innerHTML = `<div class="error-board"><div class="error-heading"><span>❌ ҚАТЕНІ ТАП</span><b>Талдау ${currentIndex + 1}</b></div><div class="error-scene"><div class="error-tape">⚠ МАТЕМАТИКАЛЫҚ ТЕКСЕРУ ⚠</div><div class="error-equation">${escapeGameHtml(q.statement)}</div><div class="error-question">Бұл шешімнің қай жерінде қате бар?</div><textarea id="gameTextAnswer" placeholder="Қатені көрсетіп, дұрыс нұсқаны жазыңыз..."></textarea><button type="button" class="game-primary" id="textAnswerButton">🔎 Қатені тексеру</button></div><div class="error-hint">Дәлеліңде математикалық әрекетті көрсет.</div></div>`;
     bindTextAnswer(); return;
@@ -150,6 +144,28 @@ function renderCurrentQuestion() {
   }
 }
 
+function renderMatchingBoard(){
+ const box=document.getElementById("gameQuestion"),questions=currentQuestions,total=questions.length;
+ const done=matchState.solved,selected=matchState.selected;
+ document.getElementById("gameProgress").textContent=`${done.size} / ${total} жұп`;
+ const left=questions.map((q,i)=>`<button type="button" data-match-left="${i}" class="match-tile ${done.has(i)?"solved":selected===i?"selected":""}" ${done.has(i)?"disabled":""}><span class="match-num">${i+1}</span>${escapeGameHtml(q.left)}</button>`).join("");
+ const right=matchState.order.map((i,pos)=>`<button type="button" data-match-right="${pos}" class="match-tile ${done.has(i)?"solved":""}" ${done.has(i)?"disabled":""}><span class="match-num">${String.fromCharCode(65+pos)}</span>${escapeGameHtml(questions[i].right)}</button>`).join("");
+ box.innerHTML=`<div class="matching-game"><div class="match-banner"><div><b>🧩 СӘЙКЕСТЕНДІР</b><p>Сол жақтағы тапсырманы таңдап, оң жақтағы сәйкес жауабын бас.</p></div><span class="match-total">${done.size} / ${total} ✓</span></div><div class="matching-columns"><div><h3>📘 Тапсырмалар</h3><div class="matching-list">${left}</div></div><div class="match-connect">↔</div><div><h3>✨ Жауаптар</h3><div class="matching-list">${right}</div></div></div><div class="match-status" role="status">${escapeGameHtml(matchState.message||"Жұптарды тауып, тақтаны толық аш!")}</div></div>`;
+ box.querySelectorAll("[data-match-left]").forEach(btn=>btn.onclick=()=>{
+   matchState.selected=Number(btn.dataset.matchLeft);matchState.message="Енді оң жақтан сәйкес жауапты таңда.";renderMatchingBoard();
+ });
+ box.querySelectorAll("[data-match-right]").forEach(btn=>btn.onclick=()=>{
+   const i=matchState.selected;if(i===null){matchState.message="Алдымен тапсырманы таңда.";renderMatchingBoard();return;}
+   const target=matchState.order[Number(btn.dataset.matchRight)];
+   if(done.has(target))return;
+   if(answersMatch(questions[i].right,questions[target].right)){
+     done.add(i);done.add(target);
+     matchState.message="✓ Дұрыс сәйкестік! Келесі жұпты тап.";currentScore=done.size;
+     matchState.selected=null;renderMatchingBoard();
+     if(done.size===total){const session=gameSession;pendingGameTimeout=setTimeout(()=>{if(session===gameSession&&currentGameMode==="match")finishGame();},700);}
+   }else{matchState.message="Қате жұп. Тағы бір рет тексер.";matchState.selected=null;renderMatchingBoard();}
+ });
+}
 function renderQuickAnswer(q) {
   document.getElementById("gameProgress").textContent = `${currentIndex + 1} / ${currentQuestions.length}`;
   document.getElementById("gameQuestion").innerHTML = `<div class="quick-board"><div class="quick-stats"><div><span>⏱️ Уақыт</span><strong id="quickTimer">30</strong> сек</div><div><span>⭐ Ұпай</span><strong id="quickScore">${currentScore}</strong></div><div><span>🔥 Серия</span><strong id="quickStreak">${quickStreak}</strong></div></div><div class="quick-timebar"><div id="quickTimebarFill"></div></div><div class="game-task quick-task"><div class="quick-label">⚡ ЖЫЛДАМ ЖАУАП</div><p class="game-prompt">${escapeGameHtml(q.question)}</p><input id="quickAnswerInput" inputmode="numeric" autocomplete="off" placeholder="Жауабыңызды енгізіңіз"><button type="button" class="game-primary quick-submit" id="quickAnswerButton">Жауап беру →</button><div id="quickFeedback" class="quick-feedback" aria-live="polite"></div></div></div>`;
