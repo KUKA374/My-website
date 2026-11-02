@@ -38,9 +38,17 @@
     document.head.appendChild(s);
   }
 
-  function sourceQuestions(key) {
-    const bank = window.gameQuestionBank?.[key];
-    return bank?.quickAnswer ? bank.quickAnswer.map(q => ({ question:q.question, answer:String(q.answer), options:q.options || [String(q.answer),'5','8','10'].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4) })) : [];
+  function sourceQuestions(key){
+    const bank=window.gameQuestionBank?.[key];
+    return (bank?.quickAnswer||[]).map((q,i)=>{
+      const answer=String(q.answer);
+      const choices=[...new Set([...(q.options||[]).map(String),answer])];
+      const number=Number(answer.replace(",","."));
+      const others=Number.isFinite(number)?[number+1,number-1,number+2,number-2].map(String):["0","1","2","3","5","8","10","1/2"];
+      for(const v of others){if(!choices.includes(v))choices.push(v);if(choices.length>=4)break;}
+      const four=choices.slice(0,4),offset=(i+1)%four.length;
+      return {question:q.question,answer,options:four.slice(offset).concat(four.slice(0,offset))};
+    });
   }
 
   function startState(id, key) {
@@ -124,6 +132,8 @@
     b.innerHTML=`<div class="team-game"><div class="team-card winner"><div class="winner-icon">🪢🏆</div><h2>${winner}</h2><p>Арқан тартыс аяқталды!</p><div class="teams"><div class="team-box blue"><div class="team-name">КӨК</div><div class="team-score">${state.tug.blue}</div></div><div></div><div class="team-box red"><div class="team-name">ҚЫЗЫЛ</div><div class="team-score">${state.tug.red}</div></div></div><button class="game-primary" id="tugReplay">🔄 Қайта ойнау</button></div></div>`;
     document.getElementById('tugReplay').onclick=()=>{if(typeof startSelectedGame==='function')startSelectedGame();};
   }
+
+  window.cancelGameTeams=function(){state.id=null;state.token++;clearTimeout(state.wheelTimeout);state.wheelTimeout=null;};
 
   window.renderCurrentQuestion=function(){
     if(state.id==='math-race')return renderRace();
