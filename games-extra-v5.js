@@ -152,11 +152,106 @@
     document.getElementById('v5replay').onclick=replay;
   }
 
+
+  const sceneNames={
+    auction:"💰 МАТЕМАТИКАЛЫҚ АУКЦИОН",blitz:"🧠 БЛИЦ",cards:"🃏 КАРТОЧКАЛАР",quest:"🗺️ МАТЕМАТИКАЛЫҚ КВЕСТ",
+    "secret-number":"🔑 ҚҰПИЯ САН",puzzle:"🧩 ПАЗЛ ЖИНА",rocket:"🚀 ЗЫМЫРАН ЖАРЫСЫ",castle:"🏰 ҚАМАЛДЫ ҚОРҒА",
+    "car-race":"🏎️ КӨЛІК ЖАРЫСЫ",target:"🎯 НЫСАНА",bridge:"🌉 КӨПІРДЕН ӨТ","math-king":"👑 МАТЕМАТИКА ПАТШАСЫ"
+  };
+  function sceneCss(){
+    if(document.getElementById("game-scenes-css"))return;
+    const el=document.createElement("style");el.id="game-scenes-css";
+    el.textContent=`
+      .scene{--scene-accent:#5ee7ff;max-width:960px;margin:auto;color:#eef8ff}
+      .scene[data-kind="auction"]{--scene-accent:#f8cc73}.scene[data-kind="puzzle"]{--scene-accent:#b5a3ff}
+      .scene[data-kind="castle"]{--scene-accent:#ff9b8a}.scene[data-kind="quest"]{--scene-accent:#7be0ae}
+      .scene[data-kind="rocket"]{--scene-accent:#87c6ff}.scene[data-kind="bridge"]{--scene-accent:#7ee2d3}
+      .scene-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+      .scene-title{font-weight:900;font-size:13px;letter-spacing:1px;color:var(--scene-accent)}
+      .scene-chip{font-size:12px;border:1px solid rgba(255,255,255,.13);border-radius:999px;padding:8px 13px;background:#142a43}
+      .scene-stage{position:relative;min-height:172px;padding:24px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:radial-gradient(circle at 80% 0%,rgba(94,231,255,.09),transparent 50%),linear-gradient(145deg,#10253d,#0a1729);overflow:hidden;margin-bottom:16px}
+      .scene-stage h3{font-size:15px;color:#bed1e4;margin:0 0 16px}
+      .scene-visual{font-size:52px;line-height:1.4;text-align:center}
+      .scene-question{border:1px solid rgba(255,255,255,.11);background:#0d2035;border-radius:22px;padding:24px;text-align:center}
+      .scene-question h3{font-size:clamp(23px,4vw,36px);line-height:1.35;margin:8px 0 24px}
+      .scene-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+      .scene-options button{font:inherit;font-weight:800;color:#fff;background:#17334e;border:1px solid rgba(255,255,255,.16);border-radius:14px;min-height:56px;padding:14px;cursor:pointer;transition:transform .18s,border-color .18s,background .18s}
+      .scene-options button:hover{transform:translateY(-2px);border-color:var(--scene-accent);background:#1d4261}
+      .scene-options button:focus-visible{outline:3px solid var(--scene-accent);outline-offset:2px}
+      .scene-progress{height:12px;border-radius:99px;background:#1c344b;overflow:hidden;margin:15px 0}
+      .scene-progress span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#39c9e8,var(--scene-accent));transition:width .45s}
+      .scene-path{display:flex;justify-content:space-between;gap:6px;align-items:center;margin:24px 0}
+      .scene-node{flex:1;text-align:center;border-radius:13px;padding:12px 2px;background:#19324b;border:1px solid #31516b;font-size:23px}
+      .scene-node.done{background:#145a50;border-color:#4ad5a2}.scene-node.current{outline:2px solid var(--scene-accent);outline-offset:2px}
+      .scene-puzzle{display:grid;grid-template-columns:repeat(3,1fr);max-width:290px;margin:auto;gap:5px}
+      .scene-piece{aspect-ratio:1;display:grid;place-items:center;border-radius:10px;border:2px dashed #49617d;background:#0a182b;color:#66819e;font-size:28px;transition:background .25s}
+      .scene-piece.done{border:2px solid #9d91ff;background:linear-gradient(140deg,#6456c5,#2c8fc0);color:white}
+      .scene-track{height:98px;border-radius:18px;position:relative;background:repeating-linear-gradient(90deg,#183c59 0 32px,#204662 32px 64px);border:1px solid #38627b;margin-top:24px}
+      .scene-vehicle{position:absolute;left:var(--pos);top:17px;font-size:43px;transition:left .6s ease;transform:translateX(-20%)}.scene-finish{position:absolute;right:14px;top:10px;font-size:43px}
+      .scene-health{display:flex;gap:6px;justify-content:center;font-size:29px}
+      .scene-targets{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.scene-target{font-size:39px;padding:15px;border-radius:50%;border:2px solid #44647f;background:#163550}
+      .scene-bridge{display:flex;gap:5px;justify-content:center;margin-top:28px}.scene-plank{height:27px;flex:1;max-width:60px;background:#244059;border:2px dashed #5a7892;border-radius:5px}.scene-plank.done{background:#8b6041;border:2px solid #d3a06a}
+      .scene-auction{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.scene-money{font-size:26px;font-weight:900;color:#f8cc73}
+      .scene-feedback{min-height:24px;margin-top:14px;font-weight:800;color:#b9cfe2}
+      .scene-done{text-align:center;padding:38px 20px;border:1px solid rgba(255,255,255,.13);border-radius:23px;background:#0e2239}
+      .scene-done h2{font-size:30px}.scene-done p{color:#b9cfe2}
+      @media(max-width:600px){.scene-stage{padding:17px;min-height:130px}.scene-question{padding:18px}.scene-options{grid-template-columns:1fr}.scene-node{font-size:17px;padding:9px 2px}.scene-visual{font-size:38px}}
+      @media(prefers-reduced-motion:reduce){.scene-progress span,.scene-vehicle,.scene-piece,.scene-options button{transition:none}}
+    `;
+    document.head.appendChild(el);
+  }
   function renderFallback(){
-    const q=special.qs[special.i], b=document.getElementById('gameQuestion'); if(!q||!b)return;
-    const total=special.qs.length;
-    b.innerHTML=`<div class="v5"><div class="v5-hud"><span class="v5-pill">${esc(special.id)}</span><span class="v5-pill">Сұрақ <strong>${special.i+1}/${total}</strong></span><span class="v5-pill">Ұпай <strong>${special.score}</strong></span></div><div class="v5-card"><div class="v5-q">${esc(q.question)}</div><div class="v5-opts">${q.options.map(o=>`<button type="button" data-extra="${esc(o)}">${esc(o)}</button>`).join('')}</div></div></div>`;
-    b.querySelectorAll('[data-extra]').forEach(x=>x.onclick=()=>{if(String(x.dataset.extra)===String(q.answer))special.score+=10;special.i++;special.i>=special.qs.length?finishRace():renderFallback();});
+    sceneCss();
+    const b=document.getElementById("gameQuestion");if(!b)return;
+    const id=special.id,qs=special.qs,total=qs.length,i=special.i,q=qs[i];
+    const correct=Number(special.score/10);
+    if(!q){
+      const label=sceneNames[id]||"ОЙЫН";
+      b.innerHTML=`<div class="scene-done"><div class="scene-visual">🏆</div><h2>${esc(label)} аяқталды!</h2><p>Дұрыс жауап: ${correct} / ${total}</p><p>Жиналған ұпай: ${special.score}</p><button class="game-primary" id="scene-replay">🔄 Қайта ойнау</button></div>`;
+      b.querySelector("#scene-replay").onclick=replay;
+      return;
+    }
+    const progress=Math.round(i/total*100),label=sceneNames[id]||id;
+    let stage="";
+    if(id==="rocket"||id==="car-race"){
+      const vehicle=id==="rocket"?"🚀":"🏎️";
+      stage=`<h3>${id==="rocket"?"Ғарышқа ұшу":"Мәре сызығына жету"}</h3><div class="scene-track"><span class="scene-vehicle" style="--pos:${Math.min(85,correct/total*85)}%">${vehicle}</span><span class="scene-finish">🏁</span></div><div class="scene-progress"><span style="width:${progress}%"></span></div>`;
+    }else if(id==="puzzle"){
+      const cells=Array.from({length:9},(_,n)=>`<div class="scene-piece ${n<Math.round(correct/total*9)?"done":""}">${n<Math.round(correct/total*9)?"✦":"?"}</div>`).join("");
+      stage=`<h3>Дұрыс жауаппен пазл бөліктерін аш</h3><div class="scene-puzzle">${cells}</div>`;
+    }else if(id==="quest"||id==="math-king"){
+      const icon=id==="quest"?"🗺️":"👑";
+      stage=`<h3>${icon} Кезеңдер картасы</h3><div class="scene-path">${Array.from({length:Math.min(total,8)},(_,n)=>`<div class="scene-node ${n<i?"done":n===i?"current":""}">${n<i?"✓":n===i?"📍":"🔒"}</div>`).join("")}</div>`;
+    }else if(id==="auction"){
+      stage=`<h3>Аукциондағы ұпай қоры</h3><div class="scene-auction"><span class="scene-chip">Бастапқы қор: 100</span><span class="scene-chip">Жауап бонусы: +10</span><span class="scene-money">💰 ${100+special.score} ұпай</span></div><div class="scene-visual">🔨</div>`;
+    }else if(id==="castle"){
+      stage=`<h3>Қамалды қорғау — ${i+1}-шабуыл</h3><div class="scene-visual">🏰 🛡️</div><div class="scene-health">${Array.from({length:Math.min(total,8)},(_,n)=>n<i?"🟩":"⬜").join("")}</div>`;
+    }else if(id==="bridge"){
+      stage=`<h3>Көпірді аяқтау үшін есептерді шеш</h3><div class="scene-visual">🚶 🌊</div><div class="scene-bridge">${Array.from({length:Math.min(total,10)},(_,n)=>`<div class="scene-plank ${n<correct?"done":""}"></div>`).join("")}</div>`;
+    }else if(id==="target"){
+      stage=`<h3>Дұрыс жауап — дәл тиген нысана!</h3><div class="scene-targets"><div class="scene-target">🎯</div><div class="scene-target">🎯</div><div class="scene-target">🎯</div></div>`;
+    }else if(id==="cards"){
+      stage=`<h3>Карточка №${i+1}</h3><div class="scene-visual">🃏 🂠 🃏</div>`;
+    }else if(id==="secret-number"){
+      stage=`<h3>Құпия кодты жина</h3><div class="scene-visual">${"🔓".repeat(correct)}${"🔒".repeat(Math.max(0,total-correct))}</div>`;
+    }else if(id==="blitz"){
+      stage=`<h3>Блиц — жылдам әрі дәл жауап бер!</h3><div class="scene-visual">⚡ ⏱️</div><div class="scene-progress"><span style="width:${progress}%"></span></div>`;
+    }else{
+      stage=`<h3>Математикалық сынақ</h3><div class="scene-visual">⭐</div>`;
+    }
+    const options=Array.isArray(q.options)&&q.options.length?q.options:[String(q.answer)];
+    b.innerHTML=`<div class="scene" data-kind="${esc(id)}"><div class="scene-header"><span class="scene-title">${esc(label)}</span><span class="scene-chip">Сұрақ ${i+1}/${total} · ⭐ ${special.score}</span></div><div class="scene-stage">${stage}</div><div class="scene-question"><h3>${esc(q.question)}</h3><div class="scene-options">${options.map(o=>`<button type="button" data-scene-answer="${esc(o)}">${esc(o)}</button>`).join("")}</div><div class="scene-feedback" aria-live="polite"></div></div></div>`;
+    b.querySelectorAll("[data-scene-answer]").forEach(btn=>btn.onclick=()=>{
+      const correctAnswer=String(btn.dataset.sceneAnswer)===String(q.answer);
+      b.querySelectorAll("[data-scene-answer]").forEach(x=>x.disabled=true);
+      if(correctAnswer)special.score+=10;
+      const feedback=b.querySelector(".scene-feedback");
+      feedback.textContent=correctAnswer?"✓ Дұрыс! +10 ұпай":"Дұрыс жауап: "+String(q.answer);
+      feedback.style.color=correctAnswer?"#73e7b3":"#ffb3a8";
+      const next=document.createElement("button");next.className="game-primary";next.type="button";next.textContent=i+1>=total?"Нәтижені көру":"Келесі тапсырма →";
+      next.style.marginTop="12px";next.onclick=()=>{special.i++;renderFallback();};
+      feedback.appendChild(document.createElement("div")).appendChild(next);
+    });
   }
 
   function renderSpecial(){
