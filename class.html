@@ -27,12 +27,21 @@
   <script src="ktp-7.js?v=1"></script>
   <script>
     window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
-      if(window.ktpD&&window.ktpD["7_algebra_q1"]&&window.ktpD["7_geometry_q1"]) return resolve(window.ktpD);
+      const classId=new URLSearchParams(location.search).get('class');
+      const subjectId=new URLSearchParams(location.search).get('subject');
+      const quarter=Number(new URLSearchParams(location.search).get('quarter'));
+      const key=classId&&subjectId?`${classId}_${subjectId}`:'';
+      const ready=()=>{
+        const all=window.ktpD||{};
+        return !!(all[key+`_q${quarter}`] || (all[classId]&&all[classId][key]) || Object.keys(all).some(k=>k.startsWith(key+'_q')));
+      };
+      if(ready()) return resolve(window.ktpD);
+      const started=Date.now();
       const timer=setInterval(()=>{
-        if(window.ktpD&&window.ktpD["7_algebra_q1"]&&window.ktpD["7_geometry_q1"]){clearInterval(timer);resolve(window.ktpD)}
-      },20);
+        if(ready() || Date.now()-started>8000){clearInterval(timer);resolve(window.ktpD||{});}
+      },50);
     }));
   </script>
-  <script src="ktp-render.js?v=15"></script>
+  <script src="ktp-render.js?v=16"></script>
 </body>
 </html>
