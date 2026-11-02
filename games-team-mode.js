@@ -55,6 +55,7 @@
 
   window.getGameQuestions = function(id,key) {
     if (id === 'math-race' || id === 'wheel' || id === 'tug-of-war') return startState(id,key);
+    state.id=null;
     return originalGet ? originalGet(id,key) : [];
   };
 
