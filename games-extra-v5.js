@@ -212,10 +212,12 @@
     sceneCss();
     const b=document.getElementById("gameQuestion");if(!b)return;
     const id=special.id,qs=special.qs,total=qs.length,i=special.i,q=qs[i];
-    const correct=Number(special.score/10);
-    if(!q){
+    const correct=special.scene.correct.filter(Boolean).length;
+    if(document.getElementById("gameProgress"))document.getElementById("gameProgress").textContent=i>=total?"Нәтиже":`${Math.min(total,i+1)} / ${total}`;
+    clearInterval(special.sceneTimer);special.sceneTimer=null;
+    if(!q||special.scene.health<=0){
       const label=sceneNames[id]||"ОЙЫН";
-      b.innerHTML=`<div class="scene-done"><div class="scene-visual">🏆</div><h2>${esc(label)} аяқталды!</h2><p>Дұрыс жауап: ${correct} / ${total}</p><p>Жиналған ұпай: ${special.score}</p><button class="game-primary" id="scene-replay">🔄 Қайта ойнау</button></div>`;
+      b.innerHTML=`<div class="scene-done"><div class="scene-visual">${special.scene.health<=0?"🛡️":"🏆"}</div><h2>${special.scene.health<=0?"Қамалдың қорғанысы аяқталды":esc(label)+" аяқталды!"}</h2><p>Дұрыс жауап: ${correct} / ${total}</p><p>Жиналған ұпай: ${special.score}</p><button class="game-primary" id="scene-replay">🔄 Қайта ойнау</button></div>`;
       b.querySelector("#scene-replay").onclick=replay;
       return;
     }
@@ -225,30 +227,30 @@
       const vehicle=id==="rocket"?"🚀":"🏎️";
       stage=`<h3>${id==="rocket"?"Ғарышқа ұшу":"Мәре сызығына жету"}</h3><div class="scene-track"><span class="scene-vehicle" style="--pos:${Math.min(85,correct/total*85)}%">${vehicle}</span><span class="scene-finish">🏁</span></div><div class="scene-progress"><span style="width:${progress}%"></span></div>`;
     }else if(id==="puzzle"){
-      const cells=Array.from({length:9},(_,n)=>`<div class="scene-piece ${n<Math.round(correct/total*9)?"done":""}">${n<Math.round(correct/total*9)?"✦":"?"}</div>`).join("");
-      stage=`<h3>Дұрыс жауаппен пазл бөліктерін аш</h3><div class="scene-puzzle">${cells}</div>`;
+      const cells=Array.from({length:9},(_,n)=>`<div class="scene-piece ${n<Math.round(correct/total*9)?"done":""}">${n<Math.round(correct/total*9)?["☀️","☁️","🕊️","🏔️","🌳","🌲","🌷","🌼","🍀"][n]:"?"}</div>`).join("");
+      stage=`<h3>Дұрыс жауаппен табиғат суретін жина</h3><div class="scene-puzzle">${cells}</div>`;
     }else if(id==="quest"||id==="math-king"){
       const icon=id==="quest"?"🗺️":"👑";
-      stage=`<h3>${icon} Кезеңдер картасы</h3><div class="scene-path">${Array.from({length:Math.min(total,8)},(_,n)=>`<div class="scene-node ${n<i?"done":n===i?"current":""}">${n<i?"✓":n===i?"📍":"🔒"}</div>`).join("")}</div>`;
+      stage=`<h3>${icon} Кезеңдер картасы</h3><div class="scene-path">${Array.from({length:Math.min(total,8)},(_,n)=>`<div class="scene-node ${special.scene.correct[n]?"done":n===i?"current":""}">${special.scene.correct[n]?"✓":n===i?"📍":"🔒"}</div>`).join("")}</div>`;
     }else if(id==="auction"){
-      stage=`<h3>Аукциондағы ұпай қоры</h3><div class="scene-auction"><span class="scene-chip">Бастапқы қор: 100</span><span class="scene-chip">Жауап бонусы: +10</span><span class="scene-money">💰 ${100+special.score} ұпай</span></div><div class="scene-visual">🔨</div>`;
+      stage=`<h3>Лот №${i+1} — ұпайыңды тік!</h3><div class="scene-auction"><span class="scene-money">💰 ${special.scene.capital} ұпай</span><span class="scene-chip">Таңдалған ставка: ${special.scene.bid}</span></div><div class="scene-bids">${[10,20,30].map(n=>`<button type="button" data-bid="${n}" ${n>special.scene.capital?"disabled":""} class="${n===special.scene.bid?"selected":""}">${n} ұпай</button>`).join("")}</div><div class="scene-visual">🔨</div>`;
     }else if(id==="castle"){
-      stage=`<h3>Қамалды қорғау — ${i+1}-шабуыл</h3><div class="scene-visual">🏰 🛡️</div><div class="scene-health">${Array.from({length:Math.min(total,8)},(_,n)=>n<i?"🟩":"⬜").join("")}</div>`;
+      stage=`<h3>Қамалды қорғау — ${i+1}-шабуыл</h3><div class="scene-visual">🏰 🛡️</div><div class="scene-health">${Array.from({length:3},(_,n)=>n<special.scene.health?"❤️":"🩶").join("")}</div><p class="scene-help">Қате жауап қамалдың бір қорғанысын азайтады</p>`;
     }else if(id==="bridge"){
       stage=`<h3>Көпірді аяқтау үшін есептерді шеш</h3><div class="scene-visual">🚶 🌊</div><div class="scene-bridge">${Array.from({length:Math.min(total,10)},(_,n)=>`<div class="scene-plank ${n<correct?"done":""}"></div>`).join("")}</div>`;
     }else if(id==="target"){
       stage=`<h3>Дұрыс жауап — дәл тиген нысана!</h3><div class="scene-targets"><div class="scene-target">🎯</div><div class="scene-target">🎯</div><div class="scene-target">🎯</div></div>`;
     }else if(id==="cards"){
-      stage=`<h3>Карточка №${i+1}</h3><div class="scene-visual">🃏 🂠 🃏</div>`;
+      stage=`<h3>Карточка №${i+1}</h3><div class="scene-visual">${special.scene.cardOpen?"🃏✨":"🂠 🂠 🂠"}</div>${special.scene.cardOpen?"<p>Карточка ашылды — тапсырманы шеш!</p>":'<button type="button" id="scene-flip" class="game-primary">🃏 Карточканы аудару</button>'}`;
     }else if(id==="secret-number"){
-      stage=`<h3>Құпия кодты жина</h3><div class="scene-visual">${"🔓".repeat(correct)}${"🔒".repeat(Math.max(0,total-correct))}</div>`;
+      stage=`<h3>Құпия кодтың цифрларын аш</h3><div class="scene-code">${Array.from({length:total},(_,n)=>`<span>${special.scene.correct[n]?String((n+3)%10):"?"}</span>`).join("")}</div><p class="scene-help">Әр дұрыс жауап бір цифрды ашады</p>`;
     }else if(id==="blitz"){
-      stage=`<h3>Блиц — жылдам әрі дәл жауап бер!</h3><div class="scene-visual">⚡ ⏱️</div><div class="scene-progress"><span style="width:${progress}%"></span></div>`;
+      stage=`<h3>Блиц — 12 секундта жауап бер!</h3><div class="scene-visual">⚡ <span id="scene-seconds">12</span> c</div><div class="scene-progress"><span id="scene-timer-fill" style="width:100%"></span></div>`;
     }else{
       stage=`<h3>Математикалық сынақ</h3><div class="scene-visual">⭐</div>`;
     }
     const options=Array.isArray(q.options)&&q.options.length?q.options:[String(q.answer)];
-    b.innerHTML=`<div class="scene" data-kind="${esc(id)}"><div class="scene-header"><span class="scene-title">${esc(label)}</span><span class="scene-chip">Сұрақ ${i+1}/${total} · ⭐ ${special.score}</span></div><div class="scene-stage">${stage}</div><div class="scene-question"><h3>${esc(q.question)}</h3><div class="scene-options">${options.map(o=>`<button type="button" data-scene-answer="${esc(o)}">${esc(o)}</button>`).join("")}</div><div class="scene-feedback" aria-live="polite"></div></div></div>`;
+    b.innerHTML=`<div class="scene" data-kind="${esc(id)}"><div class="scene-header"><span class="scene-title">${esc(label)}</span><span class="scene-chip">Сұрақ ${i+1}/${total} · ⭐ ${special.score}</span></div><div class="scene-stage">${stage}</div><div class="scene-question" ${id==="cards"&&!special.scene.cardOpen?"style='display:none'":""}><h3>${esc(q.question)}</h3><div class="scene-options ${id==="target"?"scene-target-options":""}">${options.map(o=>`<button type="button" data-scene-answer="${esc(o)}">${id==="target"?"🎯 ":""}${esc(o)}</button>`).join("")}</div><div class="scene-feedback" aria-live="polite"></div></div></div>`;
     b.querySelectorAll("[data-scene-answer]").forEach(btn=>btn.onclick=()=>{
       const correctAnswer=String(btn.dataset.sceneAnswer)===String(q.answer);
       b.querySelectorAll("[data-scene-answer]").forEach(x=>x.disabled=true);
