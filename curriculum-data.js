@@ -10,8 +10,8 @@ const curriculum = {
     { id: "geometry", title: "Геометрия", planKey: "8_geometry", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) }
   ] },
   9: { title: "9-сынып", subjects: [
-    { id: "algebra", title: "Алгебра", planKey: "9_algebra", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
-    { id: "geometry", title: "Геометрия", planKey: "9_geometry", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) }
+    { id: "algebra", title: "Алгебра", planKey: "9_algebra", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) },
+    { id: "geometry", title: "Геометрия", planKey: "9_geometry", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) }
   ] },
   10: { title: "10-сынып", subjects: [
     { id: "algebra_ЖМБ", title: "Алгебра және анализ бастамалары — ЖМБ", planKey: "10_algebra_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
