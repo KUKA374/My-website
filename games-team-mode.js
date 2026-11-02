@@ -91,14 +91,16 @@
     b.innerHTML=`<div class="team-game"><div class="team-hud"><span class="team-pill">🎡 СӘТТІЛІК ДӨҢГЕЛЕГІ</span><span class="team-pill">Тапсырма <strong>${state.wheel.index+1}/${total}</strong></span><span class="team-pill">Ұпай <strong>${state.wheel.score}</strong></span></div><div class="team-card"><div class="wheel-pointer">▼</div><div class="wheel-big" id="teamWheel">🎡</div><button class="game-primary" id="spinTeamWheel">🎡 Айналдыру</button><div id="wheelTask"></div></div></div>`;
     document.getElementById('spinTeamWheel').onclick=()=>{
       if(state.wheel.spinning)return; state.wheel.spinning=true; const w=document.getElementById('teamWheel'); w.classList.add('spin');
-      setTimeout(()=>{state.wheel.spinning=false;w.classList.remove('spin');showWheelTask(q);},1000);
+      const token=state.token;
+      state.wheel.bonus=[10,20,30,40][Math.floor(Math.random()*4)];
+      state.wheelTimeout=setTimeout(()=>{if(token!==state.token||state.id!=='wheel')return;state.wheel.spinning=false;w.classList.remove('spin');showWheelTask(q);},1000);
     };
   }
 
   function showWheelTask(q){
     const box=document.getElementById('wheelTask'); if(!box)return;
-    box.innerHTML=`<div class="race-question">${esc(q.question)}</div><div class="answer-grid">${q.options.map(o=>`<button data-wheel-team="${esc(o)}">${esc(o)}</button>`).join('')}</div><div class="team-feedback" id="wheelFeedback"></div>`;
-    box.querySelectorAll('[data-wheel-team]').forEach(btn=>btn.onclick=()=>{const ok=String(btn.dataset.wheelTeam)===String(q.answer);if(ok)state.wheel.score+=20;state.wheel.index++;state.wheel.index>=state.wheel.questions.length?finishWheel():renderWheel();});
+    box.innerHTML=`<div class="team-pill">🎁 Таңдалған сектор: +${state.wheel.bonus} ұпай</div><div class="race-question">${esc(q.question)}</div><div class="answer-grid">${q.options.map(o=>`<button data-wheel-team="${esc(o)}">${esc(o)}</button>`).join('')}</div><div class="team-feedback" id="wheelFeedback"></div>`;
+    box.querySelectorAll('[data-wheel-team]').forEach(btn=>btn.onclick=()=>{const ok=String(btn.dataset.wheelTeam)===String(q.answer);if(ok)state.wheel.score+=state.wheel.bonus;state.wheel.index++;state.wheel.index>=state.wheel.questions.length?finishWheel():renderWheel();});
   }
 
   function finishWheel(){
