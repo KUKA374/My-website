@@ -8,7 +8,7 @@ let pendingGameTimeout = null;
 let gameSession = 0;
 let quickInputLocked = false;
 let codeResults = [];
-let matchState={order:[],solved:new Set(),selected:null,message:""};
+let matchState={order:[],solved:new Set(),solvedRight:new Set(),selected:null,message:""};
 function cancelGameActions(){clearInterval(timerId);timerId=null;clearTimeout(pendingGameTimeout);pendingGameTimeout=null;gameSession++;}
 let quickTimeLeft = 30;
 let quickStreak = 0;
@@ -105,7 +105,7 @@ function startSelectedGame() {
   codeResults=[];
   const order=currentQuestions.map((_,i)=>i);
   for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];}
-  matchState={order,solved:new Set(),selected:null,message:""};
+  matchState={order,solved:new Set(),solvedRight:new Set(),selected:null,message:""};
   quickTimeLeft = 30;
   quickStreak = 0;
   bestStreak = 0;
@@ -146,10 +146,10 @@ function renderCurrentQuestion() {
 
 function renderMatchingBoard(){
  const box=document.getElementById("gameQuestion"),questions=currentQuestions,total=questions.length;
- const done=matchState.solved,selected=matchState.selected;
+ const done=matchState.solved,solvedRight=matchState.solvedRight,selected=matchState.selected;
  document.getElementById("gameProgress").textContent=`${done.size} / ${total} жұп`;
  const left=questions.map((q,i)=>`<button type="button" data-match-left="${i}" class="match-tile ${done.has(i)?"solved":selected===i?"selected":""}" ${done.has(i)?"disabled":""}><span class="match-num">${i+1}</span>${escapeGameHtml(q.left)}</button>`).join("");
- const right=matchState.order.map((i,pos)=>`<button type="button" data-match-right="${pos}" class="match-tile ${done.has(i)?"solved":""}" ${done.has(i)?"disabled":""}><span class="match-num">${String.fromCharCode(65+pos)}</span>${escapeGameHtml(questions[i].right)}</button>`).join("");
+ const right=matchState.order.map((i,pos)=>`<button type="button" data-match-right="${pos}" class="match-tile ${solvedRight.has(i)?"solved":""}" ${solvedRight.has(i)?"disabled":""}><span class="match-num">${String.fromCharCode(65+pos)}</span>${escapeGameHtml(questions[i].right)}</button>`).join("");
  box.innerHTML=`<div class="matching-game"><div class="match-banner"><div><b>🧩 СӘЙКЕСТЕНДІР</b><p>Сол жақтағы тапсырманы таңдап, оң жақтағы сәйкес жауабын бас.</p></div><span class="match-total">${done.size} / ${total} ✓</span></div><div class="matching-columns"><div><h3>📘 Тапсырмалар</h3><div class="matching-list">${left}</div></div><div class="match-connect">↔</div><div><h3>✨ Жауаптар</h3><div class="matching-list">${right}</div></div></div><div class="match-status" role="status">${escapeGameHtml(matchState.message||"Жұптарды тауып, тақтаны толық аш!")}</div></div>`;
  box.querySelectorAll("[data-match-left]").forEach(btn=>btn.onclick=()=>{
    matchState.selected=Number(btn.dataset.matchLeft);matchState.message="Енді оң жақтан сәйкес жауапты таңда.";renderMatchingBoard();
@@ -157,9 +157,9 @@ function renderMatchingBoard(){
  box.querySelectorAll("[data-match-right]").forEach(btn=>btn.onclick=()=>{
    const i=matchState.selected;if(i===null){matchState.message="Алдымен тапсырманы таңда.";renderMatchingBoard();return;}
    const target=matchState.order[Number(btn.dataset.matchRight)];
-   if(done.has(target))return;
+   if(solvedRight.has(target))return;
    if(answersMatch(questions[i].right,questions[target].right)){
-     done.add(i);done.add(target);
+     done.add(i);solvedRight.add(target);
      matchState.message="✓ Дұрыс сәйкестік! Келесі жұпты тап.";currentScore=done.size;
      matchState.selected=null;renderMatchingBoard();
      if(done.size===total){const session=gameSession;pendingGameTimeout=setTimeout(()=>{if(session===gameSession&&currentGameMode==="match")finishGame();},700);}
