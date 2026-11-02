@@ -8,7 +8,7 @@
 </head>
 <body><main class="container"><div id="lessonPage"></div></main>
 <script src="auth.js"></script><script>requireRole(["teacher","admin","super_admin"]);</script><script src="curriculum-data.js?v=upper-grades-1"></script><script src="ktp-data.js?v=5"></script><script src="ktp-5-q1.js?v=1"></script><script src="ktp-5-q2.js?v=1"></script><script src="ktp-5-q2-loader.js?v=1"></script><script src="ktp-5-q3.js?v=1"></script><script src="ktp-5-q4.js?v=1"></script><script src="ktp-6-q1.js?v=1"></script><script src="ktp-6-q2.js?v=1"></script><script src="ktp-6-q3.js?v=1"></script><script src="ktp-6-q4-topics.js?v=1"></script><script src="ktp-7.js?v=2"></script><script src="ktp-7-q2.js?v=1"></script><script src="ktp-7-q3.js?v=1"></script><script src="ktp-7-q4.js?v=1"></script><script src="ktp-8-loader.js?v=1"></script><script src="ktp-upper-tools.js?v=1"></script><script src="ktp-upper-loader.js?v=1"></script><script>
-window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
+if (!['9','10','11'].includes(new URLSearchParams(location.search).get('class'))) window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
   const p=new URLSearchParams(location.search),classId=p.get('class'),subjectId=p.get('subject'),quarter=Number(p.get('quarter')),key=classId&&subjectId?`${classId}_${subjectId}`:'';
   const ready=()=>{const all=window.ktpD||{};return !!(all[key+`_q${quarter}`]||all[key]||(all[classId]&&(all[classId][key]||Array.isArray(all[classId].r)))||Object.keys(all).some(k=>k.startsWith(key+'_q')))};
   if(ready()) return resolve(window.ktpD);
