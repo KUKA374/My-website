@@ -70,6 +70,7 @@
     if(extraIds.has(id)){
       const qs=getSource(key,id); special.id=id; special.qs=qs; special.i=0; special.score=0; return qs;
     }
+    special.id=null;
     return coreGet ? coreGet(id,key) : [];
   };
 
