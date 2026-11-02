@@ -39,6 +39,8 @@ function decorateSetup(){
  const id=document.body.dataset.game;if(!id)return;
  let intro=setup.querySelector(".arcade-intro");
  if(!intro){intro=document.createElement("div");intro.className="arcade-intro";const grid=setup.querySelector(".setup-grid");if(grid)grid.before(intro);}
+ if(intro.dataset.gameId===id)return;
+ intro.dataset.gameId=id;
  intro.replaceChildren();
  const icon=document.createElement("div");icon.className="intro-art";icon.textContent=emoji(id)[0];
  const content=document.createElement("div");const strong=document.createElement("strong");strong.textContent="Ойынға дайындал!";
@@ -51,17 +53,20 @@ function decorateStage(){
  let banner=area.querySelector(".arcade-scene-banner");
  if(!banner){banner=document.createElement("div");banner.className="arcade-scene-banner";const top=area.querySelector(".game-top");if(top)top.after(banner);else area.prepend(banner);}
  const game=typeof mathGames!=="undefined"?mathGames.find(x=>x.id===id):null;
+ if(banner.dataset.gameId!==id){
+ banner.dataset.gameId=id;
  banner.replaceChildren();
  const icon=document.createElement("span");icon.className="banner-icon";icon.textContent=emoji(id)[0];
  const content=document.createElement("div");const title=document.createElement("strong");title.textContent=game?game.title:"Математикалық ойын";
  const desc=document.createElement("small");desc.textContent=notes[id]||"Есептерді шеш";
  content.append(title,desc);banner.append(icon,content);
+ }
  let progress=area.querySelector(".arcade-progress");
  if(!progress){progress=document.createElement("div");progress.className="arcade-progress";progress.innerHTML="<span></span>";banner.after(progress);}
  const label=area.querySelector("#gameProgress")?.textContent||"";
  const m=label.match(/(\d+)\s*\/\s*(\d+)/);
  const pct=m?Math.max(0,Math.min(100,(Number(m[1])-1)/Number(m[2])*100)):label.includes("Нәтиже")?100:0;
- progress.firstElementChild.style.width=pct+"%";
+ if(progress.firstElementChild.style.width!==pct+"%")progress.firstElementChild.style.width=pct+"%";
 }
 let pending=false;
 function refresh(){pending=false;decorateCards();decorateSetup();decorateStage();}
