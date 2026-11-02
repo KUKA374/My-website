@@ -3,9 +3,9 @@
 (function () {
   const grade = new URLSearchParams(location.search).get('class');
   const files = {
-    '9': ['ktp-9-algebra.js?v=3', 'ktp-9-geometry.js?v=3'],
-    '10': ['ktp-10.js?v=3'],
-    '11': ['ktp-11.js?v=3']
+    '9': ['ktp-9-algebra.js?v=4', 'ktp-9-geometry.js?v=4'],
+    '10': ['ktp-10.js?v=4'],
+    '11': ['ktp-11.js?v=4']
   }[grade] || [];
   if (!files.length) {
     window.ktpUpperReady = Promise.resolve(window.ktpD || {});
