@@ -11,7 +11,7 @@
   <main class="section"><div class="container" id="classPage"></div></main>
   <footer><div class="container">© 2026 Math Teacher Platform</div></footer>
   <script src="auth.js?v=3"></script><script>requireRole(["teacher", "admin", "super_admin"]);</script>
-  <script src="curriculum-data.js?v=stage1"></script>
+  <script src="curriculum-data.js?v=upper-grades-1"></script>
   <script src="script.js?v=5"></script>
   <script src="ktp-data.js?v=5"></script>
   <script>window.renderQuarterPage=function(){};</script>
@@ -29,6 +29,8 @@
   <script src="ktp-7-q3.js?v=1"></script>
   <script src="ktp-7-q4.js?v=1"></script>
   <script src="ktp-8-loader.js?v=1"></script>
+  <script src="ktp-upper-tools.js?v=1"></script>
+  <script src="ktp-upper-loader.js?v=1"></script>
   <script>
     window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
       const classId=new URLSearchParams(location.search).get('class');
@@ -37,7 +39,7 @@
       const key=classId&&subjectId?`${classId}_${subjectId}`:'';
       const ready=()=>{
         const all=window.ktpD||{};
-        return !!(all[key+`_q${quarter}`] || (all[classId]&&all[classId][key]) || Object.keys(all).some(k=>k.startsWith(key+'_q')));
+        return !!(all[key+`_q${quarter}`] || all[key] || (all[classId]&&(all[classId][key]||Array.isArray(all[classId].r))) || Object.keys(all).some(k=>k.startsWith(key+'_q')));
       };
       if(ready()) return resolve(window.ktpD);
       const started=Date.now();
@@ -46,6 +48,6 @@
       },50);
     }));
   </script>
-  <script src="ktp-render.js?v=18"></script>
+  <script src="ktp-render.js?v=upper-grades-1"></script>
 </body>
 </html>
