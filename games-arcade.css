@@ -34,3 +34,22 @@
 @keyframes previewFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-width:650px){.game-card{min-height:0}.game-card .game-preview{height:62px}.game-setup .arcade-intro{padding:13px}.arcade-intro .intro-art{font-size:40px}.game-area .arcade-scene-banner{padding:12px}.arcade-scene-banner .banner-icon{font-size:35px}.arcade-scene-banner strong{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.game-preview .preview-emoji,.arcade-scene-banner .banner-icon,.game-area .finish-icon{animation:none!important}}
+
+/* Interactive pair-matching board */
+.matching-game{max-width:1000px;margin:auto}
+.match-banner{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:18px 20px;margin-bottom:18px;border-radius:19px;background:linear-gradient(100deg,#143650,#192958);border:1px solid #5ce7fa33}
+.match-banner b{font-size:19px;color:#7de7f5}.match-banner p{margin:7px 0 0;color:#b4cbdc;font-size:13px}
+.match-total{white-space:nowrap;font-size:19px;color:#81edbc;font-weight:900}
+.matching-columns{display:grid;grid-template-columns:minmax(0,1fr) 35px minmax(0,1fr);align-items:start;gap:12px}
+.matching-columns h3{font-size:13px;color:#bcd5e8;text-transform:uppercase;letter-spacing:1px;margin:6px 0 12px}
+.matching-list{display:grid;gap:10px}
+.match-tile{position:relative;width:100%;text-align:left;min-height:84px;border-radius:15px;padding:15px 16px;display:flex;align-items:center;gap:13px;font:inherit;font-size:clamp(13px,1.6vw,17px);font-weight:800;line-height:1.45;color:#f2fbff;background:linear-gradient(145deg,#163653,#10243c);border:2px solid #47648280;cursor:pointer;transition:transform .17s,border-color .17s,background .17s;overflow-wrap:anywhere}
+.match-tile .match-num{display:grid;place-items:center;width:29px;height:29px;min-width:29px;border-radius:9px;background:#283e60;color:#9fddf2;font-size:12px}
+.match-tile:hover:not(:disabled){transform:translateY(-2px);border-color:#75ddf4}
+.match-tile.selected{border-color:#ffd27f;background:#59442a;box-shadow:0 0 18px #ffd27f35}
+.match-tile.solved{border-color:#57deac;background:#124d48;color:#c6fbe0;opacity:.8}
+.match-tile.solved .match-num{background:#247a63;color:#fff}
+.match-tile:focus-visible{outline:3px solid #96eaff;outline-offset:3px}
+.match-connect{font-size:30px;font-weight:900;color:#6ddbec;align-self:center;text-align:center}
+.match-status{margin-top:20px;padding:14px;border-radius:14px;border:1px solid #ffffff17;background:#112b42;color:#bce7ef;font-weight:800;text-align:center}
+@media(max-width:640px){.matching-columns{gap:5px;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr)}.match-tile{padding:10px 8px;gap:5px;min-height:73px;font-size:12px;flex-wrap:wrap}.match-tile .match-num{width:22px;min-width:22px;height:22px}.match-connect{font-size:17px}.match-banner{padding:12px;align-items:flex-start}.match-banner b{font-size:15px}.match-total{font-size:14px}}
