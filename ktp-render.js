@@ -38,6 +38,12 @@
   const st=document.createElement('style');st.textContent='.ktp-note{margin:16px 0;padding:14px 16px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;color:#667085;line-height:1.6}.ktp-section-title{margin:24px 0 10px;padding:10px 14px;border-radius:10px;background:#eef2ff;color:#3730a3;font-weight:800}.quarter-lesson-info small{display:block;margin-top:6px;color:#667085}';document.head.appendChild(st);
   async function start(){
     if(!classId||!subjectId||!quarterId)return;
+    const selected=subject();
+    const quarter=selected&&selected.quarters&&selected.quarters.find(q=>Number(q.id)===quarterId);
+    if(quarter&&quarter.available===false){
+      if(root)root.innerHTML='<a href="class.html?class='+encodeURIComponent(classId)+'" class="back-link">← '+esc(classId)+'-сынып</a><div class="admin-box"><h2>'+esc(selected.title)+' • '+quarterId+'-тоқсан</h2><p>Бұл тоқсанның сабақ материалдары әзірленуде. Дайын болғанда осы жерде пайда болады.</p></div>';
+      return;
+    }
     try{if(window.ktpReady)await window.ktpReady;setTimeout(()=>{if(!render())error()},0)}catch(e){console.error(e);error()}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
