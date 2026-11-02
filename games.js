@@ -238,7 +238,13 @@ function submitTextAnswer(){
  if(correct)currentScore++;
  if(currentGameMode==="math-code")codeResults[currentIndex]=correct?String(q.code??q.answer):"—";
  const btn=document.getElementById("textAnswerButton");if(btn)btn.disabled=true;
- nextGameQuestion();
+ input.disabled=true;
+ const panel=document.createElement("div");panel.className="game-answer-feedback";panel.setAttribute("role","status");
+ panel.textContent=correct?"✓ Дұрыс!":("Дұрыс жауап: "+String(q.correction||q.answer||"Қатені қайта талда"));
+ panel.classList.add(correct?"good":"bad");
+ const next=document.createElement("button");next.type="button";next.className="game-primary";next.textContent=currentIndex+1>=currentQuestions.length?"Нәтижені көру":"Келесі тапсырма →";
+ next.onclick=nextGameQuestion;panel.appendChild(document.createElement("div")).appendChild(next);
+ const target=document.getElementById("gameQuestion");if(target)target.appendChild(panel);
 }
 function normalizedAnswer(value){return String(value??"").trim().toLowerCase().replace(/\s+/g,"").replace(/,/g,".");}
 function numericAnswer(value){
@@ -253,7 +259,18 @@ function answersMatch(a,b){
  return x!==null&&y!==null&&Math.abs(x-y)<1e-9;
 }
 function nextGameQuestion() { currentIndex++; renderCurrentQuestion(); }
-function finishGame() { cancelGameActions(); const total = currentQuestions.length, percent = Math.round((currentScore / total) * 100); document.getElementById("gameProgress").textContent = "Нәтиже"; document.getElementById("gameQuestion").innerHTML = `<div class="game-finish"><div class="finish-icon">🏆</div><h2>Ойын аяқталды!</h2><p>Нәтиже: <strong>${currentScore} / ${total}</strong> (${percent}%)</p><button type="button" class="game-primary" id="replayGameButton">↻ Қайта ойнау</button></div>`; document.getElementById("replayGameButton").addEventListener("click", startSelectedGame); document.getElementById("gameResult").textContent = "Бұл нәтиже тек осы ойын экранында көрсетіледі."; }
+function finishGame(){
+ cancelGameActions();
+ const total=currentQuestions.length,percent=total?Math.round(currentScore/total*100):0;
+ const isCode=currentGameMode==="math-code",isDetective=currentGameMode==="detective";
+ const code=codeResults.join(""),allUnlocked=isCode&&codeResults.length===total&&!codeResults.includes("—");
+ const extra=isCode?`<p class="finish-secret">${allUnlocked?"🔓 Құпия код ашылды: <strong>"+escapeGameHtml(code)+"</strong>":"🔒 Кейбір код бөліктері ашылмады. Қайта байқап көр!"}</p>`:
+   isDetective?`<p class="finish-secret">🔎 Дәлелдер қаралды: <strong>${currentScore}/${total}</strong>. ${currentScore===total?"Іс сәтті шешілді!":"Істі қайта зерттеп көр."}</p>`:"";
+ document.getElementById("gameProgress").textContent="Нәтиже";
+ document.getElementById("gameQuestion").innerHTML=`<div class="game-finish"><div class="finish-icon">${allUnlocked?"🔓":currentScore===total?"🏆":"⭐"}</div><h2>${isCode?"Математикалық код":isDetective?"Детектив ісі":"Ойын"} аяқталды!</h2><p>Нәтиже: <strong>${currentScore} / ${total}</strong> (${percent}%)</p>${extra}<button type="button" class="game-primary" id="replayGameButton">↻ Қайта ойнау</button></div>`;
+ document.getElementById("replayGameButton").addEventListener("click",startSelectedGame);
+ document.getElementById("gameResult").textContent="Бұл нәтиже тек осы ойын экранында көрсетіледі.";
+}
 function showGameMessage(message) { const box = document.getElementById("gameMessage"); if (!box) return; box.textContent = message; box.style.display = "block"; }
 function populateLessonSelect() {
  const gradeEl=document.getElementById("gradeSelect"),subjectEl=document.getElementById("subjectSelect"),quarterEl=document.getElementById("quarterSelect"),lessonEl=document.getElementById("lessonSelect");
