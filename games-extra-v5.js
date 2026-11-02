@@ -55,8 +55,8 @@
         for(const v of pool){if(!choices.includes(v))choices.push(v);if(choices.length>=4)break;}
       }
       choices=[...new Set(choices)].slice(0,4);
-      const offset=(i+1)%choices.length;
-      return {...q,question:q.question,answer,options:choices.slice(offset).concat(choices.slice(0,offset))};
+      for(let n=choices.length-1;n>0;n--){const j=Math.floor(Math.random()*(n+1));[choices[n],choices[j]]=[choices[j],choices[n]];}
+      return {...q,question:q.question,answer,options:choices};
     });
   }
   function resetScene(){
