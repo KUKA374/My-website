@@ -32,6 +32,7 @@
       .race-track:before{content:'🏁';position:absolute;right:10px;top:8px;font-size:18px}.race-runner{position:absolute;top:50%;font-size:38px;transform:translate(-50%,-50%);transition:left .35s ease}.race-runner.blue-run{top:31%}.race-runner.red-run{top:73%}.race-line{position:absolute;left:5%;right:5%;bottom:17px;height:3px;background:rgba(255,255,255,.15)}
       .race-question{font-size:clamp(27px,5vw,46px);font-weight:900;margin:25px 0}.answer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:700px;margin:auto}.answer-grid button{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:#102943;color:#fff;font:inherit;font-weight:900;cursor:pointer;transition:.2s}.answer-grid button:hover{transform:translateY(-2px);border-color:#5ee7ff}.team-feedback{min-height:26px;margin-top:14px;font-weight:900}.team-feedback.good{color:#35d49a}.team-feedback.bad{color:#ff7b8c}
       .wheel-pointer{font-size:28px;margin-bottom:-8px}.wheel-big{width:200px;height:200px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;font-size:50px;border:9px solid #10233b;background:conic-gradient(#5ee7ff 0 25%,#8b7cff 25% 50%,#f7c873 50% 75%,#ff7b8c 75%);box-shadow:0 0 35px rgba(94,231,255,.12);transition:transform 1.1s cubic-bezier(.17,.67,.25,1)}.wheel-big.spin{transform:rotate(1080deg)}
+      .wheel-legend{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:-8px 0 18px}.wheel-legend span{padding:5px 11px;border-radius:999px;background:#142d45;border:1px solid #ffffff20;color:#c7dbea;font-size:12px;font-weight:800}
       .winner{animation:teamWinner .7s ease both}.winner-icon{font-size:68px}@keyframes teamWinner{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
       @media(max-width:720px){.teams{grid-template-columns:1fr}.race-track{order:3}.answer-grid{grid-template-columns:1fr}.team-card{padding:20px}.wheel-big{width:165px;height:165px}}
     `;
@@ -97,11 +98,13 @@
   function renderWheel() {
     styles(); const q=state.wheel.questions[state.wheel.index], total=state.wheel.questions.length, b=document.getElementById('gameQuestion');
     if(!q)return finishWheel();
-    b.innerHTML=`<div class="team-game"><div class="team-hud"><span class="team-pill">🎡 СӘТТІЛІК ДӨҢГЕЛЕГІ</span><span class="team-pill">Тапсырма <strong>${state.wheel.index+1}/${total}</strong></span><span class="team-pill">Ұпай <strong>${state.wheel.score}</strong></span></div><div class="team-card"><div class="wheel-pointer">▼</div><div class="wheel-big" id="teamWheel">🎡</div><button class="game-primary" id="spinTeamWheel">🎡 Айналдыру</button><div id="wheelTask"></div></div></div>`;
+    b.innerHTML=`<div class="team-game"><div class="team-hud"><span class="team-pill">🎡 СӘТТІЛІК ДӨҢГЕЛЕГІ</span><span class="team-pill">Тапсырма <strong>${state.wheel.index+1}/${total}</strong></span><span class="team-pill">Ұпай <strong>${state.wheel.score}</strong></span></div><div class="team-card"><div class="wheel-pointer">▼</div><div class="wheel-big" id="teamWheel">🎡</div><div class="wheel-legend"><span>🔹 10</span><span>🟣 20</span><span>🟡 30</span><span>🔴 40</span></div><button class="game-primary" id="spinTeamWheel">🎡 Айналдыру</button><div id="wheelTask"></div></div></div>`;
     document.getElementById('spinTeamWheel').onclick=()=>{
       if(state.wheel.spinning)return; state.wheel.spinning=true; const w=document.getElementById('teamWheel'); w.classList.add('spin');
       const token=state.token;
-      state.wheel.bonus=[10,20,30,40][Math.floor(Math.random()*4)];
+      const sector=Math.floor(Math.random()*4);
+      state.wheel.bonus=[10,20,30,40][sector];
+      w.style.transform=`rotate(${1440+315-90*sector}deg)`;
       state.wheelTimeout=setTimeout(()=>{if(token!==state.token||state.id!=='wheel')return;state.wheel.spinning=false;w.classList.remove('spin');showWheelTask(q);},1000);
     };
   }
