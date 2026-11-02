@@ -9,10 +9,10 @@
 <body><main class="container"><div id="lessonPage"></div></main>
 <script src="auth.js"></script><script>requireRole(["teacher","admin","super_admin"]);</script><script src="curriculum-data.js?v=5"></script><script src="ktp-data.js?v=5"></script><script src="ktp-5-q1.js?v=1"></script><script src="ktp-5-q2.js?v=1"></script><script src="ktp-5-q2-loader.js?v=1"></script><script src="ktp-5-q3.js?v=1"></script><script src="ktp-5-q4.js?v=1"></script><script src="ktp-6-q1.js?v=1"></script><script src="ktp-6-q2.js?v=1"></script><script src="ktp-6-q3.js?v=1"></script><script src="ktp-6-q4-topics.js?v=1"></script><script src="ktp-7.js?v=1"></script><script>
 window.ktpReady=Promise.resolve(window.ktpReady).then(()=>new Promise(resolve=>{
-  if(window.ktpD&&window.ktpD["7_algebra_q1"]&&window.ktpD["7_geometry_q1"]) return resolve(window.ktpD);
-  const timer=setInterval(()=>{
-    if(window.ktpD&&window.ktpD["7_algebra_q1"]&&window.ktpD["7_geometry_q1"]){clearInterval(timer);resolve(window.ktpD)}
-  },20);
+  const p=new URLSearchParams(location.search),classId=p.get('class'),subjectId=p.get('subject'),quarter=Number(p.get('quarter')),key=classId&&subjectId?`${classId}_${subjectId}`:'';
+  const ready=()=>{const all=window.ktpD||{};return !!(all[key+`_q${quarter}`]||(all[classId]&&all[classId][key])||Object.keys(all).some(k=>k.startsWith(key+'_q')))};
+  if(ready()) return resolve(window.ktpD);
+  const started=Date.now();const timer=setInterval(()=>{if(ready()||Date.now()-started>8000){clearInterval(timer);resolve(window.ktpD||{})}},50);
 }));
 </script><script src="lesson-content.js"></script><script src="lesson-content-6.js?v=3"></script><script src="my-lessons.js"></script>
 <script>
