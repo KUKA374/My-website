@@ -1,0 +1,36 @@
+/* Math AI Arcade visual system */
+:root{--arcade-glow:#62e5f4}
+.games-body{background:radial-gradient(ellipse at 12% 2%,#172c54 0,transparent 42%),radial-gradient(ellipse at 92% 28%,#251d4d 0,transparent 38%),#07101e}
+.games-hero{box-shadow:0 24px 80px #0003,inset 0 1px #ffffff22}
+.games-hero::after{content:"✦  ✧  ✦";position:absolute;right:7%;top:12%;font-size:38px;letter-spacing:22px;color:#69e5f53d;pointer-events:none}
+.game-card{--card-accent:#62e5f4;min-height:260px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.game-card:nth-child(4n+2){--card-accent:#b8a0ff}.game-card:nth-child(4n+3){--card-accent:#ffcf7e}.game-card:nth-child(4n+4){--card-accent:#7ee7ae}
+.game-card::before{background:var(--card-accent)}
+.game-card:hover{box-shadow:0 24px 60px #0007,0 0 0 1px var(--card-accent)}
+.game-card .game-icon{box-shadow:inset 0 0 0 1px #ffffff24,0 10px 25px #0004}
+.game-card .game-preview{position:relative;height:74px;border:1px solid #ffffff16;border-radius:13px;background:radial-gradient(circle at 65% 10%,color-mix(in srgb,var(--card-accent) 20%,transparent),transparent 60%),#0b1c31;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:9px}
+.game-preview .preview-emoji{font-size:34px;filter:drop-shadow(0 7px 8px #0008);animation:previewFloat 3s ease-in-out infinite}
+.game-preview .preview-emoji:nth-child(2){animation-delay:.4s}.game-preview .preview-emoji:nth-child(3){animation-delay:.8s}
+.game-card .game-card-content{flex:1}.game-card .game-tags{margin-top:auto}
+.game-card .game-enter{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:900;font-size:12px;color:var(--card-accent);margin-top:13px}
+.game-card .game-enter span:last-child{font-size:19px}
+.game-setup{position:relative;overflow:hidden}
+.game-setup::before{content:"";position:absolute;top:-100px;right:-100px;width:300px;height:300px;background:radial-gradient(circle,#5ee7ff1f,transparent 68%);pointer-events:none}
+.game-setup .arcade-intro{display:flex;align-items:center;gap:16px;padding:18px;border:1px solid #ffffff20;border-radius:18px;background:#102943;margin:18px 0}
+.arcade-intro .intro-art{font-size:55px;line-height:1}.arcade-intro strong{font-size:18px;display:block}.arcade-intro small{display:block;color:#a9c3da;margin-top:5px;line-height:1.5}
+.game-area{background:radial-gradient(circle at 50% 0%,#1a3d6055,transparent 40%),linear-gradient(155deg,#10233a,#081422);min-height:500px}
+.game-area .arcade-progress{height:8px;background:#ffffff15;border-radius:99px;overflow:hidden;margin:0 0 24px}
+.arcade-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#4ee2e2,#a58bff);border-radius:99px;transition:width .3s}
+.game-area .arcade-scene-banner{display:flex;align-items:center;gap:18px;padding:17px 22px;margin-bottom:20px;border:1px solid #ffffff1b;border-radius:18px;background:linear-gradient(120deg,#173b5b,#182348)}
+.arcade-scene-banner .banner-icon{font-size:46px;animation:previewFloat 3s ease-in-out infinite}
+.arcade-scene-banner strong{display:block;font-size:18px}.arcade-scene-banner small{display:block;color:#b7d0e3;margin-top:5px}
+.game-area .scene-stage{box-shadow:inset 0 1px #ffffff12,0 14px 40px #0003}
+.game-area .scene-question{box-shadow:0 14px 45px #0004}
+.game-area button:not(:disabled):active{transform:scale(.98)}
+.game-area button:disabled{opacity:.7;cursor:default}
+.game-area .game-finish,.game-area .scene-done{background:radial-gradient(circle at 50% 0%,#226e6e50,transparent 60%),#0c2137;border:1px solid #ffffff24;border-radius:24px;padding:42px 20px;text-align:center}
+.game-area .finish-icon{font-size:70px;animation:previewFloat 2.6s ease-in-out infinite}
+.game-area .game-result{color:#a9c2d9}
+@keyframes previewFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media(max-width:650px){.game-card{min-height:0}.game-card .game-preview{height:62px}.game-setup .arcade-intro{padding:13px}.arcade-intro .intro-art{font-size:40px}.game-area .arcade-scene-banner{padding:12px}.arcade-scene-banner .banner-icon{font-size:35px}.arcade-scene-banner strong{font-size:15px}}
+@media(prefers-reduced-motion:reduce){.game-preview .preview-emoji,.arcade-scene-banner .banner-icon,.game-area .finish-icon{animation:none!important}}
