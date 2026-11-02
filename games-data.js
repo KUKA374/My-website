@@ -86,7 +86,9 @@ window.gameQuestionBank = gameQuestionBank;
 
 function getGameQuestions(gameId, lessonKey) {
   const lesson = gameQuestionBank[lessonKey];
-  return lesson && lesson[gameId] ? lesson[gameId] : [];
+  const aliases = {"find-error":"findError","quick-answer":"quickAnswer","math-code":"mathCode"};
+  const key = aliases[gameId] || gameId;
+  return lesson && Array.isArray(lesson[key]) ? lesson[key] : [];
 }
 
 // Қосымша ойын скрипттері games.html ішінде ретімен жүктеледі.
@@ -109,13 +111,32 @@ function getGameQuestions(gameId, lessonKey) {
  const extras=["math-race","wheel","auction","blitz","cards","quest","secret-number","puzzle","rocket","castle","car-race","target","bridge","math-king"];
  for(const [key,pairs] of Object.entries(sets)){
   const bank=gameQuestionBank[key]||(gameQuestionBank[key]={});
-  const q=pairs.map(([question,answer],i)=>({question,answer,options:[answer,...pairs.map(p=>p[1]).filter(x=>x!==answer)].slice(0,4)}));
+  const q=pairs.map(([question,answer],i)=>{
+    const pool=[...new Set(pairs.map(p=>String(p[1])).filter(x=>x!==String(answer)))];
+    if(/^-?\d+(?:[.,]\d+)?$/.test(String(answer))){
+      const number=Number(String(answer).replace(",","."));
+      for(const delta of [1,-1,2,-2,5,-5,10]){
+        const v=String(number+delta).replace(".",String(answer).includes(",")?",":".");
+        if(v!==String(answer)&&!pool.includes(v))pool.push(v);
+        if(pool.length>=3)break;
+      }
+    }
+    if(pool.length<3){for(const v of ["1/2","1/3","2/3","3/4","0","1","2","3","∅","{1,2}"]){if(v!==String(answer)&&!pool.includes(v))pool.push(v);if(pool.length>=3)break;}}
+    const options=[String(answer),...pool.slice(0,3)];
+    const offset=(i%options.length)+1;
+    return {question,answer:String(answer),options:options.slice(offset).concat(options.slice(0,offset))};
+  });
   bank.match=bank.match||pairs.map(([left,right])=>({left,right}));
-  bank.findError=bank.findError||pairs.map(([question,answer])=>({statement:question+" Жауапты тексер.",error:"Есептеуді тексеру қажет",correction:"Дұрыс жауап: "+answer}));
+  bank.findError=bank.findError||pairs.map(([question,answer],i)=>({
+    statement:question+" Оқушының жауабы: "+(q[i].options.find(v=>v!==String(answer))||"0"),
+    error:"Жауап дұрыс есептелмеген",
+    answer:String(answer),
+    correction:"Дұрыс жауап: "+answer
+  }));
   bank.quickAnswer=bank.quickAnswer||q;
   bank.mathCode=bank.mathCode||pairs.map(([question,answer],i)=>({question,answer,code:String(i+1)}));
   bank.detective=bank.detective||pairs.map(([question,answer])=>({clue:question,answer}));
   bank["tug-of-war"]=bank["tug-of-war"]||q;
-  for(const id of extras)bank[id]=q.map(x=>({...x}));
+  for(const id of extras)bank[id]=q.map(x=>({...x,options:[...x.options]}));
  }
 })();
