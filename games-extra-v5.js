@@ -305,5 +305,8 @@
     else if(coreRender) coreRender();
   };
 
-  if(typeof renderGameCards==='function') renderGameCards();
+  window.cancelGameExtra=function(){
+    resetScene();special.id=null;special.qs=[];special.i=0;
+  };
+    if(typeof renderGameCards==='function') renderGameCards();
 })();
