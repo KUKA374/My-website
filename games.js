@@ -122,9 +122,16 @@ function renderCurrentQuestion() {
   document.getElementById("gameProgress").textContent = `${currentIndex + 1} / ${total}`;
   if (currentGameMode === "quick-answer") { renderQuickAnswer(q); return; }
   if (currentGameMode === "tug-of-war") { renderTugOfWar(q); return; }
-  if (currentGameMode === "match") {
-    box.innerHTML = `<div class="match-board"><div class="match-heading"><span>🧩 СӘЙКЕСТЕНДІР</span><b>Жұп ${currentIndex + 1}</b></div><div class="match-stage"><div class="match-card match-question-card"><small>СҰРАҚ</small><strong>${escapeGameHtml(q.left)}</strong></div><div class="match-arrow">→</div><div class="match-answer-zone"><button class="match-option" type="button" data-answer="${escapeGameHtml(q.right)}"><span>✓</span>${escapeGameHtml(q.right)}</button><button class="match-option" type="button" data-answer="Қате жауап"><span>?</span>Басқа жауап</button></div></div><div class="match-hint">Сол жақтағы тапсырмаға сәйкес келетін жауапты таңда.</div></div>`;
-    bindAnswerButtons(); return;
+  if(currentGameMode==="match"){
+    const variants=[...new Set(currentQuestions.map(item=>String(item.right)).filter(v=>v!==String(q.right)))];
+    for(const v of ["x = 4","x = 5","x = 6","x = 7","x = 8","x = 9","x = 10","0","1","2","3","4","5","6","7","8","9","10","12"]){
+      if(variants.length>=3)break;if(v!==String(q.right)&&!variants.includes(v))variants.push(v);
+    }
+    const options=[String(q.right),...variants.slice(0,3)];
+    const n=(currentIndex+1)%options.length;
+    const mixed=options.slice(n).concat(options.slice(0,n));
+    box.innerHTML=`<div class="match-board"><div class="match-heading"><span>🧩 СӘЙКЕСТЕНДІР</span><b>Жұп ${currentIndex+1}</b></div><div class="match-stage"><div class="match-card match-question-card"><small>СҰРАҚ</small><strong>${escapeGameHtml(q.left)}</strong></div><div class="match-arrow">→</div><div class="match-answer-zone">${mixed.map((v,j)=>`<button class="match-option" type="button" data-answer="${escapeGameHtml(v)}"><span>${j+1}</span>${escapeGameHtml(v)}</button>`).join("")}</div></div><div class="match-hint">Төрт нұсқаның ішінен дұрыс жауапты таңда.</div></div>`;
+    bindAnswerButtons();return;
   }
   if (currentGameMode === "find-error") {
     box.innerHTML = `<div class="error-board"><div class="error-heading"><span>❌ ҚАТЕНІ ТАП</span><b>Талдау ${currentIndex + 1}</b></div><div class="error-scene"><div class="error-tape">⚠ МАТЕМАТИКАЛЫҚ ТЕКСЕРУ ⚠</div><div class="error-equation">${escapeGameHtml(q.statement)}</div><div class="error-question">Бұл шешімнің қай жерінде қате бар?</div><textarea id="gameTextAnswer" placeholder="Қатені көрсетіп, дұрыс нұсқаны жазыңыз..."></textarea><button type="button" class="game-primary" id="textAnswerButton">🔎 Қатені тексеру</button></div><div class="error-hint">Дәлеліңде математикалық әрекетті көрсет.</div></div>`;
@@ -202,7 +209,19 @@ function maxTugPosition() { return 5; }
 function finishTugGame(winnerByPosition) { clearInterval(timerId); const winner = winnerByPosition === "left" ? "🔵 Көк команда" : "🔴 Қызыл команда", left = tugScores.left, right = tugScores.right; document.getElementById("gameProgress").textContent = "Нәтиже"; document.getElementById("gameQuestion").innerHTML = `<div class="game-finish"><div class="finish-icon">🏆</div><h2>${winner} жеңді!</h2><p>Қорытынды ұпай: <strong>${left} : ${right}</strong></p><button type="button" class="game-primary" id="replayGameButton">↻ Қайта ойнау</button></div>`; document.getElementById("replayGameButton").addEventListener("click", startSelectedGame); document.getElementById("gameResult").textContent = "Командалық нәтиже аяқталды."; }
 
 function submitGameAnswer(value) { const q=currentQuestions[currentIndex];if(!q)return;if(answersMatch(value,q.right))currentScore++;nextGameQuestion(); }
-function submitTextAnswer() { const input = document.getElementById("gameTextAnswer"); if (!input) return; const userAnswer = input.value.trim(), q = currentQuestions[currentIndex]; let correct = false; if (currentGameMode === "find-error") { const normalized = userAnswer.toLowerCase(); correct = normalized.includes(String(q.error).toLowerCase()) || normalized.includes(String(q.correction).toLowerCase()); } else correct = normalizedAnswer(userAnswer) === normalizedAnswer(q.answer); if (correct) currentScore++; nextGameQuestion(); }
+function submitTextAnswer(){
+ const input=document.getElementById("gameTextAnswer"),q=currentQuestions[currentIndex];
+ if(!input||!q)return;
+ const value=input.value.trim();if(!value)return;
+ const correct=currentGameMode==="find-error"
+  ? (q.answer!==undefined ? answersMatch(value,q.answer)||normalizedAnswer(value).includes(normalizedAnswer(q.correction))
+    :normalizedAnswer(value).includes(normalizedAnswer(q.error))||normalizedAnswer(value).includes(normalizedAnswer(q.correction)))
+  :answersMatch(value,q.answer);
+ if(correct)currentScore++;
+ if(currentGameMode==="math-code")codeResults[currentIndex]=correct?String(q.code??q.answer):"—";
+ const btn=document.getElementById("textAnswerButton");if(btn)btn.disabled=true;
+ nextGameQuestion();
+}
 function normalizedAnswer(value){return String(value??"").trim().toLowerCase().replace(/\s+/g,"").replace(/,/g,".");}
 function numericAnswer(value){
  const t=normalizedAnswer(value);
