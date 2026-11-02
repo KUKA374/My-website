@@ -12,6 +12,9 @@
     return null;
   }
   function lessons(){
+    if (Number(classId)>=9 && typeof window.getKtpQuarterLessons==='function') {
+      return window.getKtpQuarterLessons(classId,subjectId,quarterId);
+    }
     const source=planSource();
     if(!source)return [];
     if(Array.isArray(source.rows)){
@@ -44,7 +47,7 @@
       if(root)root.innerHTML='<a href="class.html?class='+encodeURIComponent(classId)+'" class="back-link">← '+esc(classId)+'-сынып</a><div class="admin-box"><h2>'+esc(selected.title)+' • '+quarterId+'-тоқсан</h2><p>Бұл тоқсанның сабақ материалдары әзірленуде. Дайын болғанда осы жерде пайда болады.</p></div>';
       return;
     }
-    try{if(window.ktpReady)await window.ktpReady;setTimeout(()=>{if(!render())error()},0)}catch(e){console.error(e);error()}
+    try{if(window.ktpUpperReady)await window.ktpUpperReady;if(window.ktpReady)await window.ktpReady;setTimeout(()=>{if(!render())error()},0)}catch(e){console.error(e);error()}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
