@@ -201,6 +201,7 @@
       .scene-bridge{display:flex;gap:5px;justify-content:center;margin-top:28px}.scene-plank{height:27px;flex:1;max-width:60px;background:#244059;border:2px dashed #5a7892;border-radius:5px}.scene-plank.done{background:#8b6041;border:2px solid #d3a06a}
       .scene-auction{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.scene-money{font-size:26px;font-weight:900;color:#f8cc73}
       .scene-feedback{min-height:24px;margin-top:14px;font-weight:800;color:#b9cfe2}
+      .scene-code span.done{border-color:#64f0ba;color:#83f4cc;box-shadow:0 0 20px #46e9c455}.scene-target-options button.target-hit{animation:targetHit .65s ease;background:#2e987e;border-color:#70e3b8}.scene-target-options button.target-miss{animation:targetMiss .45s ease;border-color:#ff879a}.scene-card-revealed{animation:cardReveal .5s ease}.scene-vehicle{will-change:left}@keyframes targetHit{0%{transform:scale(1)}45%{transform:scale(1.16);box-shadow:0 0 28px #5ee7ff99}100%{transform:scale(1)}}@keyframes targetMiss{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}@keyframes cardReveal{0%{transform:rotateY(90deg);opacity:.3}100%{transform:rotateY(0deg);opacity:1}}
       .scene-bids{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}.scene-bids button{border:2px solid #637088;color:#fff;background:#1a314b;border-radius:12px;padding:10px 17px;font-weight:900;cursor:pointer}.scene-bids button.selected{border-color:#ffcb75;background:#6b5032}.scene-bids button:disabled{opacity:.4}.scene-help{color:#b4cbd9;font-size:13px}.scene-code{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:25px 0}.scene-code span{min-width:35px;min-height:45px;display:grid;place-items:center;border:2px solid #5ee7ff66;background:#0c1c30;border-radius:10px;font-size:23px;font-weight:900}.scene-target-options button{border-radius:45%;min-height:85px;background:radial-gradient(circle,#17344b 0 19%,#e9edef 20% 34%,#e4636e 35% 52%,#e9edef 53% 69%,#15334c 70%);text-shadow:0 2px 5px #111;box-shadow:0 8px 22px #0004}.scene-puzzle .scene-piece.done{background:linear-gradient(140deg,#345c9f,#648f68);border-color:#d5d6a2;font-size:30px}
       .scene-done{text-align:center;padding:38px 20px;border:1px solid rgba(255,255,255,.13);border-radius:23px;background:#0e2239}
       .scene-done h2{font-size:30px}.scene-done p{color:#b9cfe2}
@@ -251,7 +252,7 @@
       stage=`<h3>Математикалық сынақ</h3><div class="scene-visual">⭐</div>`;
     }
     const options=Array.isArray(q.options)&&q.options.length?q.options:[String(q.answer)];
-    b.innerHTML=`<div class="scene" data-kind="${esc(id)}"><div class="scene-header"><span class="scene-title">${esc(label)}</span><span class="scene-chip">Сұрақ ${i+1}/${total} · ⭐ ${special.score}</span></div><div class="scene-stage">${stage}</div><div class="scene-question" ${id==="cards"&&!special.scene.cardOpen?"style='display:none'":""}><h3>${esc(q.question)}</h3><div class="scene-options ${id==="target"?"scene-target-options":""}">${options.map(o=>`<button type="button" data-scene-answer="${esc(o)}">${id==="target"?"🎯 ":""}${esc(o)}</button>`).join("")}</div><div class="scene-feedback" aria-live="polite"></div></div></div>`;
+    b.innerHTML=`<div class="scene" data-kind="${esc(id)}"><div class="scene-header"><span class="scene-title">${esc(label)}</span><span class="scene-chip">Сұрақ ${i+1}/${total} · ⭐ ${special.score}</span></div><div class="scene-stage">${stage}</div><div class="scene-question ${id==="cards"&&special.scene.cardOpen?"scene-card-revealed":""}" ${id==="cards"&&!special.scene.cardOpen?"style='display:none'":""}><h3>${esc(q.question)}</h3><div class="scene-options ${id==="target"?"scene-target-options":""}">${options.map(o=>`<button type="button" data-scene-answer="${esc(o)}">${id==="target"?"🎯 ":""}${esc(o)}</button>`).join("")}</div><div class="scene-feedback" aria-live="polite"></div></div></div>`;
     const flip=b.querySelector("#scene-flip");
     if(flip)flip.onclick=()=>{special.scene.cardOpen=true;renderFallback();};
     b.querySelectorAll("[data-bid]").forEach(btn=>btn.onclick=()=>{
@@ -275,6 +276,16 @@
       const correctAnswer=typeof answersMatch==="function"?answersMatch(btn.dataset.sceneAnswer,q.answer):String(btn.dataset.sceneAnswer)===String(q.answer);
       b.querySelectorAll("[data-scene-answer]").forEach(x=>x.disabled=true);
       special.scene.correct[i]=correctAnswer;
+      const wins=special.scene.correct.filter(Boolean).length;
+      if(correctAnswer){
+        if(id==="rocket"||id==="car-race"){
+          const vehicle=b.querySelector(".scene-vehicle");if(vehicle)vehicle.style.setProperty("--pos",Math.min(85,wins/total*85)+"%");
+        }
+        if(id==="bridge"){const plank=b.querySelectorAll(".scene-plank")[Math.min(wins-1,total-1)];if(plank)plank.classList.add("done");}
+        if(id==="puzzle"){b.querySelectorAll(".scene-piece").forEach((tile,n)=>{if(n<Math.round(wins/total*9)){tile.classList.add("done");tile.textContent=["☀️","☁️","🕊️","🏔️","🌳","🌲","🌷","🌼","🍀"][n];}});}
+        if(id==="secret-number"){const cell=b.querySelectorAll(".scene-code span")[i];if(cell){cell.textContent=String((i+3)%10);cell.classList.add("done");}}
+      }
+      if(id==="target")btn.classList.add(correctAnswer?"target-hit":"target-miss");
       if(id==="auction"){
         special.scene.capital=Math.max(0,special.scene.capital+(correctAnswer?special.scene.bid:-special.scene.bid));
         if(correctAnswer)special.score+=special.scene.bid;
