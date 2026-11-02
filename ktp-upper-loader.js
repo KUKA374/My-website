@@ -31,7 +31,19 @@
     // Grade 9 source files decode JSON asynchronously; grades 10/11
     // decode their own gzipped data asynchronously. Wait for completion.
     await Promise.resolve(window.ktpReady);
-    return window.ktpD || {};
+    // The original 10th-grade file stores KTP rows in window.ktpPlans.
+    // Map those existing lesson objects to the unified quarter keys.
+    const plans = window.ktpPlans || {};
+    window.ktpD = window.ktpD || {};
+    for (const key of Object.keys(plans)) {
+      if (!key.startsWith(grade + '_')) continue;
+      const rows = Array.isArray(plans[key] && plans[key].lessons) ? plans[key].lessons : [];
+      for (let quarter = 1; quarter <= 4; quarter++) {
+        const lessons = rows.filter(item => Number(item.quarter) === quarter);
+        if (lessons.length) window.ktpD[key + '_q' + quarter] = lessons;
+      }
+    }
+    return window.ktpD;
   })();
   window.ktpUpperReady.catch(function (error) {
     console.error('9–11 сынып КТП деректерін жүктеу қатесі:', error);
