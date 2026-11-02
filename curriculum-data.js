@@ -14,16 +14,16 @@ const curriculum = {
     { id: "geometry", title: "Геометрия", planKey: "9_geometry", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) }
   ] },
   10: { title: "10-сынып", subjects: [
-    { id: "algebra_ЖМБ", title: "Алгебра және анализ бастамалары — ЖМБ", planKey: "10_algebra_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
-    { id: "geometry_ЖМБ", title: "Геометрия — ЖМБ", planKey: "10_geometry_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
-    { id: "algebra_ҚГБ", title: "Алгебра және анализ бастамалары — ҚГБ", planKey: "10_algebra_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
-    { id: "geometry_ҚГБ", title: "Геометрия — ҚГБ", planKey: "10_geometry_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) }
+    { id: "algebra_ЖМБ", title: "Алгебра және анализ бастамалары — ЖМБ", planKey: "10_algebra_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) },
+    { id: "geometry_ЖМБ", title: "Геометрия — ЖМБ", planKey: "10_geometry_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) },
+    { id: "algebra_ҚГБ", title: "Алгебра және анализ бастамалары — ҚГБ", planKey: "10_algebra_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) },
+    { id: "geometry_ҚГБ", title: "Геометрия — ҚГБ", planKey: "10_geometry_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) }
   ] },
   11: { title: "11-сынып", subjects: [
-    { id: "algebra_ЖМБ", title: "Алгебра және анализ бастамалары — ЖМБ", planKey: "11_algebra_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
-    { id: "geometry_ЖМБ", title: "Геометрия — ЖМБ", planKey: "11_geometry_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
-    { id: "algebra_ҚГБ", title: "Алгебра және анализ бастамалары — ҚГБ", planKey: "11_algebra_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) },
-    { id: "geometry_ҚГБ", title: "Геометрия — ҚГБ", planKey: "11_geometry_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: true})) }
+    { id: "algebra_ЖМБ", title: "Алгебра және анализ бастамалары — ЖМБ", planKey: "11_algebra_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) },
+    { id: "geometry_ЖМБ", title: "Геометрия — ЖМБ", planKey: "11_geometry_ЖМБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) },
+    { id: "algebra_ҚГБ", title: "Алгебра және анализ бастамалары — ҚГБ", planKey: "11_algebra_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) },
+    { id: "geometry_ҚГБ", title: "Геометрия — ҚГБ", planKey: "11_geometry_ҚГБ", quarters: [1,2,3,4].map(id => ({id, title: `${id}-тоқсан`, available: false})) }
   ] }
 };
 window.curriculum = curriculum;
