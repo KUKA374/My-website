@@ -89,15 +89,4 @@ function getGameQuestions(gameId, lessonKey) {
   return lesson && lesson[gameId] ? lesson[gameId] : [];
 }
 
-(function loadExtraGamesAfterCore(){
-  setTimeout(() => {
-    const extra = document.createElement('script');
-    extra.src = 'games-extra-v5.js?v=2';
-    document.head.appendChild(extra);
-    setTimeout(() => {
-      const team = document.createElement('script');
-      team.src = 'games-team-mode.js?v=1';
-      document.head.appendChild(team);
-    }, 150);
-  }, 0);
-})();
+// Қосымша ойын скрипттері games.html ішінде ретімен жүктеледі.
