@@ -1,6 +1,7 @@
 const mechanics = require("./helpers/mechanics.cjs");
 const logic = require("./helpers/logic.cjs");
 const racing = require("./helpers/racing.cjs");
+const timed = require("./helpers/timed.cjs");
 const { test } = require("node:test"),
   assert = require("node:assert/strict");
 const { chromium } = require("playwright"),
@@ -64,6 +65,7 @@ async function start(p, id) {
   await p.locator("#startGameButton").click();
 }
 async function firstAnswer(p, id, correct = true) {
+  if (timed.supports(id)) return timed.firstStep(p, id, correct);
   if (racing.supports(id)) return racing.firstStep(p, id, correct);
   if (logic.supports(id)) return logic.firstStep(p, id, correct);
   if (mechanics.supported(id)) return mechanics.firstStep(p, id);
@@ -150,11 +152,15 @@ test("all 20 games save and resume their mechanics after a submitted answer", as
       assert.equal(await p.evaluate(() => GameSession.canAnswer()), true);
       assert.ok(
         (await p.locator("#gameProgress").textContent()).includes(
-          ["match", "cards"].includes(id)
-            ? "1 / 4"
-            : ["tug-of-war", "math-race"].includes(id)
+          id === "quick-answer"
+            ? `2 / ${await p.evaluate(() => GameTimed.snapshot().game.count)}`
+            : id === "auction"
               ? "2 / 8"
-              : "2 / 4",
+              : ["match", "cards"].includes(id)
+                ? "1 / 4"
+                : ["tug-of-war", "math-race"].includes(id)
+                  ? "2 / 8"
+                  : "2 / 4",
         ),
       );
       await p.locator("#backToGamesButton").click();
@@ -179,7 +185,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
           );
           assert.match(
             await p.locator("#sharedQuestionCount").innerText(),
-            /4/,
+            /\d+/,
           );
           assert.equal(
             await p.locator("#sharedTimeField").isVisible(),
@@ -187,7 +193,13 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
           );
           assert.equal(
             await p.locator("#sharedModeField").isVisible(),
-            !["math-race", "tug-of-war", "cards", "car-race"].includes(id),
+            ![
+              "math-race",
+              "tug-of-war",
+              "cards",
+              "car-race",
+              "auction",
+            ].includes(id),
           );
           await p.locator("#startGameButton").click();
           assert.equal(
@@ -281,7 +293,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
       await p.locator("#sharedSummary details").first().click();
       assert.match(
         await p.locator("#sharedSummary details").first().innerText(),
-        /2\/4/,
+        /2\/\d+/,
       );
       await p.locator("#retryMistakesButton").click();
       assert.equal(await p.evaluate(() => currentQuestions.length), 1);
@@ -309,7 +321,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
       await p.locator("#sharedSolutionButton").click();
       assert.match(
         await p.locator("#sharedHelpText").textContent(),
-        /1\/2 \+ 1\/4/,
+        /1\/2 \+ 1\/\d+/,
       );
     },
   );
@@ -373,17 +385,19 @@ test("shared timers pause, resume, expire once and cancel animations on exit", a
     async () => {
       await p.locator("#backToGamesButton").click();
       await p.locator('[data-game-id="blitz"]').click();
+      await p.selectOption("#sharedMode", "practice");
       await p.selectOption("#sharedTime", "0");
       await p.locator("#startGameButton").click();
       await p.clock.fastForward(60000);
-      assert.equal(await p.locator("[data-scene-answer]:enabled").count(), 4);
+      assert.equal(await p.locator("[data-timed-answer]:enabled").count(), 4);
       assert.match(await p.locator("#scene-seconds").textContent(), /Уақытсыз/);
       await p.locator("#backToGamesButton").click();
       await p.locator('[data-game-id="blitz"]').click();
+      await p.selectOption("#sharedMode", "practice");
       await p.selectOption("#sharedTime", "20");
       await p.locator("#startGameButton").click();
       await p.clock.fastForward(21000);
-      assert.equal(await p.locator("[data-scene-answer]:enabled").count(), 0);
+      assert.equal(await p.locator("[data-timed-answer]:enabled").count(), 0);
       assert.equal(
         await p.evaluate(() => GameSession.current().summary().timeout),
         1,
@@ -397,15 +411,15 @@ test("shared timers pause, resume, expire once and cancel animations on exit", a
       await p.locator("#spinTeamWheel").click();
       await p.locator("#pauseGameButton").click();
       await p.clock.fastForward(5000);
-      assert.equal(await p.locator("[data-wheel-team]").count(), 0);
+      assert.equal(await p.locator("[data-timed-answer]").count(), 0);
       await p.locator("#resumePausedButton").click();
-      await p.clock.fastForward(1200);
-      assert.equal(await p.locator("[data-wheel-team]").count(), 4);
+      await p.clock.fastForward(1600);
+      assert.equal(await p.locator("[data-timed-answer]").count(), 4);
       await p.locator("#backToGamesButton").click();
       await start(p, "detective");
       await p.clock.fastForward(10000);
       assert.equal(await p.locator(".detective-game").count(), 1);
-      assert.equal(await p.locator("[data-wheel-team]").count(), 0);
+      assert.equal(await p.locator("[data-timed-answer]").count(), 0);
     },
   );
 });
@@ -440,29 +454,19 @@ test("resume at terminal checkpoints and recover corrupt state safely", async (t
     },
   );
   await t.test(
-    "last quick answer resumes once, and the next game gets a fresh timer",
+    "quick progress resumes once with the same deadline; a new round gets fresh time",
     async () => {
       await start(p, "quick-answer");
-      for (let i = 0; i < 3; i++) {
-        await p
-          .locator("#quickAnswerInput")
-          .fill(
-            await p.evaluate(
-              (i) => GameSession.current().questions[i].answer,
-              i,
-            ),
-          );
-        await p.locator("#quickAnswerInput").press("Enter");
-        await p.waitForFunction((i) => currentIndex === i + 1, i);
-      }
-      await p.locator("#quickAnswerInput").fill("2");
-      await p.evaluate(() => {
-        submitQuickAnswer();
-        GameSession.pause();
-        GameSession.save();
-      });
+      for (let i = 0; i < 4; i++) await timed.firstStep(p, "quick-answer");
+      await p.locator("#quickAnswerInput").fill("1/");
+      await p.locator("#pauseGameButton").click();
+      const before = await p.evaluate(() => GameTimed.snapshot());
       await p.reload();
       await p.locator("#resumeGameBanner button").click();
+      assert.deepEqual(await p.evaluate(() => GameTimed.snapshot()), before);
+      assert.equal(await p.locator("#quickAnswerInput").inputValue(), "1/");
+      await p.locator("#resumePausedButton").click();
+      await p.clock.fastForward(31000);
       assert.equal(await p.locator("#sharedSummary").count(), 1);
       assert.equal(
         await p.evaluate(() => GameSession.current().summary().correct),
@@ -489,10 +493,11 @@ test("resume at terminal checkpoints and recover corrupt state safely", async (t
         d.engine = {};
         localStorage.setItem(k, JSON.stringify(d));
       });
-      await p.locator("#resumeGameBanner button").click();
+      await p.reload();
+      assert.equal(await p.locator("#resumeGameBanner button").count(), 0);
       assert.match(
         await p.locator("#resumeGameBanner").textContent(),
-        /мүмкін болмады/,
+        /механикасы жаңартылды/,
       );
       await start(p, "bridge");
       assert.equal(await p.locator("[data-scene-answer]:enabled").count(), 4);

@@ -57,7 +57,9 @@
         (window.GameLogic?.supports(data.model.id) &&
           (data.active !== "logic" || data.engine.version !== 1)) ||
         (window.GameRacing?.supports(data.model.id) &&
-          (data.active !== "racing" || data.engine.version !== 1))
+          (data.active !== "racing" || data.engine.version !== 1)) ||
+        (window.GameTimed?.supports(data.model.id) &&
+          (data.active !== "timed" || data.engine.version !== 1))
       ) {
         storageError =
           "Бұл ойынның механикасы жаңартылды. Бұрынғы сессияны жаңа механикада жалғастыру мүмкін емес; жаңа ойын бастаңыз.";
@@ -153,28 +155,31 @@
     if (id === "match")
       opts.format = byId("logicMatchFormat")?.value || "answers";
     window.GameRacing?.configure(opts, id);
+    window.GameTimed?.configure(opts, id);
     model = new LearningSession(id, lesson, questions, opts);
     clock = new GameClock();
     lastSaved = 0;
     clock.resume();
-    active = window.GameRacing?.supports(id)
-      ? "racing"
-      : window.GameLogic?.supports(id)
-        ? "logic"
-        : window.GameMechanics?.supports(id)
-          ? "mechanics"
-          : ["math-race", "wheel", "tug-of-war"].includes(id)
-            ? "teams"
-            : GameLearning.rules[id] &&
-                ![
-                  "match",
-                  "find-error",
-                  "quick-answer",
-                  "math-code",
-                  "detective",
-                ].includes(id)
-              ? "extra"
-              : "core";
+    active = window.GameTimed?.supports(id)
+      ? "timed"
+      : window.GameRacing?.supports(id)
+        ? "racing"
+        : window.GameLogic?.supports(id)
+          ? "logic"
+          : window.GameMechanics?.supports(id)
+            ? "mechanics"
+            : ["math-race", "wheel", "tug-of-war"].includes(id)
+              ? "teams"
+              : GameLearning.rules[id] &&
+                  ![
+                    "match",
+                    "find-error",
+                    "quick-answer",
+                    "math-code",
+                    "detective",
+                  ].includes(id)
+                ? "extra"
+                : "core";
     for (const a of Object.values(adapters)) a.setQuestions?.(questions);
     paused = false;
     byId("sharedSummary")?.remove();
@@ -356,6 +361,10 @@
     renderSummary();
   }
   function renderSummary() {
+    if (window.GameTimed?.supports(model.id)) {
+      window.GameTimed.renderSummary(clock.time());
+      return;
+    }
     if (window.GameRacing?.supports(model.id)) {
       window.GameRacing.renderSummary(clock.time());
       return;
@@ -451,6 +460,7 @@
       byId("sharedTime").value = String(saved.model.settings.seconds);
       window.GameLogic?.restoreSettings(saved.model);
       window.GameRacing?.restoreSettings(saved.model);
+      window.GameTimed?.restoreSettings(saved.model);
       startSelectedGame();
       if (!model) throw Error();
       model = Object.assign(new LearningSession(), saved.model);
@@ -532,6 +542,7 @@
       .join("");
     window.GameLogic?.setup(id);
     window.GameRacing?.setup(id);
+    window.GameTimed?.setup(id);
     updateCount();
   }
   function updateCount() {
@@ -555,6 +566,14 @@
           : bank?.[aliases[selectedGameId] || selectedGameId]) ||
       bank?.quickAnswer ||
       [];
+    if (window.GameTimed?.supports(selectedGameId)) {
+      const n = window.GameTimed.source(selectedGameId, getLessonKey()).length;
+      byId("sharedQuestionCount").textContent =
+        selectedGameId === "auction"
+          ? `4 лот әр командаға, 4 жұп раунд. Қосымша қалпына келтіру есептері бөлек. Бастапқы капитал: 100 + 100 виртуалды ұпай.`
+          : `Қайталанбайтын тапсырма саны: ${n}. Сынып пен тақырыпқа сай қысқа есептер.${selectedGameId === "quick-answer" ? " Жалпы уақыт не қор біткенде раунд аяқталады." : ""}`;
+      return;
+    }
     if (window.GameRacing?.supports(selectedGameId)) {
       byId("sharedQuestionCount").textContent =
         selectedGameId === "car-race"

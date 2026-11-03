@@ -1,0 +1,297 @@
+/* Four scoped scenes. No selectors for the other sixteen mechanics. */
+.timed-game {
+  max-width: 1000px;
+  margin: auto;
+  color: #eaf5ff;
+  line-height: 1.6;
+}
+.timed-game header,
+.timed-task,
+.timed-finish,
+.timed-journal,
+.timed-clock-panel {
+  padding: 24px;
+  border: 1px solid #668399;
+  border-radius: 20px;
+  margin: 18px 0;
+  background: #10273d;
+}
+.timed-game h2,
+.timed-game h3 {
+  line-height: 1.3;
+}
+.timed-prompt {
+  font-size: clamp(23px, 4vw, 36px);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.timed-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.timed-choices button {
+  min-height: 58px;
+  padding: 17px;
+  font: inherit;
+  font-weight: 800;
+  color: white;
+  background: #173d55;
+  border: 2px solid #648da1;
+  border-radius: 13px;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.timed-game button:focus-visible,
+.timed-game input:focus-visible {
+  outline: 3px solid #ffe2a2;
+  outline-offset: 3px;
+}
+.timed-game button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.timed-game input {
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+  padding: 16px;
+  border: 2px solid #7fa2b8;
+  border-radius: 13px;
+  background: #081b2f;
+  color: white;
+  box-sizing: border-box;
+  margin: 10px 0 16px;
+}
+.timed-game label {
+  display: block;
+  font-weight: 700;
+}
+.timed-score-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.timed-score-row span {
+  padding: 12px;
+  border: 1px solid #4e768b;
+  border-radius: 12px;
+}
+.timed-score-row strong {
+  display: block;
+  font-size: 26px;
+}
+.timed-clock-panel strong {
+  display: block;
+  font-size: clamp(42px, 8vw, 64px);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: #b6f6ed;
+}
+.timed-bar {
+  height: 13px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #092032;
+}
+.timed-bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #2cd3ac, #6ad4ed);
+}
+.timed-danger strong {
+  color: #ffb4ac;
+}
+.timed-danger .timed-bar i {
+  background: #ff9a8d;
+}
+.timed-quick-answer header {
+  background: linear-gradient(120deg, #17494e, #1a294b);
+}
+.timed-blitz header {
+  background: linear-gradient(120deg, #473167, #202f52);
+}
+.timed-feedback,
+.timed-last,
+.timed-note,
+.timed-recovery,
+.timed-locked-bid {
+  padding: 17px;
+  border-left: 4px solid #83d9cb;
+  background: #14364c;
+  margin: 16px 0;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+.timed-last {
+  border-color: #e8c77c;
+}
+.timed-finish {
+  text-align: center;
+  background: linear-gradient(130deg, #174954, #292b51);
+}
+.timed-finish h2 {
+  animation: timedFinish 0.4s ease-out;
+}
+.timed-task {
+  animation: timedTask 0.18s ease-out;
+}
+.timed-quick-answer .timed-task {
+  animation: none;
+}
+.timed-wheel header {
+  background: linear-gradient(120deg, #473357, #1f334b);
+}
+.timed-wheel-scene {
+  text-align: center;
+  padding: 14px 0;
+}
+.timed-wheel-disc {
+  display: block;
+  width: min(100%, 320px);
+  height: auto;
+  margin: auto;
+  overflow: visible;
+}
+.timed-pointer {
+  position: relative;
+  z-index: 2;
+  font-size: 34px;
+  color: #ffdfa0;
+  line-height: 1;
+  margin-bottom: -6px;
+  filter: drop-shadow(0 3px 2px #000);
+}
+.timed-wheel-scene svg {
+  border-radius: 50%;
+  box-shadow: 0 0 36px #6b5eb533;
+}
+.timed-wheel-scene button {
+  margin-top: 8px;
+}
+.timed-capitals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.timed-capitals section {
+  border: 2px solid #74c4d9;
+  padding: 15px;
+  border-radius: 13px;
+  background: #112b42;
+}
+.timed-capitals .capital-1 {
+  border-color: #ee9fbd;
+}
+.timed-capitals strong,
+.timed-capitals span {
+  display: block;
+}
+.timed-capitals span {
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 850;
+}
+.timed-active {
+  box-shadow: 0 0 0 3px #ebd8a455;
+}
+.timed-auction header {
+  background: linear-gradient(120deg, #4e3c23, #29374c);
+}
+.timed-bid-panel {
+  padding: 19px;
+  border: 2px solid #d5b877;
+  border-radius: 15px;
+  background: #342f2b;
+}
+.timed-bid-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+.timed-bid-shortcuts button {
+  font: inherit;
+  color: #fff;
+  background: #544631;
+  border: 1px solid #d8c18e;
+  padding: 12px 19px;
+  border-radius: 9px;
+  min-height: 48px;
+  cursor: pointer;
+}
+.timed-recovery {
+  border-color: #eec478;
+}
+.timed-journal p {
+  padding: 12px;
+  border-bottom: 1px solid #527083;
+  overflow-wrap: anywhere;
+}
+.timed-setup select {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  min-height: 48px;
+  background: #142e45;
+  color: #fff;
+  border: 1px solid #7ca0b4;
+  border-radius: 12px;
+  font: inherit;
+}
+@keyframes timedTask {
+  from {
+    opacity: 0.5;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes timedFinish {
+  from {
+    opacity: 0.3;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 650px) {
+  .timed-game header,
+  .timed-task,
+  .timed-finish,
+  .timed-journal,
+  .timed-clock-panel {
+    padding: 16px;
+  }
+  .timed-choices {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .timed-capitals {
+    gap: 8px;
+  }
+  .timed-capitals section {
+    padding: 12px 8px;
+  }
+  .timed-capitals strong {
+    font-size: 13px;
+  }
+  .timed-bid-panel {
+    padding: 13px;
+  }
+  .timed-score-row {
+    gap: 8px;
+  }
+  .timed-score-row span {
+    padding: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .timed-game * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
