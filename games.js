@@ -47,7 +47,7 @@ function renderGameCards() {
       <div class="game-icon">${escapeGameHtml(game.title.split(" ")[0])}</div>
       <div class="game-card-content">
         <h3>${escapeGameHtml(game.title.substring(game.title.indexOf(" ") + 1))}</h3>
-        <p>${escapeGameHtml(window.GameTimed?.description(game.id) || window.GameRacing?.description(game.id) || window.GameLogic?.description(game.id) || game.description)}</p>
+        <p>${escapeGameHtml(window.GameFinal?.description(game.id) || window.GameTimed?.description(game.id) || window.GameRacing?.description(game.id) || window.GameLogic?.description(game.id) || game.description)}</p>
         <div class="game-tags">${(window.GameLearning?(["math-race","tug-of-war","auction"].includes(game.id)?["Екі команда"]:game.id==="wheel"?["Жеке","Екі команда"]:["Жеке"]):game.formats).map(x => `<span>${escapeGameHtml(x)}</span>`).join("")}</div>
       </div>
     </button>
@@ -64,7 +64,7 @@ function selectGame(gameId) {
   const game = mathGames.find(x => x.id === gameId);
   document.getElementById("selectedGameTitle").textContent = game ? game.title : "";
   document.getElementById("selectedGameHeading").textContent = game ? game.title : "Ойынды баптау";
-  document.getElementById("selectedGameDescription").textContent = game ? (window.GameTimed?.description(gameId) || window.GameRacing?.description(gameId) || window.GameLogic?.description(gameId) || game.description) : "";
+  document.getElementById("selectedGameDescription").textContent = game ? (window.GameFinal?.description(gameId) || window.GameTimed?.description(gameId) || window.GameRacing?.description(gameId) || window.GameLogic?.description(gameId) || game.description) : "";
   document.getElementById("gamesLibrary").style.display = "none";
   document.getElementById("gameStage").style.display = "block";
   document.getElementById("gameSetup").style.display = "block";
@@ -135,6 +135,7 @@ function startSelectedGame() {
   window.GameLogic?.start(selectedGameId,lessonKey,currentQuestions);
   window.GameRacing?.start(selectedGameId,lessonKey,currentQuestions);
   window.GameTimed?.start(selectedGameId,lessonKey,currentQuestions);
+  window.GameFinal?.start(selectedGameId,lessonKey,currentQuestions);
   document.getElementById("gameSetup").style.display = "none";
   document.getElementById("gameArea").style.display = "block";
   document.getElementById("gameResult").textContent = "";

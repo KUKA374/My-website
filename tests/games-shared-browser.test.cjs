@@ -2,6 +2,7 @@ const mechanics = require("./helpers/mechanics.cjs");
 const logic = require("./helpers/logic.cjs");
 const racing = require("./helpers/racing.cjs");
 const timed = require("./helpers/timed.cjs");
+const finalGames = require("./helpers/final.cjs");
 const { test } = require("node:test"),
   assert = require("node:assert/strict");
 const { chromium } = require("playwright"),
@@ -65,6 +66,7 @@ async function start(p, id) {
   await p.locator("#startGameButton").click();
 }
 async function firstAnswer(p, id, correct = true) {
+  if (finalGames.supports(id)) return finalGames.firstStep(p, id, correct);
   if (timed.supports(id)) return timed.firstStep(p, id, correct);
   if (racing.supports(id)) return racing.firstStep(p, id, correct);
   if (logic.supports(id)) return logic.firstStep(p, id, correct);
@@ -152,15 +154,21 @@ test("all 20 games save and resume their mechanics after a submitted answer", as
       assert.equal(await p.evaluate(() => GameSession.canAnswer()), true);
       assert.ok(
         (await p.locator("#gameProgress").textContent()).includes(
-          id === "quick-answer"
-            ? `2 / ${await p.evaluate(() => GameTimed.snapshot().game.count)}`
-            : id === "auction"
-              ? "2 / 8"
-              : ["match", "cards"].includes(id)
-                ? "1 / 4"
-                : ["tug-of-war", "math-race"].includes(id)
-                  ? "2 / 8"
-                  : "2 / 4",
+          id === "quest"
+            ? "1 / 8"
+            : id === "math-king"
+              ? "1 / 20"
+              : ["rocket", "castle", "bridge"].includes(id)
+                ? "2 / 6"
+                : id === "quick-answer"
+                  ? `2 / ${await p.evaluate(() => GameTimed.snapshot().game.count)}`
+                  : id === "auction"
+                    ? "2 / 8"
+                    : ["match", "cards"].includes(id)
+                      ? "1 / 4"
+                      : ["tug-of-war", "math-race"].includes(id)
+                        ? "2 / 8"
+                        : "2 / 4",
         ),
       );
       await p.locator("#backToGamesButton").click();
@@ -199,6 +207,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
               "cards",
               "car-race",
               "auction",
+              "math-king",
             ].includes(id),
           );
           await p.locator("#startGameButton").click();
@@ -212,8 +221,8 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
         }
       }
       await p.setViewportSize({ width: 1440, height: 1000 });
-      await start(p, "rocket");
-      const target = p.locator("[data-scene-answer]").first();
+      await start(p, "target");
+      const target = p.locator("[data-final-answer]").first();
       await target.scrollIntoViewIfNeeded();
       const before = await target.boundingBox();
       await p.mouse.move(
@@ -321,7 +330,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
       await p.locator("#sharedSolutionButton").click();
       assert.match(
         await p.locator("#sharedHelpText").textContent(),
-        /1\/2 \+ 1\/\d+/,
+        /1\/2 \+ 1\/4/,
       );
     },
   );
@@ -337,7 +346,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
         await p.locator("#resumeGameBanner").innerText(),
         /оқылмады/,
       );
-      await start(p, "rocket");
+      await start(p, "target");
       await p.evaluate(() => {
         Storage.prototype.setItem = function () {
           throw Error("quota");
@@ -348,7 +357,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
         await p.locator("#localSaveStatus").textContent(),
         /сақтау мүмкін болмады/,
       );
-      assert.equal(await p.locator("[data-scene-answer]:enabled").count(), 4);
+      assert.equal(await p.locator("[data-final-answer]:enabled").count(), 4);
     },
   );
 });
@@ -500,7 +509,7 @@ test("resume at terminal checkpoints and recover corrupt state safely", async (t
         /механикасы жаңартылды/,
       );
       await start(p, "bridge");
-      assert.equal(await p.locator("[data-scene-answer]:enabled").count(), 4);
+      assert.equal(await p.locator("#finalSubmit").isEnabled(), true);
     },
   );
 });

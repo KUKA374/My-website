@@ -59,7 +59,9 @@
         (window.GameRacing?.supports(data.model.id) &&
           (data.active !== "racing" || data.engine.version !== 1)) ||
         (window.GameTimed?.supports(data.model.id) &&
-          (data.active !== "timed" || data.engine.version !== 1))
+          (data.active !== "timed" || data.engine.version !== 1)) ||
+        (window.GameFinal?.supports(data.model.id) &&
+          (data.active !== "final" || data.engine.version !== 1))
       ) {
         storageError =
           "Бұл ойынның механикасы жаңартылды. Бұрынғы сессияны жаңа механикада жалғастыру мүмкін емес; жаңа ойын бастаңыз.";
@@ -156,30 +158,33 @@
       opts.format = byId("logicMatchFormat")?.value || "answers";
     window.GameRacing?.configure(opts, id);
     window.GameTimed?.configure(opts, id);
+    window.GameFinal?.configure(opts, id);
     model = new LearningSession(id, lesson, questions, opts);
     clock = new GameClock();
     lastSaved = 0;
     clock.resume();
-    active = window.GameTimed?.supports(id)
-      ? "timed"
-      : window.GameRacing?.supports(id)
-        ? "racing"
-        : window.GameLogic?.supports(id)
-          ? "logic"
-          : window.GameMechanics?.supports(id)
-            ? "mechanics"
-            : ["math-race", "wheel", "tug-of-war"].includes(id)
-              ? "teams"
-              : GameLearning.rules[id] &&
-                  ![
-                    "match",
-                    "find-error",
-                    "quick-answer",
-                    "math-code",
-                    "detective",
-                  ].includes(id)
-                ? "extra"
-                : "core";
+    active = window.GameFinal?.supports(id)
+      ? "final"
+      : window.GameTimed?.supports(id)
+        ? "timed"
+        : window.GameRacing?.supports(id)
+          ? "racing"
+          : window.GameLogic?.supports(id)
+            ? "logic"
+            : window.GameMechanics?.supports(id)
+              ? "mechanics"
+              : ["math-race", "wheel", "tug-of-war"].includes(id)
+                ? "teams"
+                : GameLearning.rules[id] &&
+                    ![
+                      "match",
+                      "find-error",
+                      "quick-answer",
+                      "math-code",
+                      "detective",
+                    ].includes(id)
+                  ? "extra"
+                  : "core";
     for (const a of Object.values(adapters)) a.setQuestions?.(questions);
     paused = false;
     byId("sharedSummary")?.remove();
@@ -361,6 +366,10 @@
     renderSummary();
   }
   function renderSummary() {
+    if (window.GameFinal?.supports(model.id)) {
+      window.GameFinal.renderSummary(clock.time());
+      return;
+    }
     if (window.GameTimed?.supports(model.id)) {
       window.GameTimed.renderSummary(clock.time());
       return;
@@ -461,6 +470,7 @@
       window.GameLogic?.restoreSettings(saved.model);
       window.GameRacing?.restoreSettings(saved.model);
       window.GameTimed?.restoreSettings(saved.model);
+      window.GameFinal?.restoreSettings(saved.model);
       startSelectedGame();
       if (!model) throw Error();
       model = Object.assign(new LearningSession(), saved.model);
@@ -497,23 +507,25 @@
     if (!e) return;
     const r = GameLearning.rules[id];
     const scoreRule =
-      id === "find-error"
-        ? "Ойын ұпайы: қатені табуға 1, дұрыс түзетуге 1 ұпай. Таңдау әр бөлімде бір рет бекітіледі."
-        : id === "cards"
-          ? "Өзіндік бағалау автоматты тексерілген ұпайға айналмайды."
-          : ["auction", "wheel", "quick-answer"].includes(id)
-            ? ""
-            : [
-                  "match",
-                  "find-error",
-                  "math-code",
-                  "detective",
-                  "math-race",
-                  "tug-of-war",
-                  "car-race",
-                ].includes(id)
-              ? "Ойын ұпайы: әр дұрыс жауапқа 1 ұпай."
-              : "Ойын ұпайы: әр дұрыс жауапқа 10 ұпай.";
+      id === "math-king"
+        ? "Сынақтағы дұрыс жауапқа 10 ұпай. Дайындық жаттығуы ойын ұпайын және деңгейді қоспайды."
+        : id === "find-error"
+          ? "Ойын ұпайы: қатені табуға 1, дұрыс түзетуге 1 ұпай. Таңдау әр бөлімде бір рет бекітіледі."
+          : id === "cards"
+            ? "Өзіндік бағалау автоматты тексерілген ұпайға айналмайды."
+            : ["auction", "wheel", "quick-answer"].includes(id)
+              ? ""
+              : [
+                    "match",
+                    "find-error",
+                    "math-code",
+                    "detective",
+                    "math-race",
+                    "tug-of-war",
+                    "car-race",
+                  ].includes(id)
+                ? "Ойын ұпайы: әр дұрыс жауапқа 1 ұпай."
+                : "Ойын ұпайы: әр дұрыс жауапқа 10 ұпай.";
     e.innerHTML = `<p>Жаңа ойын басталса, бұрынғы сақталған сессияның орнына осы ойын сақталады.</p><h3>Ойынның мақсаты</h3><p>${esc(r[0])}</p><h3>Қалай ойнаймыз?</h3><p>${esc(r[1])}</p><h3>Жеңіс және ұпай шарты</h3><p>${esc(r[2])} ${esc(scoreRule)}</p><p>${id === "cards" ? "Өзіндік белгілер бөлек қорытындыланады. Автоматты дұрыс/қате жауап және дәлдік пайызы есептелмейді." : "Оқу нәтижесі ойын ұпайынан бөлек есептеледі. Әр дұрыс жауапқа, арнайы ереже көрсетілмесе, 1 дұрыс тапсырма тіркеледі."}</p>`;
     const team = ["math-race", "tug-of-war", "cards"].includes(id);
     byId("sharedModeField").hidden = team;
@@ -543,6 +555,7 @@
     window.GameLogic?.setup(id);
     window.GameRacing?.setup(id);
     window.GameTimed?.setup(id);
+    window.GameFinal?.setup(id);
     updateCount();
   }
   function updateCount() {
@@ -566,6 +579,12 @@
           : bank?.[aliases[selectedGameId] || selectedGameId]) ||
       bank?.quickAnswer ||
       [];
+    if (window.GameFinal?.supports(selectedGameId)) {
+      const n = window.GameFinal.source(selectedGameId, getLessonKey()).length;
+      byId("sharedQuestionCount").textContent =
+        `Тапсырма саны: ${n}. ${selectedGameId === "math-king" ? "4 міндетті деңгей, әр сынақта 5 есеп; өту шегі 80%." : "Дағдылар таңдалған сынып пен сабаққа сай; өту шарттары ойын ережесінде көрсетілген."} Белсенді уақыт есептеледі; жауап беру мерзімі жоқ.`;
+      return;
+    }
     if (window.GameTimed?.supports(selectedGameId)) {
       const n = window.GameTimed.source(selectedGameId, getLessonKey()).length;
       byId("sharedQuestionCount").textContent =

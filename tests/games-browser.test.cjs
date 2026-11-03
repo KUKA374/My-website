@@ -6,6 +6,7 @@ const mechanics=require('./helpers/mechanics.cjs');
 const logic=require('./helpers/logic.cjs');
 const racing=require('./helpers/racing.cjs');
 const timed=require('./helpers/timed.cjs');
+const finalGames=require('./helpers/final.cjs');
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const http=require('node:http');
@@ -51,6 +52,7 @@ async function bank(page,id){return page.evaluate(id=>{
 },id);}
 async function continueAnswer(page){await page.locator('#gameQuestion .game-answer-feedback button,#gameQuestion .scene-feedback button').click();}
 async function play(page,id){
+ if(finalGames.supports(id))return finalGames.play(page,id);
  if(timed.supports(id))return timed.play(page,id);
  if(racing.supports(id))return racing.play(page,id);
  if(logic.supports(id))return logic.play(page,id);
@@ -141,15 +143,11 @@ test('edge cases: scoring, locks, timeouts, cancellation, keyboard and narrow sc
   assert.equal(await page.locator('#gameProgress').textContent(),'Нәтиже');
   await page.locator('#backToGamesButton').click();
  });
- await t.test('castle: three wrong answers end the game early; replay restores health',async()=>{
-  await start(page,'castle');const qs=await bank(page,'castle');
-  for(let i=0;i<3;i++){
-   const wrong=await page.locator('[data-scene-answer]').evaluateAll((bs,a)=>bs.find(b=>b.dataset.sceneAnswer!==a).dataset.sceneAnswer,qs[i].answer);
-   await page.locator(`[data-scene-answer=${JSON.stringify(wrong)}]`).click();await continueAnswer(page);
-  }
-  assert.match(await page.locator('.scene-ending').textContent(),/таусылды/);
+ await t.test('castle: three unprotected mistakes end the game and replay restores defense',async()=>{
+  await start(page,'castle');for(let i=0;i<3;i++)await finalGames.firstStep(page,'castle',false);
+  assert.equal(await page.evaluate(()=>GameFinal.snapshot().game.health),0);
   assert.equal(await page.locator('#gameProgress').textContent(),'Нәтиже');
-  await page.locator('#scene-replay').click();assert.equal(await page.locator('.scene-health').textContent(),'❤️❤️❤️');
+  await page.locator('#finalReplay').click();assert.equal(await page.evaluate(()=>GameFinal.snapshot().game.health),100);
   await page.locator('#backToGamesButton').click();
  });
  await t.test('code parts: repeated submit and stale handlers cannot add points or skip questions',async()=>{
