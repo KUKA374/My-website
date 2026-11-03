@@ -22,7 +22,7 @@
   const specialIds = new Set(['math-race','wheel']);
   const coreGet = window.getGameQuestions;
   const coreRender = window.renderCurrentQuestion;
-  const special = { id:null, qs:[], i:0, score:0, wheelReady:false, timer:null, timeLeft:20, tugLeft:0, tugRight:0, tugTurn:'left', tugPos:0, scene:{capital:100,bid:10,health:3,cardOpen:false,correct:[],seconds:12},sceneTimer:null,sceneToken:0 };
+  const special = { id:null, qs:[], i:0, score:0, wheelReady:false, timer:null, timeLeft:20, tugLeft:0, tugRight:0, tugTurn:'left', tugPos:0, scene:{capital:100,bid:10,health:3,cardOpen:false,correct:[],seconds:12},sceneTimer:null,sceneToken:0,answered:false };
 
   const esc = v => String(v ?? '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -54,7 +54,7 @@
         const pool=Number.isFinite(numeric)?[numeric+1,numeric-1,numeric+2,numeric-2].map(String):["1/2","1/4","2/3","0","2","5","8","10"];
         for(const v of pool){if(!choices.includes(v))choices.push(v);if(choices.length>=4)break;}
       }
-      choices=[...new Set(choices)].slice(0,4);
+      choices=[answer,...new Set(choices.filter(v=>v!==answer))].slice(0,4);
       for(let n=choices.length-1;n>0;n--){const j=Math.floor(Math.random()*(n+1));[choices[n],choices[j]]=[choices[j],choices[n]];}
       return {...q,question:q.question,answer,options:choices};
     });
@@ -62,7 +62,7 @@
   function resetScene(){
     clearInterval(special.sceneTimer);special.sceneTimer=null;
     clearInterval(special.timer);special.timer=null;
-    special.sceneToken++;special.scene={capital:100,bid:10,health:3,cardOpen:false,correct:[],seconds:12};
+    special.answered=false;special.sceneToken++;special.scene={capital:100,bid:10,health:3,cardOpen:false,correct:[],seconds:12};
   }
   window.getGameQuestions=function(id,key){
     resetScene();
@@ -220,17 +220,22 @@
     const correct=special.scene.correct.filter(Boolean).length;
     if(document.getElementById("gameProgress"))document.getElementById("gameProgress").textContent=i>=total?"Нәтиже":`${Math.min(total,i+1)} / ${total}`;
     clearInterval(special.sceneTimer);special.sceneTimer=null;
-    if(!q||special.scene.health<=0){
+    if(!q||special.scene.health<=0||id==="auction"&&special.scene.capital===0){
+      document.getElementById("gameProgress").textContent="Нәтиже";
       const label=sceneNames[id]||"ОЙЫН";
       const kingSuccess=id==="math-king"&&correct>=Math.ceil(total*.75);
       const secret=id==="secret-number"&&correct===total?qs.map((item,n)=>String((String(item.answer).match(/\d/g)||[String(n+1)]).slice(-1)[0])).join(""):null;
       const result=id==="math-king"?(kingSuccess?"👑 ТӘЖДІ ИЕЛЕНДІҢ!":"🏰 Тәжге жету үшін кемінде 75% дұрыс жауап қажет"):
         id==="secret-number"?(secret?"🔓 Құпия код: "+secret:"🔒 Құпия код толық ашылмады"):
+        id==="auction"?"💰 Соңғы капитал: "+special.scene.capital+" ұпай":
+        ["puzzle","rocket","bridge","car-race","quest"].includes(id)?(correct===total?"🌟 Мақсатқа жеттің!":`⭐ Мақсатқа жету: ${Math.round(correct/total*100)}%. Қайта байқап көр!`):
         id==="castle"&&special.scene.health<=0?"🛡️ Қамалдың қорғанысы таусылды":"Сынақтар аяқталды";
       b.innerHTML=`<div class="scene-done"><div class="scene-visual">${kingSuccess?"👑":special.scene.health<=0?"🛡️":"🏆"}</div><h2>${esc(label)} аяқталды!</h2><p class="scene-ending">${esc(result)}</p><p>Дұрыс жауап: ${correct} / ${total}</p><p>Жиналған ұпай: ${special.score}</p><button class="game-primary" id="scene-replay">🔄 Қайта ойнау</button></div>`;
       b.querySelector("#scene-replay").onclick=replay;
       return;
     }
+    special.answered=false;
+    if(id==="auction")special.scene.bid=Math.min(special.scene.bid,special.scene.capital);
     const progress=Math.round(i/total*100),label=sceneNames[id]||id;
     let stage="";
     if(id==="rocket"){
@@ -253,7 +258,7 @@
     }else if(id==="target"){
       stage=`<h3>Дұрыс жауап — дәл тиген нысана!</h3><div class="scene-targets"><div class="scene-target">🎯</div><div class="scene-target">🎯</div><div class="scene-target">🎯</div></div>`;
     }else if(id==="cards"){
-      stage=`<h3>Карточка №${i+1}</h3><div class="scene-visual">${special.scene.cardOpen?"🃏✨":"🂠 🂠 🂠"}</div>${special.scene.cardOpen?"<p>Карточка ашылды — тапсырманы шеш!</p>":'<button type="button" id="scene-flip" class="game-primary">🃏 Карточканы аудару</button>'}`;
+      stage=`<h3>Карточка №${i+1}</h3><div class="scene-visual">${special.scene.cardOpen?"🃏✨":'<div class="scene-deck" aria-label="Үш жабық карточка"><span class="scene-card-back">?</span><span class="scene-card-back">?</span><span class="scene-card-back">?</span></div>'}</div>${special.scene.cardOpen?"<p>Карточка ашылды — тапсырманы шеш!</p>":'<button type="button" id="scene-flip" class="game-primary">🃏 Карточканы аудару</button>'}`;
     }else if(id==="secret-number"){
       stage=`<h3>Құпия кодтың цифрларын аш</h3><div class="scene-code">${Array.from({length:total},(_,n)=>`<span>${special.scene.correct[n]?String((String(qs[n].answer).match(/\d/g)||[String(n+1)]).slice(-1)[0]):"?"}</span>`).join("")}</div><p class="scene-help">Әр дұрыс жауап бір цифрды ашады</p>`;
     }else if(id==="blitz"){
@@ -267,24 +272,31 @@
     if(flip)flip.onclick=()=>{special.scene.cardOpen=true;renderFallback();};
     b.querySelectorAll("[data-bid]").forEach(btn=>btn.onclick=()=>{
       const amount=Number(btn.dataset.bid);
-      if(amount<=special.scene.capital){special.scene.bid=amount;renderFallback();}
+      if(!special.answered&&amount<=special.scene.capital){special.scene.bid=amount;renderFallback();}
     });
     const session=special.sceneToken;
     if(id==="blitz"){
-      let remaining=12;
+      let remaining=12;const deadline=performance.now()+12000;
       special.sceneTimer=setInterval(()=>{
         if(session!==special.sceneToken||special.id!=="blitz"||special.i!==i){clearInterval(special.sceneTimer);special.sceneTimer=null;return;}
-        remaining--;
+        remaining=Math.max(0,Math.ceil((deadline-performance.now())/1000));
         const timer=b.querySelector("#scene-seconds"),bar=b.querySelector("#scene-timer-fill");
         if(timer)timer.textContent=String(remaining);if(bar)bar.style.width=Math.max(0,remaining/12*100)+"%";
-        if(remaining<=0){clearInterval(special.sceneTimer);special.sceneTimer=null;special.scene.correct[i]=false;special.i++;renderFallback();}
-      },1000);
+        if(remaining<=0){clearInterval(special.sceneTimer);special.sceneTimer=null;special.answered=true;special.scene.correct[i]=false;
+          b.querySelectorAll('[data-scene-answer]').forEach(x=>{x.disabled=true;if(answersMatch(x.dataset.sceneAnswer,q.answer))x.classList.add('answer-correct');});
+          const feedback=b.querySelector('.scene-feedback');feedback.textContent='⏱ Уақыт аяқталды. Дұрыс жауап: '+q.answer;
+          const next=document.createElement('button');next.type='button';next.className='game-primary';next.textContent='Жалғастыру →';
+          let used=false;next.onclick=()=>{if(used||session!==special.sceneToken||special.i!==i)return;used=true;special.i++;renderFallback();};
+          feedback.appendChild(document.createElement('div')).appendChild(next);next.focus({preventScroll:true});}
+      },100);
     }
     b.querySelectorAll("[data-scene-answer]").forEach(btn=>btn.onclick=()=>{
-      if(special.sceneToken!==session||special.i!==i)return;
+      if(special.sceneToken!==session||special.i!==i||special.answered)return;
+      special.answered=true;
       clearInterval(special.sceneTimer);special.sceneTimer=null;
       const correctAnswer=typeof answersMatch==="function"?answersMatch(btn.dataset.sceneAnswer,q.answer):String(btn.dataset.sceneAnswer)===String(q.answer);
-      b.querySelectorAll("[data-scene-answer]").forEach(x=>x.disabled=true);
+      b.querySelectorAll("[data-bid]").forEach(x=>x.disabled=true);
+      b.querySelectorAll("[data-scene-answer]").forEach(x=>{x.disabled=true;if(answersMatch(x.dataset.sceneAnswer,q.answer))x.classList.add("answer-correct");else if(x===btn)x.classList.add("answer-wrong");});
       special.scene.correct[i]=correctAnswer;
       const wins=special.scene.correct.filter(Boolean).length;
       if(correctAnswer){
@@ -306,8 +318,10 @@
       const next=document.createElement("button");next.className="game-primary";next.type="button";
       next.textContent=i+1>=total||special.scene.health<=0?"Нәтижені көру":"Келесі тапсырма →";
       next.style.marginTop="12px";
-      next.onclick=()=>{if(session!==special.sceneToken)return;special.i++;special.scene.cardOpen=false;renderFallback();};
+      let advanced=false;
+      next.onclick=()=>{if(advanced||session!==special.sceneToken||special.i!==i)return;advanced=true;special.i++;special.scene.cardOpen=false;renderFallback();};
       feedback.appendChild(document.createElement("div")).appendChild(next);
+      next.focus({preventScroll:true});
     });
   }
 

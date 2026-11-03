@@ -57,14 +57,14 @@
     @media(max-width:650px){.games-library{width:calc(100% - 28px);padding-top:20px}.games-hero{padding:25px 20px;border-radius:22px}.games-hero h1{letter-spacing:-1px}.game-section-title{align-items:flex-start;flex-direction:column;gap:5px}.games-grid{grid-template-columns:1fr;gap:12px}.game-card{min-height:0;gap:12px;padding:19px}.game-card p{margin-bottom:12px}.games-nav-inner{width:calc(100% - 28px)}.games-nav-links{justify-content:flex-start}.games-nav-links a{padding:7px 9px}.presentation-top,.presentation-canvas{width:calc(100% - 24px)}.presentation-top{align-items:flex-start}.presentation-title{font-size:15px}.setup-grid{grid-template-columns:1fr}.game-setup,.game-area{border-radius:20px;padding:18px}.game-task{padding:19px}.game-prompt{font-size:clamp(23px,7vw,34px)}.answer-buttons button{width:100%}.game-top h2{font-size:20px}}
     @media(prefers-reduced-motion:reduce){.game-card,.game-primary,.v5-wheel,.v5-run,.v5-rope-mark{transition:none!important;animation:none!important}}
   </style>
-  <link rel="stylesheet" href="games-arcade.css?v=3">
+  <link rel="stylesheet" href="games-arcade.css?v=4">
 </head>
 <body class="games-body">
   <div class="games-shell">
     <header class="games-nav"><div class="games-nav-inner"><a href="index.html" class="games-logo">📐 Math <span>Games</span></a><nav class="games-nav-links"><a href="index.html">← Негізгі платформа</a><a href="games.html">🎮 Ойындар</a><a href="qmj.html">📄 ҚМЖ</a></nav></div></header>
 
     <main id="gamesLibrary" class="games-library">
-      <section class="games-hero"><span class="game-kicker">⚡ INTERACTIVE MATH PLATFORM</span><h1>Математиканы<br><em>ойнап үйрен.</em></h1><p>Ойын механизмдері бір рет жасалып, кейін әр сынып пен әр тақырыпқа жаңа есептермен толтырылады.</p><div class="games-stats"><div class="game-stat"><strong>6</strong> ойын механизмі</div><div class="game-stat"><strong>7–11</strong> сыныпқа дайын архитектура</div><div class="game-stat"><strong>∞</strong> тапсырма қосуға болады</div></div></section>
+      <section class="games-hero"><span class="game-kicker">⚡ INTERACTIVE MATH PLATFORM</span><h1>Математиканы<br><em>ойнап үйрен.</em></h1><p>Тақырыпты таңда, есептерді шеш және мақсатыңа жет. Жеке жаттық немесе достарыңмен командалық сайысқа түс.</p><div class="games-stats"><div class="game-stat"><strong>20</strong> интерактивті ойын</div><div class="game-stat"><strong>5–7</strong> сынып тапсырмалары</div><div class="game-stat"><strong>Жеке · Командалық</strong> ойын режимдері</div></div></section>
       <div class="game-section-title"><h2>Ойын таңда</h2><span>Ойынды таңдағанда ол презентация режимінде ашылады</span></div>
       <div id="gamesGrid" class="games-grid"></div>
       <div class="platform-note"><strong>Жаңа режим:</strong> ойынды таңдағаннан кейін экранда тек сол ойын қалады — PowerPoint слайды сияқты алаңға назар толық шоғырланады.</div>
@@ -73,11 +73,11 @@
     <section id="gameStage" class="game-stage" style="display:none">
       <div class="presentation-top"><button id="backToGamesButton" class="presentation-back" type="button">← Ойындарға қайту</button><div id="selectedGameTitle" class="presentation-title"></div></div>
       <div class="presentation-canvas">
-        <section id="gameSetup" class="game-setup" style="display:none"><h2 id="selectedGameHeading">Ойынды баптау</h2><p id="selectedGameDescription"></p><div class="setup-grid"><div class="setup-field"><label>Сынып</label><select id="gradeSelect"><option value="7">7-сынып</option></select></div><div class="setup-field"><label>Пән</label><select id="subjectSelect"><option value="algebra">Алгебра</option></select></div><div class="setup-field"><label>Тоқсан</label><select id="quarterSelect"><option value="1">1-тоқсан</option></select></div><div class="setup-field" style="grid-column:1/-1"><label>Тақырып / сабақ</label><select id="lessonSelect"></select></div></div><button id="startGameButton" class="game-primary" type="button">▶ Ойынды бастау</button><div id="gameMessage" class="game-message"></div></section>
-        <section id="gameArea" class="game-area" style="display:none"><div class="game-top"><h2>🎮 Ойын алаңы</h2><span id="gameProgress" class="game-progress"></span></div><div id="gameQuestion"></div><div id="gameResult" class="game-result"></div></section>
+        <section id="gameSetup" class="game-setup" style="display:none"><h2 id="selectedGameHeading">Ойынды баптау</h2><p id="selectedGameDescription"></p><div class="setup-grid"><div class="setup-field"><label for="gradeSelect">Сынып</label><select id="gradeSelect"><option value="7">7-сынып</option></select></div><div class="setup-field"><label for="subjectSelect">Пән</label><select id="subjectSelect"><option value="algebra">Алгебра</option></select></div><div class="setup-field"><label for="quarterSelect">Тоқсан</label><select id="quarterSelect"><option value="1">1-тоқсан</option></select></div><div class="setup-field" style="grid-column:1/-1"><label for="lessonSelect">Тақырып / сабақ</label><select id="lessonSelect"></select></div></div><button id="startGameButton" class="game-primary" type="button">▶ Ойынды бастау</button><div id="gameMessage" role="status" class="game-message"></div></section>
+        <section id="gameArea" class="game-area" style="display:none"><div class="game-top"><h2>🎮 Ойын алаңы</h2><span id="gameProgress" aria-live="polite" class="game-progress"></span></div><div id="gameQuestion"></div><div id="gameResult" class="game-result"></div></section>
       </div>
     </section>
   </div>
-  <script src="auth.js"></script><script>requireRole(["teacher","admin","super_admin"]);</script><script src="curriculum-data.js"></script><script src="7-synyp-algebra-1-toqsan-data.js"></script><script src="games-data.js?v=10"></script><script src="games.js?v=11"></script><script src="games-extra-v5.js?v=7"></script><script src="games-team-mode.js?v=5"></script><script src="games-arcade.js?v=2"></script>
+  <script src="auth.js"></script><script>requireRole(["teacher","admin","super_admin"]);</script><script src="curriculum-data.js"></script><script src="7-synyp-algebra-1-toqsan-data.js"></script><script src="games-data.js?v=10"></script><script src="games.js?v=12"></script><script src="games-extra-v5.js?v=8"></script><script src="games-team-mode.js?v=6"></script><script src="games-arcade.js?v=3"></script>
 </body>
 </html>
