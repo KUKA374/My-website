@@ -34,7 +34,7 @@
     s.textContent=`
       .v5{max-width:920px;margin:auto;text-align:center}.v5-card{padding:28px;border:1px solid rgba(255,255,255,.1);border-radius:24px;background:linear-gradient(145deg,#0c1b2d,#081321);box-shadow:0 18px 55px rgba(0,0,0,.22)}
       .v5-title{color:#5ee7ff;font-size:12px;font-weight:900;letter-spacing:1.7px}.v5-q{font-size:clamp(25px,5vw,44px);font-weight:900;margin:24px 0}.v5-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:680px;margin:auto}.v5-opts button{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:#10253d;color:white;font:inherit;font-weight:900;cursor:pointer;transition:.2s}.v5-opts button:hover{border-color:#5ee7ff;transform:translateY(-2px)}
-      .v5-hud{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:15px}.v5-pill{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);color:#b9c8d8;font-size:12px;font-weight:900}.v5-pill strong{color:#fff}.v5-timer{color:#f7c873}.v5-timer.danger{color:#ff7b8c}.v5-race{height:100px;border-radius:20px;background:linear-gradient(90deg,rgba(53,212,154,.10),rgba(94,231,255,.12));border:1px solid rgba(255,255,255,.1);position:relative;margin:20px 0;overflow:hidden}.v5-race:before{content:'START';position:absolute;left:12px;top:10px;font-size:9px;color:#66829b;letter-spacing:1px}.v5-race:after{content:'FINISH';position:absolute;right:12px;top:10px;font-size:9px;color:#66829b;letter-spacing:1px}.v5-run{position:absolute;top:52%;transform:translate(-50%,-50%);font-size:42px;transition:left .35s ease}.v5-wheel-wrap{padding:8px}.v5-wheel{width:190px;height:190px;border-radius:50%;margin:5px auto 20px;display:grid;place-items:center;background:conic-gradient(#5ee7ff 0 25%,#8b7cff 25% 50%,#f7c873 50% 75%,#ff7b8c 75%);border:9px solid #10233b;font-size:46px;box-shadow:0 0 35px rgba(94,231,255,.12);transition:transform 1s cubic-bezier(.17,.67,.25,1)}.v5-wheel.spinning{transform:rotate(900deg)}.v5-wheel-label{color:#8da5bd;font-size:11px}.v5-result{padding:22px;border-radius:18px;background:rgba(53,212,154,.08);border:1px solid rgba(53,212,154,.2);margin-top:18px}.v5-result h2{margin:8px 0}.v5-replay{margin-top:18px}.v5-feedback{min-height:28px;margin-top:14px;font-weight:900}.v5-feedback.ok{color:#35d49a}.v5-feedback.bad{color:#ff7b8c}.v5-teamboard{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:14px;align-items:center;margin:15px 0 20px}.v5-team{padding:18px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:#10253d}.v5-team.active{border-color:#5ee7ff;box-shadow:0 0 22px rgba(94,231,255,.1)}.v5-team.red.active{border-color:#ff7b8c}.v5-team .name{font-size:11px;color:#8da5bd;font-weight:900;letter-spacing:1px}.v5-team .score{font-size:34px;font-weight:900;margin-top:7px}.v5-rope{height:92px;border-radius:18px;background:linear-gradient(90deg,rgba(94,231,255,.08),rgba(255,123,140,.08));border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden}.v5-rope-line{position:absolute;left:8%;right:8%;top:50%;height:8px;background:#c79a62;border-radius:99px;transform:translateY(-50%)}.v5-rope-mark{position:absolute;top:50%;left:50%;width:24px;height:24px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);transition:left .35s ease;box-shadow:0 0 16px rgba(255,255,255,.35)}.v5-rope-pos{font-size:10px;color:#8399ae;margin-top:8px}.v5-answer-label{font-size:11px;color:#8da5bd;margin:5px 0 14px}.v5-win{font-size:48px;margin-bottom:8px}.v5-win h2{font-size:30px;margin:5px 0}.v5-muted{color:#8195ad;font-size:12px}
+      .v5-hud{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:15px}.v5-pill{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);color:#b9c8d8;font-size:12px;font-weight:900}.v5-pill strong{color:#fff}.v5-timer{color:#f7c873}.v5-timer.danger{color:#ff7b8c}.v5-race{height:100px;border-radius:20px;background:linear-gradient(90deg,rgba(53,212,154,.10),rgba(94,231,255,.12));border:1px solid rgba(255,255,255,.1);position:relative;margin:20px 0;overflow:hidden}.v5-race:before{content:'БАСТАУ';position:absolute;left:12px;top:10px;font-size:9px;color:#66829b;letter-spacing:1px}.v5-race:after{content:'МӘРЕ';position:absolute;right:12px;top:10px;font-size:9px;color:#66829b;letter-spacing:1px}.v5-run{position:absolute;top:52%;transform:translate(-50%,-50%);font-size:42px;transition:left .35s ease}.v5-wheel-wrap{padding:8px}.v5-wheel{width:190px;height:190px;border-radius:50%;margin:5px auto 20px;display:grid;place-items:center;background:conic-gradient(#5ee7ff 0 25%,#8b7cff 25% 50%,#f7c873 50% 75%,#ff7b8c 75%);border:9px solid #10233b;font-size:46px;box-shadow:0 0 35px rgba(94,231,255,.12);transition:transform 1s cubic-bezier(.17,.67,.25,1)}.v5-wheel.spinning{transform:rotate(900deg)}.v5-wheel-label{color:#8da5bd;font-size:11px}.v5-result{padding:22px;border-radius:18px;background:rgba(53,212,154,.08);border:1px solid rgba(53,212,154,.2);margin-top:18px}.v5-result h2{margin:8px 0}.v5-replay{margin-top:18px}.v5-feedback{min-height:28px;margin-top:14px;font-weight:900}.v5-feedback.ok{color:#35d49a}.v5-feedback.bad{color:#ff7b8c}.v5-teamboard{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:14px;align-items:center;margin:15px 0 20px}.v5-team{padding:18px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:#10253d}.v5-team.active{border-color:#5ee7ff;box-shadow:0 0 22px rgba(94,231,255,.1)}.v5-team.red.active{border-color:#ff7b8c}.v5-team .name{font-size:11px;color:#8da5bd;font-weight:900;letter-spacing:1px}.v5-team .score{font-size:34px;font-weight:900;margin-top:7px}.v5-rope{height:92px;border-radius:18px;background:linear-gradient(90deg,rgba(94,231,255,.08),rgba(255,123,140,.08));border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden}.v5-rope-line{position:absolute;left:8%;right:8%;top:50%;height:8px;background:#c79a62;border-radius:99px;transform:translateY(-50%)}.v5-rope-mark{position:absolute;top:50%;left:50%;width:24px;height:24px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);transition:left .35s ease;box-shadow:0 0 16px rgba(255,255,255,.35)}.v5-rope-pos{font-size:10px;color:#8399ae;margin-top:8px}.v5-answer-label{font-size:11px;color:#8da5bd;margin:5px 0 14px}.v5-win{font-size:48px;margin-bottom:8px}.v5-win h2{font-size:30px;margin:5px 0}.v5-muted{color:#8195ad;font-size:12px}
       .v5-mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:680px;margin:auto}.v5-mini-grid button{padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:#10253d;color:#fff;font-weight:900;cursor:pointer}.v5-meter{height:10px;background:#12243a;border-radius:99px;overflow:hidden;margin:15px 0}.v5-meter i{display:block;height:100%;background:linear-gradient(90deg,#5ee7ff,#8b7cff)}
       @media(max-width:700px){.v5-opts,.v5-mini-grid{grid-template-columns:1fr}.v5-card{padding:20px}.v5-teamboard{grid-template-columns:1fr}.v5-rope{order:3}.v5-wheel{width:160px;height:160px}.v5-q{font-size:28px}}
     `;
@@ -217,6 +217,7 @@
     sceneCss();
     const b=document.getElementById("gameQuestion");if(!b)return;
     const id=special.id,qs=special.qs,total=qs.length,i=special.i,q=qs[i];
+    window.GameSession?.present(i,id!=="cards"||special.scene.cardOpen);
     const correct=special.scene.correct.filter(Boolean).length;
     if(document.getElementById("gameProgress"))document.getElementById("gameProgress").textContent=i>=total?"Нәтиже":`${Math.min(total,i+1)} / ${total}`;
     clearInterval(special.sceneTimer);special.sceneTimer=null;
@@ -232,6 +233,7 @@
         id==="castle"&&special.scene.health<=0?"🛡️ Қамалдың қорғанысы таусылды":"Сынақтар аяқталды";
       b.innerHTML=`<div class="scene-done"><div class="scene-visual">${kingSuccess?"👑":special.scene.health<=0?"🛡️":"🏆"}</div><h2>${esc(label)} аяқталды!</h2><p class="scene-ending">${esc(result)}</p><p>Дұрыс жауап: ${correct} / ${total}</p><p>Жиналған ұпай: ${special.score}</p><button class="game-primary" id="scene-replay">🔄 Қайта ойнау</button></div>`;
       b.querySelector("#scene-replay").onclick=replay;
+      window.GameSession?.finish();
       return;
     }
     special.answered=false;
@@ -262,42 +264,48 @@
     }else if(id==="secret-number"){
       stage=`<h3>Құпия кодтың цифрларын аш</h3><div class="scene-code">${Array.from({length:total},(_,n)=>`<span>${special.scene.correct[n]?String((String(qs[n].answer).match(/\d/g)||[String(n+1)]).slice(-1)[0]):"?"}</span>`).join("")}</div><p class="scene-help">Әр дұрыс жауап бір цифрды ашады</p>`;
     }else if(id==="blitz"){
-      stage=`<h3>Блиц — 12 секундта жауап бер!</h3><div class="scene-visual">⚡ <span id="scene-seconds">12</span> c</div><div class="scene-progress"><span id="scene-timer-fill" style="width:100%"></span></div>`;
+      stage=`<h3>Блиц — 12 секундта жауап бер!</h3><div class="scene-visual">⚡ <span id="scene-seconds">12</span> секунд</div><div class="scene-progress"><span id="scene-timer-fill" style="width:100%"></span></div>`;
     }else{
       stage=`<h3>Математикалық сынақ</h3><div class="scene-visual">⭐</div>`;
     }
     const options=Array.isArray(q.options)&&q.options.length?q.options:[String(q.answer)];
     b.innerHTML=`<div class="scene" data-kind="${esc(id)}"><div class="scene-header"><span class="scene-title">${esc(label)}</span><span class="scene-chip">Сұрақ ${i+1}/${total} · ⭐ ${special.score}</span></div><div class="scene-stage">${stage}</div><div class="scene-question ${id==="cards"&&special.scene.cardOpen?"scene-card-revealed":""}" ${id==="cards"&&!special.scene.cardOpen?"style='display:none'":""}><h3>${esc(q.question)}</h3><div class="scene-options ${id==="target"?"scene-target-options":""}">${options.map(o=>`<button type="button" data-scene-answer="${esc(o)}">${id==="target"?"🎯 ":""}${esc(o)}</button>`).join("")}</div><div class="scene-feedback" aria-live="polite"></div></div></div>`;
     const flip=b.querySelector("#scene-flip");
-    if(flip)flip.onclick=()=>{special.scene.cardOpen=true;renderFallback();};
+    if(flip)flip.onclick=()=>{if(window.GameSession&&!window.GameSession.canAnswer())return;special.scene.cardOpen=true;renderFallback();};
     b.querySelectorAll("[data-bid]").forEach(btn=>btn.onclick=()=>{
       const amount=Number(btn.dataset.bid);
-      if(!special.answered&&amount<=special.scene.capital){special.scene.bid=amount;renderFallback();}
+      if((!window.GameSession||window.GameSession.canAnswer())&&!special.answered&&amount<=special.scene.capital){special.scene.bid=amount;renderFallback();}
     });
     const session=special.sceneToken;
     if(id==="blitz"){
-      let remaining=12;const deadline=performance.now()+12000;
-      special.sceneTimer=setInterval(()=>{
-        if(session!==special.sceneToken||special.id!=="blitz"||special.i!==i){clearInterval(special.sceneTimer);special.sceneTimer=null;return;}
-        remaining=Math.max(0,Math.ceil((deadline-performance.now())/1000));
-        const timer=b.querySelector("#scene-seconds"),bar=b.querySelector("#scene-timer-fill");
-        if(timer)timer.textContent=String(remaining);if(bar)bar.style.width=Math.max(0,remaining/12*100)+"%";
-        if(remaining<=0){clearInterval(special.sceneTimer);special.sceneTimer=null;special.answered=true;special.scene.correct[i]=false;
-          b.querySelectorAll('[data-scene-answer]').forEach(x=>{x.disabled=true;if(answersMatch(x.dataset.sceneAnswer,q.answer))x.classList.add('answer-correct');});
-          const feedback=b.querySelector('.scene-feedback');feedback.textContent='⏱ Уақыт аяқталды. Дұрыс жауап: '+q.answer;
-          const next=document.createElement('button');next.type='button';next.className='game-primary';next.textContent='Жалғастыру →';
-          let used=false;next.onclick=()=>{if(used||session!==special.sceneToken||special.i!==i)return;used=true;special.i++;renderFallback();};
-          feedback.appendChild(document.createElement('div')).appendChild(next);next.focus({preventScroll:true});}
-      },100);
+      const seconds=window.GameSession?.current()?.settings.seconds??12;
+      window.GameSession?.cancelTimer('blitz');
+      window.GameSession?.timer('blitz',seconds,left=>{
+        const timer=b.querySelector('#scene-seconds'),bar=b.querySelector('#scene-timer-fill');
+        if(timer)timer.textContent=seconds?String(Math.ceil(left)):'Уақытсыз';
+        if(bar)bar.style.width=(seconds?Math.max(0,left/seconds*100):100)+'%';
+      },()=>{
+        if(session!==special.sceneToken||special.i!==i||special.answered)return;
+        special.answered=true;special.scene.correct[i]=false;
+        window.GameSession?.record(i,false,'',true);
+        b.querySelectorAll('[data-scene-answer]').forEach(x=>{x.disabled=true;if(answersMatch(x.dataset.sceneAnswer,q.answer))x.classList.add('answer-correct');});
+        const feedback=b.querySelector('.scene-feedback');feedback.textContent='⏱ Уақыт аяқталды. Дұрыс жауап: '+q.answer;
+        const next=document.createElement('button');next.type='button';next.className='game-primary';next.textContent='Жалғастыру →';
+        let used=false;next.onclick=()=>{if(used||session!==special.sceneToken||special.i!==i)return;used=true;special.i++;renderFallback();};
+        feedback.appendChild(document.createElement('div')).appendChild(next);next.focus({preventScroll:true});
+      });
     }
     b.querySelectorAll("[data-scene-answer]").forEach(btn=>btn.onclick=()=>{
-      if(special.sceneToken!==session||special.i!==i||special.answered)return;
+      if(special.sceneToken!==session||special.i!==i||special.answered||window.GameSession&&!window.GameSession.canAnswer())return;
+      if(id==="blitz"&&window.GameSession?.expired("blitz")){window.GameSession.expireNow("blitz");return;}
       special.answered=true;
       clearInterval(special.sceneTimer);special.sceneTimer=null;
       const correctAnswer=typeof answersMatch==="function"?answersMatch(btn.dataset.sceneAnswer,q.answer):String(btn.dataset.sceneAnswer)===String(q.answer);
       b.querySelectorAll("[data-bid]").forEach(x=>x.disabled=true);
       b.querySelectorAll("[data-scene-answer]").forEach(x=>{x.disabled=true;if(answersMatch(x.dataset.sceneAnswer,q.answer))x.classList.add("answer-correct");else if(x===btn)x.classList.add("answer-wrong");});
+      window.GameSession?.cancelTimer("blitz");
       special.scene.correct[i]=correctAnswer;
+      window.GameSession?.record(i,correctAnswer,btn.dataset.sceneAnswer);
       const wins=special.scene.correct.filter(Boolean).length;
       if(correctAnswer){
         if(id==="rocket"){const ship=b.querySelector(".rocket-ship");if(ship)ship.style.bottom=(12+wins/total*72)+"%";}
@@ -337,6 +345,12 @@
   window.renderCurrentQuestion=function(){
     if(specialIds.has(special.id)||special.id==='tug-of-war'||extraIds.has(special.id)) renderSpecial();
     else if(coreRender) coreRender();
+  };
+
+  if(window.GameSession)window.GameSession.adapters.extra={
+    setQuestions(qs){if(special.id)special.qs=qs;},
+    snapshot(){return JSON.parse(JSON.stringify(special));},
+    restore(s){Object.assign(special,s);special.sceneToken++;if(special.answered){special.i++;special.scene.cardOpen=false;}special.answered=false;renderSpecial();}
   };
 
   window.cancelGameExtra=function(){

@@ -39,8 +39,8 @@ function decorateSetup(){
  const id=document.body.dataset.game;if(!id)return;
  let intro=setup.querySelector(".arcade-intro");
  if(!intro){intro=document.createElement("div");intro.className="arcade-intro";const grid=setup.querySelector(".setup-grid");if(grid)grid.before(intro);}
- if(intro.dataset.gameId===id)return;
- intro.dataset.gameId=id;
+ if(intro.dataset.decoratedGame===id)return;
+ intro.dataset.decoratedGame=id;
  intro.replaceChildren();
  const icon=document.createElement("div");icon.className="intro-art";icon.textContent=emoji(id)[0];
  const content=document.createElement("div");const strong=document.createElement("strong");strong.textContent="Ойынға дайындал!";
@@ -53,8 +53,8 @@ function decorateStage(){
  let banner=area.querySelector(".arcade-scene-banner");
  if(!banner){banner=document.createElement("div");banner.className="arcade-scene-banner";const top=area.querySelector(".game-top");if(top)top.after(banner);else area.prepend(banner);}
  const game=typeof mathGames!=="undefined"?mathGames.find(x=>x.id===id):null;
- if(banner.dataset.gameId!==id){
- banner.dataset.gameId=id;
+ if(banner.dataset.decoratedGame!==id){
+ banner.dataset.decoratedGame=id;
  banner.replaceChildren();
  const icon=document.createElement("span");icon.className="banner-icon";icon.textContent=emoji(id)[0];
  const content=document.createElement("div");const title=document.createElement("strong");title.textContent=game?game.title:"Математикалық ойын";

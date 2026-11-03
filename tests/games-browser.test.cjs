@@ -20,10 +20,11 @@ async function setup(){
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));base=`http://127.0.0.1:${server.address().port}`;
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
 }
-async function pageFor(viewport){
+async function pageFor(viewport,clocked=false){
  const page=await browser.newPage({viewport,reducedMotion:'reduce',isMobile:viewport.width<600,hasTouch:viewport.width<600});
  await page.route('**/auth.js',r=>r.fulfill({contentType:'application/javascript',body:'window.requireRole=()=>{};'}));
  page.on('pageerror',e=>errors.push(e.message));
+ if(clocked)await page.clock.install();
  await page.goto(base+'/games.html');await page.locator('.game-card').last().waitFor();return page;
 }
 async function layout(page,label){
@@ -93,6 +94,7 @@ test('all 20 games: complete, replay and return on desktop and mobile, grades 5�
   await shot(page,name+'-library');
   for(const id of ids){
    await t.test(name+' / '+id,async()=>{
+    try{
     await start(page,id);await layout(page,id);await shot(page,name+'-'+id);
     await play(page,id);
     assert.equal(await page.locator('#gameProgress').textContent(),'Нәтиже');
@@ -101,6 +103,7 @@ test('all 20 games: complete, replay and return on desktop and mobile, grades 5�
     assert.match(await page.locator('#gameProgress').textContent(),/^[01] \/ /);
     await page.locator('#backToGamesButton').click();
     assert.equal(await page.locator('#gamesLibrary').isVisible(),true);
+    }catch(error){console.error(name,id,error.message);throw error;}
    });
    if(await page.locator('#gameStage').isVisible())await page.locator('#backToGamesButton').click();
   }
@@ -116,7 +119,7 @@ test('all 20 games: complete, replay and return on desktop and mobile, grades 5�
 
 test('edge cases: scoring, locks, timeouts, cancellation, keyboard and narrow screens',async t=>{
  await setup();t.after(async()=>{await browser?.close();await new Promise(resolve=>server.close(resolve));});
- const page=await pageFor({width:320,height:740});
+ const page=await pageFor({width:320,height:740},true);
  const originalBank=await page.evaluate(()=>JSON.stringify(gameQuestionBank));
  await t.test('auction: a bid cannot reopen an answered lot, capital never becomes negative',async()=>{
   await start(page,'auction');
@@ -163,7 +166,7 @@ test('edge cases: scoring, locks, timeouts, cancellation, keyboard and narrow sc
   await page.locator('#backToGamesButton').click();
  });
  await t.test('quick answer: empty input, double submission and real deadline',async()=>{
-  await page.clock.install();await start(page,'quick-answer');
+  await start(page,'quick-answer');
   await page.locator('#quickAnswerButton').click();assert.equal(await page.evaluate(()=>currentIndex),0);
   await page.locator('#quickAnswerInput').fill('3/4');await page.locator('#quickAnswerInput').press('Enter');
   await page.evaluate(()=>submitQuickAnswer());assert.equal(await page.evaluate(()=>currentScore),10);
