@@ -52,8 +52,10 @@
       )
         throw Error();
       if (
-        window.GameMechanics?.supports(data.model.id) &&
-        data.active !== "mechanics"
+        (window.GameMechanics?.supports(data.model.id) &&
+          data.active !== "mechanics") ||
+        (window.GameLogic?.supports(data.model.id) &&
+          (data.active !== "logic" || data.engine.version !== 1))
       ) {
         storageError =
           "Бұл ойынның механикасы жаңартылды. Бұрынғы сессияны жаңа механикада жалғастыру мүмкін емес; жаңа ойын бастаңыз.";
@@ -144,24 +146,28 @@
     if (!["quick-answer", "blitz"].includes(id)) opts.seconds = 0;
     if (["math-race", "tug-of-war"].includes(id)) opts.mode = "challenge";
     if (id === "cards") opts.mode = "practice";
+    if (id === "match")
+      opts.format = byId("logicMatchFormat")?.value || "answers";
     model = new LearningSession(id, lesson, questions, opts);
     clock = new GameClock();
     lastSaved = 0;
     clock.resume();
-    active = window.GameMechanics?.supports(id)
-      ? "mechanics"
-      : ["math-race", "wheel", "tug-of-war"].includes(id)
-        ? "teams"
-        : GameLearning.rules[id] &&
-            ![
-              "match",
-              "find-error",
-              "quick-answer",
-              "math-code",
-              "detective",
-            ].includes(id)
-          ? "extra"
-          : "core";
+    active = window.GameLogic?.supports(id)
+      ? "logic"
+      : window.GameMechanics?.supports(id)
+        ? "mechanics"
+        : ["math-race", "wheel", "tug-of-war"].includes(id)
+          ? "teams"
+          : GameLearning.rules[id] &&
+              ![
+                "match",
+                "find-error",
+                "quick-answer",
+                "math-code",
+                "detective",
+              ].includes(id)
+            ? "extra"
+            : "core";
     for (const a of Object.values(adapters)) a.setQuestions?.(questions);
     paused = false;
     byId("sharedSummary")?.remove();
@@ -219,7 +225,8 @@
     renderFeedback(index);
   }
   function currentIndex() {
-    if (model?.id === "match") return matchState.selected ?? model.index;
+    if (model?.id === "match" && !window.GameLogic?.supports(model.id))
+      return matchState.selected ?? model.index;
     return model?.index || 0;
   }
   function help(full) {
@@ -392,6 +399,7 @@
         "",
       )}</div><div class="shared-actions"><button id="retryMistakesButton" class="game-primary" type="button">Қате есептерді қайта орындау</button><button id="chooseAnotherGame" class="presentation-back" type="button">Басқа ойын таңдау</button></div>`;
     byId("gameQuestion").append(panel);
+    window.GameLogic?.appendSummary(panel);
     const retryButton = byId("retryMistakesButton");
     const errors = model.questions.filter((q) => {
       const r = model.records[q._sessionKey];
@@ -428,6 +436,7 @@
       byId("lessonSelect").value = lesson.join("-");
       byId("sharedMode").value = saved.model.settings.mode;
       byId("sharedTime").value = String(saved.model.settings.seconds);
+      window.GameLogic?.restoreSettings(saved.model);
       startSelectedGame();
       if (!model) throw Error();
       model = Object.assign(new LearningSession(), saved.model);
@@ -464,20 +473,22 @@
     if (!e) return;
     const r = GameLearning.rules[id];
     const scoreRule =
-      id === "cards"
-        ? "Өзіндік бағалау автоматты тексерілген ұпайға айналмайды."
-        : ["auction", "wheel", "quick-answer"].includes(id)
-          ? ""
-          : [
-                "match",
-                "find-error",
-                "math-code",
-                "detective",
-                "math-race",
-                "tug-of-war",
-              ].includes(id)
-            ? "Ойын ұпайы: әр дұрыс жауапқа 1 ұпай."
-            : "Ойын ұпайы: әр дұрыс жауапқа 10 ұпай.";
+      id === "find-error"
+        ? "Ойын ұпайы: қатені табуға 1, дұрыс түзетуге 1 ұпай. Таңдау әр бөлімде бір рет бекітіледі."
+        : id === "cards"
+          ? "Өзіндік бағалау автоматты тексерілген ұпайға айналмайды."
+          : ["auction", "wheel", "quick-answer"].includes(id)
+            ? ""
+            : [
+                  "match",
+                  "find-error",
+                  "math-code",
+                  "detective",
+                  "math-race",
+                  "tug-of-war",
+                ].includes(id)
+              ? "Ойын ұпайы: әр дұрыс жауапқа 1 ұпай."
+              : "Ойын ұпайы: әр дұрыс жауапқа 10 ұпай.";
     e.innerHTML = `<p>Жаңа ойын басталса, бұрынғы сақталған сессияның орнына осы ойын сақталады.</p><h3>Ойынның мақсаты</h3><p>${esc(r[0])}</p><h3>Қалай ойнаймыз?</h3><p>${esc(r[1])}</p><h3>Жеңіс және ұпай шарты</h3><p>${esc(r[2])} ${esc(scoreRule)}</p><p>${id === "cards" ? "Өзіндік белгілер бөлек қорытындыланады. Автоматты дұрыс/қате жауап және дәлдік пайызы есептелмейді." : "Оқу нәтижесі ойын ұпайынан бөлек есептеледі. Әр дұрыс жауапқа, арнайы ереже көрсетілмесе, 1 дұрыс тапсырма тіркеледі."}</p>`;
     const team = ["math-race", "tug-of-war", "cards"].includes(id);
     byId("sharedModeField").hidden = team;
@@ -504,10 +515,12 @@
     )
       .map(([v, t]) => `<option value="${v}">${t}</option>`)
       .join("");
+    window.GameLogic?.setup(id);
     updateCount();
   }
   function updateCount() {
     if (!byId("sharedQuestionCount") || !selectedGameId) return;
+    window.GameLogic?.syncFormat();
     const bank = window.gameQuestionBank?.[getLessonKey()],
       aliases = {
         "quick-answer": "quickAnswer",
@@ -515,13 +528,22 @@
         "find-error": "findError",
       };
     const qs =
-      (window.GameMechanics?.supports(selectedGameId)
-        ? bank?.quickAnswer
-        : bank?.[aliases[selectedGameId] || selectedGameId]) ||
+      (window.GameLogic?.supports(selectedGameId)
+        ? window.GameLogic.source(
+            selectedGameId,
+            getLessonKey(),
+            byId("logicMatchFormat")?.value || "answers",
+          )
+        : window.GameMechanics?.supports(selectedGameId)
+          ? bank?.quickAnswer
+          : bank?.[aliases[selectedGameId] || selectedGameId]) ||
       bank?.quickAnswer ||
       [];
-    byId("sharedQuestionCount").textContent =
-      `Қордағы тапсырма саны: ${qs.length}. Деңгей: таңдалған тақырыптың қолданыстағы есептері.${qs.length < 10 ? " Қор шағын; есептер біткенде ойын аяқталады." : ""}`;
+    byId("sharedQuestionCount").textContent = window.GameLogic?.supports(
+      selectedGameId,
+    )
+      ? `Осы ойындағы ${selectedGameId === "match" ? "жұп" : "тапсырма"} саны: ${qs.length}. Мазмұн таңдалған сынып пен тақырыпқа сай.${selectedGameId === "match" ? " Бірдей жауаптары бар есептер бір карточкаға біріктіріледі." : ""}`
+      : `Қордағы тапсырма саны: ${qs.length}. Деңгей: таңдалған тақырыптың қолданыстағы есептері.${qs.length < 10 ? " Қор шағын; есептер біткенде ойын аяқталады." : ""}`;
   }
   window.GameSession = {
     adapters,

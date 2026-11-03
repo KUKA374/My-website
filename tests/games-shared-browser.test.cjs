@@ -1,4 +1,5 @@
-const mechanics=require('./helpers/mechanics.cjs');
+const mechanics = require("./helpers/mechanics.cjs");
+const logic = require("./helpers/logic.cjs");
 const { test } = require("node:test"),
   assert = require("node:assert/strict");
 const { chromium } = require("playwright"),
@@ -62,7 +63,8 @@ async function start(p, id) {
   await p.locator("#startGameButton").click();
 }
 async function firstAnswer(p, id, correct = true) {
-  if(mechanics.supported(id))return mechanics.firstStep(p,id);
+  if (logic.supports(id)) return logic.firstStep(p, id, correct);
+  if (mechanics.supported(id)) return mechanics.firstStep(p, id);
   if (id === "match") {
     await p.locator('[data-match-left="0"]').click();
     const pos = await p.evaluate(() => matchState.order.indexOf(0));
@@ -124,7 +126,11 @@ test("all 20 games save and resume their mechanics after a submitted answer", as
         summary: GameSession.current().summary(),
         id: GameSession.current().id,
       }));
-      assert.equal(before.rows, id === "cards" ? 0 : 1, id + " assessed or verified separately");
+      assert.equal(
+        before.rows,
+        id === "cards" ? 0 : 1,
+        id + " assessed or verified separately",
+      );
       await p.reload();
       await p.locator("#resumeGameBanner button").click();
       assert.equal(
@@ -142,7 +148,7 @@ test("all 20 games save and resume their mechanics after a submitted answer", as
       assert.equal(await p.evaluate(() => GameSession.canAnswer()), true);
       assert.ok(
         (await p.locator("#gameProgress").textContent()).includes(
-          ["match","cards"].includes(id) ? "1 / 4" : "2 / 4",
+          ["match", "cards"].includes(id) ? "1 / 4" : "2 / 4",
         ),
       );
       await p.locator("#backToGamesButton").click();
@@ -187,25 +193,51 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
           );
         }
       }
-      await p.setViewportSize({width:1440,height:1000});
-      await start(p,'rocket');
-      const target=p.locator('[data-scene-answer]').first();
+      await p.setViewportSize({ width: 1440, height: 1000 });
+      await start(p, "rocket");
+      const target = p.locator("[data-scene-answer]").first();
       await target.scrollIntoViewIfNeeded();
-      const before=await target.boundingBox();
-      await p.mouse.move(before.x+before.width/2,before.y+before.height-1);
+      const before = await target.boundingBox();
+      await p.mouse.move(
+        before.x + before.width / 2,
+        before.y + before.height - 1,
+      );
       await p.waitForTimeout(100);
-      const after=await target.boundingBox();
-      assert.equal(after.y,before.y,'answer target stays stable at the pointer edge');
+      const after = await target.boundingBox();
+      assert.equal(
+        after.y,
+        before.y,
+        "answer target stays stable at the pointer edge",
+      );
       await p.locator("#backToGamesButton").click();
     },
   );
-  await t.test('cards use a dedicated reveal control and never grade self-assessment',async()=>{
-    await start(p,'cards');await p.locator('[data-card="0"]').click();
-    assert.equal(await p.locator('#sharedSolutionButton').isVisible(),false);
-    await p.locator('#sharedHintButton').click();await p.locator('#revealCard').click();await p.locator('[data-rating="independent"]').click();
-    assert.equal(await p.evaluate(()=>Object.keys(GameSession.current().records).length),0);
-    assert.equal(await p.evaluate(()=>GameSession.current().selfAssessments[GameSession.current().questions[0]._sessionKey]),'assisted');
-  });
+  await t.test(
+    "cards use a dedicated reveal control and never grade self-assessment",
+    async () => {
+      await start(p, "cards");
+      await p.locator('[data-card="0"]').click();
+      assert.equal(await p.locator("#sharedSolutionButton").isVisible(), false);
+      await p.locator("#sharedHintButton").click();
+      await p.locator("#revealCard").click();
+      await p.locator('[data-rating="independent"]').click();
+      assert.equal(
+        await p.evaluate(
+          () => Object.keys(GameSession.current().records).length,
+        ),
+        0,
+      );
+      assert.equal(
+        await p.evaluate(
+          () =>
+            GameSession.current().selfAssessments[
+              GameSession.current().questions[0]._sessionKey
+            ],
+        ),
+        "assisted",
+      );
+    },
+  );
   await t.test(
     "assistance is separated; wrong answers retry without mutating bank",
     async () => {
@@ -218,21 +250,26 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
       );
       for (let i = 0; i < 4; i++) {
         const answer = await p.evaluate(
-          (i) =>
-            i === 1
-              ? "9999"
-              : String(GameSession.current().questions[i].answer),
+          (i) => String(GameSession.current().questions[i].answer),
           i,
         );
-        await p.locator("#gameTextAnswer").fill(answer);
-        await p.locator("#textAnswerButton").click();
-        await p.locator(".game-answer-feedback button").click();
+        if (i === 1) {
+          await p.locator("#codeAnswer").fill("9999");
+          await p.locator("#codeSubmit").click();
+          await p.locator("#retryCodeTask").click();
+        }
+        await p.locator("#codeAnswer").fill(answer);
+        await p.locator("#codeSubmit").click();
       }
+      await p
+        .locator("#lockCode")
+        .fill(await p.evaluate(() => GameLogic.snapshot().parts.join("")));
+      await p.locator("#unlockCode").click();
       assert.equal(await p.locator("#sharedSummary").count(), 1);
       const summary = await p.evaluate(() => GameSession.current().summary());
-      assert.equal(summary.correct, 3);
-      assert.equal(summary.wrong, 1);
-      assert.equal(summary.assisted, 1);
+      assert.equal(summary.correct, 4);
+      assert.equal(summary.wrong, 0);
+      assert.equal(summary.assisted, 2);
       assert.equal(summary.independent, 2);
       assert.equal(summary.accuracy, 50);
       await p.locator("#sharedSummary details").first().click();
@@ -243,7 +280,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
       await p.locator("#retryMistakesButton").click();
       assert.equal(await p.evaluate(() => currentQuestions.length), 1);
       assert.match(
-        await p.locator(".code-question").textContent(),
+        await p.locator(".logic-code-question .logic-prompt").textContent(),
         /3\/4 - 1\/2/,
       );
       assert.equal(
@@ -261,8 +298,8 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
       await p.locator("#startGameButton").click();
       assert.equal(await p.locator("#sharedSolutionButton").isDisabled(), true);
       assert.equal(await p.locator("#sharedHelpText").isVisible(), false);
-      await p.locator("#gameTextAnswer").fill("999");
-      await p.locator("#textAnswerButton").click();
+      await p.locator("#codeAnswer").fill("999");
+      await p.locator("#codeSubmit").click();
       await p.locator("#sharedSolutionButton").click();
       assert.match(
         await p.locator("#sharedHelpText").textContent(),
@@ -370,23 +407,24 @@ test("shared timers pause, resume, expire once and cancel animations on exit", a
 test("resume at terminal checkpoints and recover corrupt state safely", async (t) => {
   const p = await fixture(t);
   await t.test(
-    "all matched pairs resume to the result, not a locked board",
+    "last selected matching pair resumes and finishes exactly once",
     async () => {
       await start(p, "match");
-      await p.evaluate(() => {
-        for (let i = 0; i < currentQuestions.length; i++) {
-          document.querySelector(`[data-match-left="${i}"]`).click();
-          document
-            .querySelector(
-              `[data-match-right="${matchState.order.indexOf(i)}"]`,
-            )
-            .click();
-        }
-        GameSession.pause();
-        GameSession.save();
-      });
+      for (let i = 0; i < 3; i++) await logic.firstStep(p, "match");
+      await p.locator('[data-match-left="3"]').click();
+      await p.locator("#pauseGameButton").click();
       await p.reload();
       await p.locator("#resumeGameBanner button").click();
+      assert.equal(await p.locator("#sharedSummary").count(), 0);
+      assert.equal(
+        await p.locator('[data-match-left="3"]').getAttribute("aria-pressed"),
+        "true",
+      );
+      await p.locator("#resumePausedButton").click();
+      await p.locator('[data-match-right="3"]').evaluate((b) => {
+        b.click();
+        b.click();
+      });
       assert.equal(await p.locator("#sharedSummary").count(), 1);
       assert.equal(
         await p.evaluate(() => GameSession.current().summary().correct),

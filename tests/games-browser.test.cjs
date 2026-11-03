@@ -3,6 +3,7 @@
  */
 const {test}=require('node:test');
 const mechanics=require('./helpers/mechanics.cjs');
+const logic=require('./helpers/logic.cjs');
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const http=require('node:http');
@@ -48,6 +49,7 @@ async function bank(page,id){return page.evaluate(id=>{
 },id);}
 async function continueAnswer(page){await page.locator('#gameQuestion .game-answer-feedback button,#gameQuestion .scene-feedback button').click();}
 async function play(page,id){
+ if(logic.supports(id))return logic.play(page,id);
  if(mechanics.supported(id))return mechanics.play(page,id);
  const qs=await bank(page,id);
  if(id==='match'){
@@ -151,13 +153,12 @@ test('edge cases: scoring, locks, timeouts, cancellation, keyboard and narrow sc
   await page.locator('#scene-replay').click();assert.equal(await page.locator('.scene-health').textContent(),'❤️❤️❤️');
   await page.locator('#backToGamesButton').click();
  });
- await t.test('text answers: repeated submit and stale next cannot add points or skip questions',async()=>{
-  await start(page,'math-code');await page.locator('#gameTextAnswer').fill('0.75');
-  await page.locator('#gameTextAnswer').press('Enter');
-  await page.evaluate(()=>{submitTextAnswer();submitTextAnswer();});
-  assert.equal(await page.locator('.game-answer-feedback').count(),1);
+ await t.test('code parts: repeated submit and stale handlers cannot add points or skip questions',async()=>{
+  await start(page,'math-code');await page.locator('#codeAnswer').fill('0.75');
+  await page.locator('#codeSubmit').evaluate(b=>{window.staleCodeSubmit=b.onclick;b.click();b.click();});
+  await page.evaluate(()=>window.staleCodeSubmit());
+  assert.equal(await page.evaluate(()=>GameLogic.snapshot().awarded.length),1);
   assert.equal(await page.evaluate(()=>currentScore),1);
-  await page.locator('.game-answer-feedback button').evaluate(b=>{b.click();b.click();});
   assert.equal(await page.locator('#gameProgress').textContent(),'2 / 4');
   await layout(page,'320px code');await page.locator('#backToGamesButton').click();
  });
