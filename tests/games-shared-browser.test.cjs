@@ -1,3 +1,4 @@
+const mechanics=require('./helpers/mechanics.cjs');
 const { test } = require("node:test"),
   assert = require("node:assert/strict");
 const { chromium } = require("playwright"),
@@ -61,6 +62,7 @@ async function start(p, id) {
   await p.locator("#startGameButton").click();
 }
 async function firstAnswer(p, id, correct = true) {
+  if(mechanics.supported(id))return mechanics.firstStep(p,id);
   if (id === "match") {
     await p.locator('[data-match-left="0"]').click();
     const pos = await p.evaluate(() => matchState.order.indexOf(0));
@@ -122,7 +124,7 @@ test("all 20 games save and resume their mechanics after a submitted answer", as
         summary: GameSession.current().summary(),
         id: GameSession.current().id,
       }));
-      assert.equal(before.rows, 1, id + " answer recorded");
+      assert.equal(before.rows, id === "cards" ? 0 : 1, id + " assessed or verified separately");
       await p.reload();
       await p.locator("#resumeGameBanner button").click();
       assert.equal(
@@ -140,7 +142,7 @@ test("all 20 games save and resume their mechanics after a submitted answer", as
       assert.equal(await p.evaluate(() => GameSession.canAnswer()), true);
       assert.ok(
         (await p.locator("#gameProgress").textContent()).includes(
-          id === "match" ? "1 / 4" : "2 / 4",
+          ["match","cards"].includes(id) ? "1 / 4" : "2 / 4",
         ),
       );
       await p.locator("#backToGamesButton").click();
@@ -173,7 +175,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
           );
           assert.equal(
             await p.locator("#sharedModeField").isVisible(),
-            !["math-race", "tug-of-war"].includes(id),
+            !["math-race", "tug-of-war", "cards"].includes(id),
           );
           await p.locator("#startGameButton").click();
           assert.equal(
@@ -197,23 +199,13 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
       await p.locator("#backToGamesButton").click();
     },
   );
-  await t.test(
-    "cards expose help only after the current card is flipped",
-    async () => {
-      await start(p, "cards");
-      assert.equal(await p.locator("#sharedHelpButtons").isVisible(), false);
-      await p.locator("#scene-flip").click();
-      assert.equal(await p.locator("#sharedHelpButtons").isVisible(), true);
-      await p.locator("#sharedHintButton").click();
-      await p.locator('[data-scene-answer="3/4"]').click();
-      await p.locator(".scene-feedback button").click();
-      assert.equal(await p.locator("#sharedHelpButtons").isVisible(), false);
-      assert.equal(
-        await p.evaluate(() => GameSession.current().summary().assisted),
-        1,
-      );
-    },
-  );
+  await t.test('cards use a dedicated reveal control and never grade self-assessment',async()=>{
+    await start(p,'cards');await p.locator('[data-card="0"]').click();
+    assert.equal(await p.locator('#sharedSolutionButton').isVisible(),false);
+    await p.locator('#sharedHintButton').click();await p.locator('#revealCard').click();await p.locator('[data-rating="independent"]').click();
+    assert.equal(await p.evaluate(()=>Object.keys(GameSession.current().records).length),0);
+    assert.equal(await p.evaluate(()=>GameSession.current().selfAssessments[GameSession.current().questions[0]._sessionKey]),'assisted');
+  });
   await t.test(
     "assistance is separated; wrong answers retry without mutating bank",
     async () => {
@@ -264,7 +256,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
     "challenge mode does not reveal help before submission",
     async () => {
       await p.locator("#backToGamesButton").click();
-      await p.locator('[data-game-id="detective"]').click();
+      await p.locator('[data-game-id="math-code"]').click();
       await p.selectOption("#sharedMode", "challenge");
       await p.locator("#startGameButton").click();
       assert.equal(await p.locator("#sharedSolutionButton").isDisabled(), true);
@@ -369,7 +361,7 @@ test("shared timers pause, resume, expire once and cancel animations on exit", a
       await p.locator("#backToGamesButton").click();
       await start(p, "detective");
       await p.clock.fastForward(10000);
-      assert.equal(await p.locator(".detective-board").count(), 1);
+      assert.equal(await p.locator(".detective-game").count(), 1);
       assert.equal(await p.locator("[data-wheel-team]").count(), 0);
     },
   );

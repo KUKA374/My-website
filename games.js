@@ -131,6 +131,7 @@ function startSelectedGame() {
     tugPosition = 0;
   }
   window.GameSession?.begin(selectedGameId,lessonKey,currentQuestions);
+  window.GameMechanics?.start(selectedGameId,lessonKey,currentQuestions);
   document.getElementById("gameSetup").style.display = "none";
   document.getElementById("gameArea").style.display = "block";
   document.getElementById("gameResult").textContent = "";

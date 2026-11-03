@@ -2,6 +2,7 @@
  * Auth is mocked only at the browser network boundary; production auth is unchanged.
  */
 const {test}=require('node:test');
+const mechanics=require('./helpers/mechanics.cjs');
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const http=require('node:http');
@@ -47,6 +48,7 @@ async function bank(page,id){return page.evaluate(id=>{
 },id);}
 async function continueAnswer(page){await page.locator('#gameQuestion .game-answer-feedback button,#gameQuestion .scene-feedback button').click();}
 async function play(page,id){
+ if(mechanics.supported(id))return mechanics.play(page,id);
  const qs=await bank(page,id);
  if(id==='match'){
   for(let i=0;i<qs.length;i++){
@@ -162,7 +164,7 @@ test('edge cases: scoring, locks, timeouts, cancellation, keyboard and narrow sc
  await t.test('wheel: navigating away during a spin does not replace the next game',async()=>{
   await start(page,'wheel');await page.locator('#spinTeamWheel').click();await page.locator('#backToGamesButton').click();
   await start(page,'detective');await page.waitForTimeout(1200);
-  assert.equal(await page.locator('.detective-board').count(),1);assert.equal(await page.locator('#wheelTask').count(),0);
+  assert.equal(await page.locator('.detective-game').count(),1);assert.equal(await page.locator('#wheelTask').count(),0);
   await page.locator('#backToGamesButton').click();
  });
  await t.test('quick answer: empty input, double submission and real deadline',async()=>{

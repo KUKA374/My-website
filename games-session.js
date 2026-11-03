@@ -51,6 +51,14 @@
         data.bank !== JSON.stringify(window.gameQuestionBank[data.model.lesson])
       )
         throw Error();
+      if (
+        window.GameMechanics?.supports(data.model.id) &&
+        data.active !== "mechanics"
+      ) {
+        storageError =
+          "Бұл ойынның механикасы жаңартылды. Бұрынғы сессияны жаңа механикада жалғастыру мүмкін емес; жаңа ойын бастаңыз.";
+        return null;
+      }
       return data;
     } catch {
       storageError = "Сақталған прогресс оқылмады. Жаңа ойын бастауға болады.";
@@ -135,22 +143,25 @@
     const opts = settings();
     if (!["quick-answer", "blitz"].includes(id)) opts.seconds = 0;
     if (["math-race", "tug-of-war"].includes(id)) opts.mode = "challenge";
+    if (id === "cards") opts.mode = "practice";
     model = new LearningSession(id, lesson, questions, opts);
     clock = new GameClock();
     lastSaved = 0;
     clock.resume();
-    active = ["math-race", "wheel", "tug-of-war"].includes(id)
-      ? "teams"
-      : GameLearning.rules[id] &&
-          ![
-            "match",
-            "find-error",
-            "quick-answer",
-            "math-code",
-            "detective",
-          ].includes(id)
-        ? "extra"
-        : "core";
+    active = window.GameMechanics?.supports(id)
+      ? "mechanics"
+      : ["math-race", "wheel", "tug-of-war"].includes(id)
+        ? "teams"
+        : GameLearning.rules[id] &&
+            ![
+              "match",
+              "find-error",
+              "quick-answer",
+              "math-code",
+              "detective",
+            ].includes(id)
+          ? "extra"
+          : "core";
     for (const a of Object.values(adapters)) a.setQuestions?.(questions);
     paused = false;
     byId("sharedSummary")?.remove();
@@ -192,6 +203,7 @@
     byId("sharedHelpText").textContent = "";
     byId("sharedHelpText").hidden = true;
     byId("sharedHelpButtons").hidden = model.id === "cards" && !helpAvailable;
+    byId("sharedSolutionButton").hidden = model.id === "cards";
     renderFeedback(index);
     queueSave();
   }
@@ -211,12 +223,17 @@
     return model?.index || 0;
   }
   function help(full) {
-    if (!model || model.finished || paused) return;
+    if (!model || model.finished || paused || (full && model.id === "cards"))
+      return;
     const i = currentIndex(),
       q = model.questions[i];
     if (!q) return;
     const row = model.records[q._sessionKey];
-    if (!row || (model.id === "match" && !row.correct)) {
+    if (
+      !row ||
+      (["match", "detective", "secret-number"].includes(model.id) &&
+        !row.correct)
+    ) {
       if (model.settings.mode === "challenge" && !row) return;
       model.assist(q._sessionKey);
       if (row) row.assisted = true;
@@ -323,6 +340,10 @@
     renderSummary();
   }
   function renderSummary() {
+    if (model.id === "cards" && window.GameMechanics) {
+      window.GameMechanics.renderCardSummary(clock.time());
+      return;
+    }
     const s = model.summary(),
       topic = GameLearning.lessons[model.lesson]?.[0] || "Таңдалған тақырып";
     byId("sharedSummary")?.remove();
@@ -442,24 +463,29 @@
     const e = byId("sharedSetupInfo");
     if (!e) return;
     const r = GameLearning.rules[id];
-    const scoreRule = ["auction", "wheel", "quick-answer"].includes(id)
-      ? ""
-      : [
-            "match",
-            "find-error",
-            "math-code",
-            "detective",
-            "math-race",
-            "tug-of-war",
-          ].includes(id)
-        ? "Ойын ұпайы: әр дұрыс жауапқа 1 ұпай."
-        : "Ойын ұпайы: әр дұрыс жауапқа 10 ұпай.";
-    e.innerHTML = `<p>Жаңа ойын басталса, бұрынғы сақталған сессияның орнына осы ойын сақталады.</p><h3>Ойынның мақсаты</h3><p>${esc(r[0])}</p><h3>Қалай ойнаймыз?</h3><p>${esc(r[1])}</p><h3>Жеңіс және ұпай шарты</h3><p>${esc(r[2])} ${esc(scoreRule)}</p><p>Оқу нәтижесі ойын ұпайынан бөлек есептеледі. Әр дұрыс жауапқа, арнайы ереже көрсетілмесе, 1 дұрыс тапсырма тіркеледі.</p>`;
-    const team = ["math-race", "tug-of-war"].includes(id);
+    const scoreRule =
+      id === "cards"
+        ? "Өзіндік бағалау автоматты тексерілген ұпайға айналмайды."
+        : ["auction", "wheel", "quick-answer"].includes(id)
+          ? ""
+          : [
+                "match",
+                "find-error",
+                "math-code",
+                "detective",
+                "math-race",
+                "tug-of-war",
+              ].includes(id)
+            ? "Ойын ұпайы: әр дұрыс жауапқа 1 ұпай."
+            : "Ойын ұпайы: әр дұрыс жауапқа 10 ұпай.";
+    e.innerHTML = `<p>Жаңа ойын басталса, бұрынғы сақталған сессияның орнына осы ойын сақталады.</p><h3>Ойынның мақсаты</h3><p>${esc(r[0])}</p><h3>Қалай ойнаймыз?</h3><p>${esc(r[1])}</p><h3>Жеңіс және ұпай шарты</h3><p>${esc(r[2])} ${esc(scoreRule)}</p><p>${id === "cards" ? "Өзіндік белгілер бөлек қорытындыланады. Автоматты дұрыс/қате жауап және дәлдік пайызы есептелмейді." : "Оқу нәтижесі ойын ұпайынан бөлек есептеледі. Әр дұрыс жауапқа, арнайы ереже көрсетілмесе, 1 дұрыс тапсырма тіркеледі."}</p>`;
+    const team = ["math-race", "tug-of-war", "cards"].includes(id);
     byId("sharedModeField").hidden = team;
     byId("sharedFixedMode").hidden = !team;
     byId("sharedFixedMode").textContent =
-      "Режим: екі команда, бір құрылғыда кезекпен. Шешімді жауаптан кейін көруге болады.";
+      id === "cards"
+        ? "Режим: өзіндік жаттығу. Шешімді карточканың арнайы батырмасымен ашыңыз."
+        : "Режим: екі команда, бір құрылғыда кезекпен. Шешімді жауаптан кейін көруге болады.";
     byId("sharedMode").value = "practice";
     const timed = ["quick-answer", "blitz"].includes(id);
     byId("sharedTimeField").hidden = !timed;
@@ -489,7 +515,9 @@
         "find-error": "findError",
       };
     const qs =
-      bank?.[aliases[selectedGameId] || selectedGameId] ||
+      (window.GameMechanics?.supports(selectedGameId)
+        ? bank?.quickAnswer
+        : bank?.[aliases[selectedGameId] || selectedGameId]) ||
       bank?.quickAnswer ||
       [];
     byId("sharedQuestionCount").textContent =

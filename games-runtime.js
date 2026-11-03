@@ -68,8 +68,12 @@
     }
     record(key, correct, value, timeout = false) {
       const previous = this.records[key];
-      // Matching allows correction. Other games settle a question once.
-      if (previous && this.id !== "match") return previous;
+      // Matching and clue investigations allow correction while retaining the first attempt.
+      if (
+        previous &&
+        !["match", "detective", "secret-number"].includes(this.id)
+      )
+        return previous;
       const row = {
         key,
         correct: !!correct,
@@ -83,6 +87,17 @@
       return row;
     }
     summary() {
+      if (this.id === "cards") {
+        const rows = Object.values(this.selfAssessments || {});
+        return {
+          total: this.questions.length,
+          assessed: rows.length,
+          independent: rows.filter((x) => x === "independent").length,
+          assisted: rows.filter((x) => x === "assisted").length,
+          repeat: rows.filter((x) => x === "repeat").length,
+          graded: false,
+        };
+      }
       const rows = Object.values(this.records),
         total = this.questions.length;
       return {
