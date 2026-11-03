@@ -4,6 +4,7 @@
 const {test}=require('node:test');
 const mechanics=require('./helpers/mechanics.cjs');
 const logic=require('./helpers/logic.cjs');
+const racing=require('./helpers/racing.cjs');
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const http=require('node:http');
@@ -49,6 +50,7 @@ async function bank(page,id){return page.evaluate(id=>{
 },id);}
 async function continueAnswer(page){await page.locator('#gameQuestion .game-answer-feedback button,#gameQuestion .scene-feedback button').click();}
 async function play(page,id){
+ if(racing.supports(id))return racing.play(page,id);
  if(logic.supports(id))return logic.play(page,id);
  if(mechanics.supported(id))return mechanics.play(page,id);
  const qs=await bank(page,id);

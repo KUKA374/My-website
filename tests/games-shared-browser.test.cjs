@@ -1,5 +1,6 @@
 const mechanics = require("./helpers/mechanics.cjs");
 const logic = require("./helpers/logic.cjs");
+const racing = require("./helpers/racing.cjs");
 const { test } = require("node:test"),
   assert = require("node:assert/strict");
 const { chromium } = require("playwright"),
@@ -63,6 +64,7 @@ async function start(p, id) {
   await p.locator("#startGameButton").click();
 }
 async function firstAnswer(p, id, correct = true) {
+  if (racing.supports(id)) return racing.firstStep(p, id, correct);
   if (logic.supports(id)) return logic.firstStep(p, id, correct);
   if (mechanics.supported(id)) return mechanics.firstStep(p, id);
   if (id === "match") {
@@ -148,7 +150,11 @@ test("all 20 games save and resume their mechanics after a submitted answer", as
       assert.equal(await p.evaluate(() => GameSession.canAnswer()), true);
       assert.ok(
         (await p.locator("#gameProgress").textContent()).includes(
-          ["match", "cards"].includes(id) ? "1 / 4" : "2 / 4",
+          ["match", "cards"].includes(id)
+            ? "1 / 4"
+            : ["tug-of-war", "math-race"].includes(id)
+              ? "2 / 8"
+              : "2 / 4",
         ),
       );
       await p.locator("#backToGamesButton").click();
@@ -181,7 +187,7 @@ test("setup, help, results, error retry and responsive screens", async (t) => {
           );
           assert.equal(
             await p.locator("#sharedModeField").isVisible(),
-            !["math-race", "tug-of-war", "cards"].includes(id),
+            !["math-race", "tug-of-war", "cards", "car-race"].includes(id),
           );
           await p.locator("#startGameButton").click();
           assert.equal(

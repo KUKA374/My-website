@@ -71,7 +71,13 @@
       // Matching and clue investigations allow correction while retaining the first attempt.
       if (
         previous &&
-        !["match", "detective", "secret-number", "math-code"].includes(this.id)
+        ![
+          "match",
+          "detective",
+          "secret-number",
+          "math-code",
+          "car-race",
+        ].includes(this.id)
       )
         return previous;
       const row = {

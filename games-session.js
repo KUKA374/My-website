@@ -55,7 +55,9 @@
         (window.GameMechanics?.supports(data.model.id) &&
           data.active !== "mechanics") ||
         (window.GameLogic?.supports(data.model.id) &&
-          (data.active !== "logic" || data.engine.version !== 1))
+          (data.active !== "logic" || data.engine.version !== 1)) ||
+        (window.GameRacing?.supports(data.model.id) &&
+          (data.active !== "racing" || data.engine.version !== 1))
       ) {
         storageError =
           "Бұл ойынның механикасы жаңартылды. Бұрынғы сессияны жаңа механикада жалғастыру мүмкін емес; жаңа ойын бастаңыз.";
@@ -71,6 +73,8 @@
     if (!model || model.finished || restoring) return;
     try {
       const a = adapter();
+      a.tick?.(clock.time());
+      if (!model || model.finished) return;
       const engine = a.snapshot();
       localStorage.setItem(
         KEY,
@@ -148,26 +152,29 @@
     if (id === "cards") opts.mode = "practice";
     if (id === "match")
       opts.format = byId("logicMatchFormat")?.value || "answers";
+    window.GameRacing?.configure(opts, id);
     model = new LearningSession(id, lesson, questions, opts);
     clock = new GameClock();
     lastSaved = 0;
     clock.resume();
-    active = window.GameLogic?.supports(id)
-      ? "logic"
-      : window.GameMechanics?.supports(id)
-        ? "mechanics"
-        : ["math-race", "wheel", "tug-of-war"].includes(id)
-          ? "teams"
-          : GameLearning.rules[id] &&
-              ![
-                "match",
-                "find-error",
-                "quick-answer",
-                "math-code",
-                "detective",
-              ].includes(id)
-            ? "extra"
-            : "core";
+    active = window.GameRacing?.supports(id)
+      ? "racing"
+      : window.GameLogic?.supports(id)
+        ? "logic"
+        : window.GameMechanics?.supports(id)
+          ? "mechanics"
+          : ["math-race", "wheel", "tug-of-war"].includes(id)
+            ? "teams"
+            : GameLearning.rules[id] &&
+                ![
+                  "match",
+                  "find-error",
+                  "quick-answer",
+                  "math-code",
+                  "detective",
+                ].includes(id)
+              ? "extra"
+              : "core";
     for (const a of Object.values(adapters)) a.setQuestions?.(questions);
     paused = false;
     byId("sharedSummary")?.remove();
@@ -286,6 +293,8 @@
   }
   function pause() {
     if (!model || model.finished) return;
+    adapter().tick?.(clock.time());
+    if (!model || model.finished) return;
     paused = true;
     clock.pause();
     showPaused();
@@ -347,6 +356,10 @@
     renderSummary();
   }
   function renderSummary() {
+    if (window.GameRacing?.supports(model.id)) {
+      window.GameRacing.renderSummary(clock.time());
+      return;
+    }
     if (model.id === "cards" && window.GameMechanics) {
       window.GameMechanics.renderCardSummary(clock.time());
       return;
@@ -437,6 +450,7 @@
       byId("sharedMode").value = saved.model.settings.mode;
       byId("sharedTime").value = String(saved.model.settings.seconds);
       window.GameLogic?.restoreSettings(saved.model);
+      window.GameRacing?.restoreSettings(saved.model);
       startSelectedGame();
       if (!model) throw Error();
       model = Object.assign(new LearningSession(), saved.model);
@@ -486,6 +500,7 @@
                   "detective",
                   "math-race",
                   "tug-of-war",
+                  "car-race",
                 ].includes(id)
               ? "Ойын ұпайы: әр дұрыс жауапқа 1 ұпай."
               : "Ойын ұпайы: әр дұрыс жауапқа 10 ұпай.";
@@ -516,6 +531,7 @@
       .map(([v, t]) => `<option value="${v}">${t}</option>`)
       .join("");
     window.GameLogic?.setup(id);
+    window.GameRacing?.setup(id);
     updateCount();
   }
   function updateCount() {
@@ -539,6 +555,13 @@
           : bank?.[aliases[selectedGameId] || selectedGameId]) ||
       bank?.quickAnswer ||
       [];
+    if (window.GameRacing?.supports(selectedGameId)) {
+      byId("sharedQuestionCount").textContent =
+        selectedGameId === "car-race"
+          ? `Қордағы тапсырма саны: ${window.gameQuestionBank[getLessonKey()]?.quickAnswer?.length || 0}. Мақсат — әр есепті дұрыс шешіп, мәреге жету.`
+          : `Негізгі кезең: 4 жұп раунд, әр командаға 4 есеп. Қажет болса, 3 қосымша жұп раундқа дейін. Қиындық бір үлгідегі есептермен теңестірілген.`;
+      return;
+    }
     byId("sharedQuestionCount").textContent = window.GameLogic?.supports(
       selectedGameId,
     )
@@ -574,6 +597,8 @@
   setInterval(() => {
     if (!model || paused || model.finished) return;
     clock.tick();
+    if (!model || model.finished) return;
+    adapter().tick?.(clock.time());
     if (!model || model.finished) return;
     for (const [name, t] of Object.entries(timers)) {
       if (timers[name] !== t) continue;
