@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel | Math Teacher</title>
+  <title>Басқару панелі | iUSTAZ</title>
   <link rel="stylesheet" href="style.css">
   <style>
     .admin-layout{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
@@ -21,24 +21,29 @@
     @media(max-width:850px){.admin-layout{grid-template-columns:1fr}.admin-sidebar{position:static}.admin-cards{grid-template-columns:1fr 1fr}.admin-grid,.editor-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
     @media(max-width:520px){.admin-cards{grid-template-columns:1fr}.admin-top{align-items:flex-start;flex-direction:column}.admin-top-right{width:100%}.logout-button{width:100%}}
   </style>
+  <meta name="theme-color" content="#6C3BFF">
+  <link rel="icon" href="assets/iustaz/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="iustaz-ui.css?v=1">
+  <script src="iustaz-shell.js?v=1" defer></script>
+  <script src="iustaz-catalog.js?v=1" defer></script>
 </head>
-<body>
-  <header class="header"><div class="container nav"><a class="logo" href="index.html">📐 Math Teacher</a><nav><button class="logout-button" id="logoutButton" type="button">Шығу</button></nav></div></header>
+<body class="iu-page">
+  <header class="header"><div class="container nav"><a class="logo" href="index.html"><img class="iu-logo" src="assets/iustaz/logo-light.svg" alt="iUSTAZ" width="184" height="48"></a><nav><button class="logout-button" id="logoutButton" type="button">Шығу</button></nav></div></header>
 
   <main class="section"><div class="container"><a class="back-link" href="index.html">← Басты бетке қайту</a>
     <div class="admin-layout" id="adminPanel">
       <aside class="admin-sidebar">
-        <div class="admin-profile"><strong id="profileName">👤 Math Teacher</strong><span class="role-badge" id="roleLabel">Admin</span></div>
+        <div class="admin-profile"><strong id="profileName">👤 iUSTAZ</strong><span class="role-badge" id="roleLabel">Әкімші</span></div>
         <div class="admin-menu">
           <button class="active" type="button">📊 Басты панель</button><button type="button" onclick="document.getElementById('materialEditor').scrollIntoView({behavior:'smooth'})">📚 Материалдар</button>
           <button type="button" onclick="focusField('videoUrl')">🎥 Видеосабақтар</button><button type="button" onclick="focusField('pairWork')">👥 Жұптық жұмыс</button><button type="button" onclick="focusField('groupWork')">👨‍👩‍👧‍👦 Топтық жұмыс</button><button type="button" onclick="focusField('individualWork')">📝 Жеке жұмыс</button><button type="button" onclick="focusField('game')">🎮 Ойындар</button><button type="button" onclick="focusField('assessment')">✅ Бағалау</button><button type="button" onclick="focusField('homework')">🏠 Үй тапсырмасы</button>
-          <button class="super-only" type="button">👤 Админдер</button><button class="super-only" type="button">🏫 Сыныптар мен пәндер</button><button class="super-only" type="button">📋 КТП басқару</button><button class="super-only" type="button">⚙️ Сайт баптаулары</button>
+          <button class="super-only" type="button">👤 Әкімшілер</button><button class="super-only" type="button">🏫 Сыныптар мен пәндер</button><button class="super-only" type="button">📋 КТП басқару</button><button class="super-only" type="button">⚙️ Сайт баптаулары</button>
         </div>
       </aside>
 
       <section class="admin-main">
-        <div class="admin-top"><div><h1 id="panelTitle">Admin Panel</h1><p id="roleDescription">Материалдарды және сабақ контентін басқару бөлімі.</p></div><div class="admin-top-right"><button class="logout-button" id="logoutButton2" type="button">Аккаунттан шығу</button></div></div>
-        <div class="admin-cards"><div class="admin-stat"><span>7–11</span><small>Қолданылатын сыныптар</small></div><div class="admin-stat"><span>2</span><small>Негізгі пәндер</small></div><div class="admin-stat"><span>8</span><small>Материал түрі</small></div></div>
+        <div class="admin-top"><div><h1 id="panelTitle">Басқару панелі</h1><p id="roleDescription">Материалдарды және сабақ контентін басқару бөлімі.</p></div><div class="admin-top-right"><button class="logout-button" id="logoutButton2" type="button">Аккаунттан шығу</button></div></div>
+        <p class="iu-empty">Қазір осы редакторда қолжетімді: 7-сынып, алгебра, 1-тоқсан. Басқа сыныптардың КТП тақырыптарын «Сыныптар мен тақырыптар» бөлімінен ашыңыз.</p>
 
         <div class="admin-section" id="materialEditor">
           <h2>📚 Сабақ материалдарын басқару</h2><p>Сынып → пән → тоқсан → сабақ таңдап, материалды енгізіңіз. Материал ортақ Firebase Database-ке қосылғанда барлық қолданушыға көрінеді.</p>
@@ -65,7 +70,7 @@
 
         <div class="admin-section"><h2>📌 Соңғы материалдар</h2><p>Таңдалған сабақтың сақталған контенті туралы ақпарат.</p><div class="material-list" id="materialStatusList"></div></div>
 
-        <div class="admin-section super-panel super-only"><h2>👑 Super Admin басқаруы</h2><p>Бұл бөлім тек Super Admin аккаунтымен кіргенде көрсетіледі.</p><div class="admin-grid"><button class="admin-action" type="button"><strong>👤 Админ қосу</strong><span>Жаңа басқарушы қолданушы жасау</span></button><button class="admin-action" type="button"><strong>🏫 Сынып/пән басқару</strong><span>Сайттың оқу құрылымын өзгерту</span></button><button class="admin-action" type="button"><strong>📋 КТП басқару</strong><span>КТП қосу, ауыстыру немесе жаңарту</span></button><button class="admin-action" type="button"><strong>⚙️ Жүйе баптаулары</strong><span>Негізгі сайт параметрлерін басқару</span></button></div></div>
+        <div class="admin-section super-panel super-only"><h2>👑 Бас әкімші басқаруы</h2><p>Бұл бөлім тек Бас әкімші аккаунтымен кіргенде көрсетіледі.</p><div class="admin-grid"><button class="admin-action" type="button"><strong>👤 Админ қосу</strong><span>Жаңа басқарушы қолданушы жасау</span></button><button class="admin-action" type="button"><strong>🏫 Сынып/пән басқару</strong><span>Сайттың оқу құрылымын өзгерту</span></button><button class="admin-action" type="button"><strong>📋 КТП басқару</strong><span>КТП қосу, ауыстыру немесе жаңарту</span></button><button class="admin-action" type="button"><strong>⚙️ Жүйе баптаулары</strong><span>Негізгі сайт параметрлерін басқару</span></button></div></div>
       </section>
     </div>
   </div></main>
@@ -80,10 +85,10 @@
     if (user) {
       const isSuper = user.role === "super_admin";
       document.getElementById("adminPanel").classList.toggle("super-mode", isSuper);
-      document.getElementById("roleLabel").textContent = isSuper ? "Super Admin" : "Admin";
+      document.getElementById("roleLabel").textContent = isSuper ? "Бас әкімші" : "Әкімші";
       document.getElementById("roleLabel").classList.toggle("super-badge", isSuper);
       document.getElementById("profileName").textContent = (isSuper ? "👑 " : "👤 ") + user.name;
-      document.getElementById("panelTitle").textContent = isSuper ? "Super Admin Panel" : "Admin Panel";
+      document.getElementById("panelTitle").textContent = isSuper ? "Бас әкімші панелі" : "Басқару панелі";
       document.getElementById("roleDescription").textContent = isSuper ? "Сайттың материалдарын және негізгі құрылымын басқару бөлімі." : "Материалдарды және сабақ контентін басқару бөлімі.";
     }
 

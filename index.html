@@ -3,18 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Math Teacher</title>
+  <title>iUSTAZ</title>
   <link rel="stylesheet" href="style.css">
   <script src="firebase-config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
   <script src="auth.js"></script>
+  <meta name="theme-color" content="#6C3BFF">
+  <link rel="icon" href="assets/iustaz/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="iustaz-ui.css?v=1">
+  <script src="iustaz-shell.js?v=1" defer></script>
 </head>
-<body>
+<body class="iu-page">
   <header class="site-header">
     <div class="container header-inner">
-      <a href="index.html" class="logo">📐 Math Teacher</a>
+      <a href="index.html" class="logo"><img class="iu-logo" src="assets/iustaz/logo-light.svg" alt="iUSTAZ" width="184" height="48"></a>
       <nav class="main-nav">
         <a href="index.html">Басты бет</a>
         <a href="#classes">Сыныптар</a>
@@ -28,17 +32,15 @@
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container">
-      <span class="badge">Математика мұғалімдеріне арналған платформа</span>
-      <h1>Сабаққа дайындалуды<br>жеңілдетіңіз</h1>
-      <p>5–11 сыныптарға арналған оқулықтар, КТП, ҚМЖ және дайын сабақ материалдары бір жерде.</p>
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="🔎 Тақырыпты іздеу...">
-        <button class="button" onclick="searchLessons()">Іздеу</button>
-      </div>
-    </div>
+  <section class="iu-welcome">
+    <div><span class="iu-kicker">Ұстаздың цифрлық серігі</span><h1>iUSTAZ платформасына<br>қош келдіңіз!</h1><p>Математика сабағын жоспарлау, өткізу және бағалау платформасы</p><a class="iu-button primary" href="constructor.html#newLesson">+ Жаңа сабақ құру</a></div>
+    <div class="iu-welcome-art" aria-hidden="true"><div class="iu-art-orbit"></div><span class="iu-art-formula">a² + b² = c²</span><img src="assets/iustaz/mark-light.svg" alt="" width="110" height="110"><span class="iu-art-note">Әр сабақ — жаңа мүмкіндік</span></div>
   </section>
+  <section class="iu-stats" aria-label="Нақты деректер"><article class="iu-card"><span class="iu-stat-icon">▱</span><strong id="iuLessonCount">Кіру қажет</strong><span>Осы браузердегі сабақтар</span></article><article class="iu-card"><span class="iu-stat-icon">◇</span><strong id="iuGameCount">Жүктелуде…</strong><span>Математикалық ойын</span></article><article class="iu-card"><span class="iu-stat-icon">▦</span><strong id="iuTopicCount">Жүктелуде…</strong><span>Қолжетімді КТП тақырыбы</span></article></section>
+  <p id="iuCatalogNote" class="iu-data-note" role="status">КТП тақырыптары дайын сабақ материалдарының санын білдірмейді.</p>
+  <section class="iu-quick-section"><div class="iu-section-heading"><h2>Жылдам бастау</h2><span class="iu-muted">Сабаққа қажет құралдар</span></div><div class="iu-quick-grid"><a href="constructor.html#newLesson" class="iu-card iu-quick"><span>▤</span><strong>Жаңа сабақ</strong><small>Жоспарды өзіңіз құрыңыз</small><b aria-hidden="true">↗</b></a><a href="constructor.html#lessonTemplate" class="iu-card iu-quick"><span>▧</span><strong>Сабақ үлгілері</strong><small>Кезеңдер құрылымын таңдаңыз</small><b aria-hidden="true">↗</b></a><a href="games.html" class="iu-card iu-quick"><span>◇</span><strong>Математикалық ойындар</strong><small>20 интерактивті механика</small><b aria-hidden="true">↗</b></a><a href="constructor.html#taskLibrary" class="iu-card iu-quick"><span>≡</span><strong>Тапсырмалар банкі</strong><small>Таңдалған тақырып материалдары</small><b aria-hidden="true">↗</b></a></div></section>
+  <section class="iu-card iu-recent"><div class="iu-section-heading"><h2>Соңғы сабақтар</h2><a href="constructor.html#savedLessons">Кітапханаға өту →</a></div><div id="iuRecentLessons" class="iu-empty">Жеке сабақтарыңызды көру үшін жүйеге кіріңіз. Жоспарлар осы браузерде ғана сақталады.</div></section>
+  <section class="iu-topic-search iu-card"><label for="searchInput"><strong>Сабақ материалын іздеу</strong><small>Қолданыстағы іздеу: 7-сынып, алгебра, 1-тоқсан</small></label><div class="search-box"><input type="search" id="searchInput" placeholder="Тақырып атауын жазыңыз…"><button class="iu-button primary" onclick="searchLessons()">Іздеу</button></div></section>
 
   <section id="searchResults" class="container" style="display: none;">
     <div class="page-heading"><h2>Іздеу нәтижелері</h2></div>
@@ -54,7 +56,7 @@
     <div id="classGrid" class="class-grid"></div>
   </section>
 
-  <section id="favorites" class="container section">
+  <section hidden data-iu-auth-only id="favorites" class="container section">
     <div class="page-heading">
       <span class="badge">⭐ Таңдаулылар</span>
       <h2>Таңдаулылар</h2>
@@ -68,11 +70,11 @@
     </div>
   </section>
 
-  <section id="my-lessons" class="container section">
+  <section hidden data-iu-auth-only id="my-lessons" class="container section">
     <div class="page-heading">
       <span class="badge">📚 Жеке жинақ</span>
-      <h2>Менің сабақтарым</h2>
-      <p>Өзіңіз жұмыс істейтін сабақтарды осы жерге жинап қойыңыз.</p>
+      <h2>Бұрынғы тақырыптар жинағы</h2>
+      <p>КТП сабақтарына бұрын сақталған сілтемелер. Конструктор жоспарлары бөлек жергілікті кітапханада сақталады.</p>
     </div>
     <div id="myLessonsList">
       <div class="admin-box">
@@ -83,11 +85,11 @@
   </section>
 
   <footer class="site-footer">
-    <div class="container"><p>© 2026 Math Teacher</p></div>
+    <div class="container"><p>© 2026 iUSTAZ</p></div>
   </footer>
 
   <script>
-    requireRole(["teacher", "admin", "super_admin"]);
+    // Басты бет қонақтарға ашық; жеке сабақтар расталған UID арқылы оқылады.
     document.addEventListener("DOMContentLoaded", function () {
       const button = document.getElementById("logoutButton");
       if (button) button.addEventListener("click", function () { logoutUser(); });
@@ -99,5 +101,6 @@
   <script src="script.js"></script>
   <script src="search.js"></script>
   <script src="my-lessons.js?v=2"></script>
+<script src="constructor-model.js"></script><script src="constructor-storage.js"></script><script src="constructor-catalog.js"></script><script src="games-learning.js"></script><script src="iustaz-dashboard.js" defer></script>
 </body>
 </html>
