@@ -264,6 +264,15 @@
       ["goal", "Сабақ мақсаты"],
     ])
       if (!x.meta[k].trim()) a.push(label + " толтырылмаған.");
+    if (
+      x.meta.grade &&
+      (!/^\d+$/.test(x.meta.grade) ||
+        Number(x.meta.grade) < 1 ||
+        Number(x.meta.grade) > 11)
+    )
+      a.push("Сынып 1–11 аралығында болуы керек.");
+    if (x.meta.quarter && !/^[1-4]$/.test(x.meta.quarter))
+      a.push("Тоқсан 1–4 аралығында болуы керек.");
     if (!x.title.trim() || x.title === "Жаңа сабақ")
       a.push("Сабақ тақырыбын енгізіңіз.");
     if (total(x) !== x.duration)

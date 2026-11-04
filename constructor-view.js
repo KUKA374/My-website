@@ -35,22 +35,49 @@
       return "";
     }
   }
-  function formula(s) {
-    if (!window.katex) return "<p>Формула: " + esc(s) + "</p>";
+  const mathCache = new Map();
+  function math(s) {
+    if (!window.katex)
+      return { html: "<p>Формула: " + esc(s) + "</p>", error: true };
+    if (mathCache.has(s)) return mathCache.get(s);
+    let result;
     try {
-      return katex.renderToString(s, {
-        throwOnError: true,
-        trust: false,
-        strict: "error",
-        maxExpand: 1000,
-        maxSize: 10,
-        displayMode: true,
-      });
+      result = {
+        html: katex.renderToString(s, {
+          throwOnError: true,
+          trust: false,
+          strict: "error",
+          maxExpand: 1000,
+          maxSize: 10,
+          displayMode: true,
+        }),
+        error: false,
+      };
     } catch {
-      return (
-        '<p class="formula-error">Формуланы тексеріңіз: ' + esc(s) + "</p>"
-      );
+      result = {
+        html:
+          '<p class="formula-error">Формуланы тексеріңіз: ' + esc(s) + "</p>",
+        error: true,
+      };
     }
+    if (mathCache.size >= 200) mathCache.delete(mathCache.keys().next().value);
+    mathCache.set(s, result);
+    return result;
+  }
+  function formula(s) {
+    return math(s).html;
+  }
+  function warnings(x) {
+    const list = [];
+    if (x.blocks.some((b) => b.type === "formula" && math(b.body).error))
+      list.push("Формула пішімін тексеріңіз.");
+    if (
+      x.blocks.some(
+        (b) => b.type === "image" && (!imageURL(b.body) || !b.aux.trim()),
+      )
+    )
+      list.push("Суретке қауіпсіз мекенжай мен сипаттама енгізіңіз.");
+    return list;
   }
   function block(b) {
     if (b.type === "formula") return formula(b.body);
@@ -81,12 +108,12 @@
     return `<section class="content-block block-${b.type}"><h4>${esc(LessonModel.blockTypes[b.type])}</h4><p>${esc(b.body)}</p></section>`;
   }
   function task(t, answers, assessment = true) {
-    return `<article class="print-task"><h4>${esc(t.level === "unclassified" ? "Деңгейі белгіленбеген" : t.level + " деңгейі")} · ${esc(LessonModel.types[t.type])}${t.optional ? " · Қосымша" : ""}${t.group ? " · " + t.group + "-топ" : ""}</h4><p>${esc(t.prompt)}</p>${t.instruction ? "<p>" + esc(t.instruction) + "</p>" : ""}${assessment && t.criteria ? "<p>Бағалау критерийі: " + esc(t.criteria) + "</p>" : ""}${assessment && t.descriptors.length ? "<ul>" + t.descriptors.map((d) => "<li>" + esc(d.text) + " — " + d.points + " ұпай</li>").join("") + "</ul>" : ""}${answers ? "<details open><summary>Мұғалімге: жауап және шешім</summary><p>" + esc(t.answer) + "</p><p>" + esc(t.solution || "Шешу жолы енгізілмеген.") + "</p></details>" : '<div class="answer-space" aria-label="Жауап жазу орны"></div>'}</article>`;
+    return `<article class="print-task"><h4>${esc(t.level === "unclassified" ? "Деңгейі белгіленбеген" : t.level + " деңгейі")} · ${esc(LessonModel.types[t.type])}${t.optional ? " · Қосымша" : " · Міндетті"}${t.group ? " · " + t.group + "-топ" : ""}</h4><p>${esc(t.prompt)}</p>${t.instruction ? "<p>" + esc(t.instruction) + "</p>" : ""}${assessment && t.criteria ? "<p>Бағалау критерийі: " + esc(t.criteria) + "</p>" : ""}${assessment && t.descriptors.length ? "<ul>" + t.descriptors.map((d) => "<li>" + esc(d.text) + " — " + d.points + " ұпай</li>").join("") + "</ul>" : ""}${answers ? "<details open><summary>Мұғалімге: жауап және шешім</summary><p>" + esc(t.answer) + "</p><p>" + esc(t.solution || "Шешу жолы енгізілмеген.") + "</p></details>" : '<div class="answer-space" aria-label="Жауап жазу орны"></div>'}</article>`;
   }
   function render(x, mode = "teacher", answers = false) {
     const pupil = mode === "student",
       home = mode === "homework";
-    let h = `<header><p class="document-status">${LessonModel.warnings(x).length ? "Жоба — тексеру қажет" : "Мұғалім тексерген жоспар"}</p><h1>${esc(x.title)}</h1><p>${esc(x.meta.grade)}-сынып · ${esc(x.meta.subject)} · ${esc(x.meta.quarter)}-тоқсан · ${x.duration} минут</p></header>`;
+    let h = `<header><p class="document-status">${LessonModel.warnings(x).concat(warnings(x)).length ? "Жоба — тексеру қажет" : "Мұғалім тексерген жоспар"}</p><h1>${esc(x.title)}</h1><p>${esc(x.meta.grade)}-сынып · ${esc(x.meta.subject)} · ${esc(x.meta.quarter)}-тоқсан · ${x.duration} минут</p></header>`;
     if (home)
       return (
         h +
@@ -116,6 +143,15 @@
         x.blocks.map(block).join("");
     }
     h += x.stages
+      .filter(
+        (s) =>
+          !pupil ||
+          s.tasks.length ||
+          s.instructions.trim() ||
+          s.pupil.trim() ||
+          (s.kind === "group" &&
+            s.groups.slice(0, s.groupCount).some((g) => g.trim())),
+      )
       .map(
         (s) =>
           `<section class="plan-stage"><h2>${esc(s.title)} <small>${s.minutes} минут</small></h2>${!pupil ? "<p>" + esc(s.goal) + "</p>" : ""}<p>${esc(s.instructions)}</p>${!pupil && s.teacher ? "<p>Мұғалім: " + esc(s.teacher) + "</p>" : ""}${s.pupil ? "<p>Оқушы: " + esc(s.pupil) + "</p>" : ""}${
@@ -161,5 +197,13 @@
         "</p></section>";
     return h;
   }
-  window.ConstructorView = { esc, imageURL, formula, block, task, render };
+  window.ConstructorView = {
+    esc,
+    imageURL,
+    formula,
+    block,
+    task,
+    render,
+    warnings,
+  };
 })();

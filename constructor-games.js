@@ -7,6 +7,7 @@
     $ = (id) => document.getElementById(id);
   let selected = { id: "match", grade: "", topic: "", minutes: 5, format: "" };
   function render() {
+    const restore = A.rememberFocus();
     const items = L.list(GameLearning),
       item = items.find((g) => g.id === selected.id);
     if (!selected.grade)
@@ -19,6 +20,7 @@
       selected.format = item.formats[0];
     $("gameEditor").innerHTML =
       `<label for="builderGame">Ойын</label><select id="builderGame">${items.map((g) => `<option value="${g.id}" ${g.id === selected.id ? "selected" : ""}>${E(g.title)}</option>`).join("")}</select><p>${E(item.purpose)}</p><p>${E(item.rule)}</p><label for="gameGrade">Ойын сыныбы</label><select id="gameGrade"><option value="">Сыныпты таңдаңыз</option>${["5", "6", "7"].map((g) => `<option value="${g}" ${g === selected.grade ? "selected" : ""}>${g}-сынып</option>`).join("")}</select><label for="gameTopic">Ойынның нақты қолжетімді тақырыбы</label><select id="gameTopic"><option value="">Тақырыпты таңдаңыз</option>${topics.map((t) => `<option value="${t.key}" ${t.key === selected.topic ? "selected" : ""}>${E(t.title)}</option>`).join("")}</select><label for="gameFormat">Жұмыс түрі</label><select id="gameFormat">${item.formats.map((f) => `<option ${f === selected.format ? "selected" : ""}>${f}</option>`).join("")}</select><label for="gameMinutes">Сабақ жоспарындағы ойын уақыты</label><input id="gameMinutes" type="number" min="1" max="80" step="1" value="${selected.minutes}"><p id="gameSupport" role="status">${selected.topic ? "Осы ойын тақырыбына тапсырмалар бар. Сабақтың оқу мақсатымен сәйкестігін өзіңіз тексеріңіз." : "Сабаққа сәйкес ойын тақырыбын таңдаңыз. 8–11-сыныптарға арналған ойын тапсырмалары әзірге жоқ."}</p><button type="button" id="addLessonGame" ${selected.topic ? "" : "disabled"}>Ойынды жоспарға қосу</button><p>Ойындар бетінде сынып, тақырып және ойын қолмен таңдалады. Жоспар минуты ойын таймерін өзгертпейді.</p>${A.doc.games.map((g) => `<article class="edit-card"><h3>${E(g.title)}</h3><p>${E(g.grade)}-сынып · ${E(g.topic)} · ${g.minutes} минут · ${E(g.format)}</p><a class="game-link" href="${L.link()}" target="_blank" rel="noopener">Ойындар каталогын ашу</a><button type="button" data-remove-game="${g.id}">Ойынды жоспардан алып тастау</button></article>`).join("")}`;
+    restore();
   }
   A.features.push({ render });
   document.addEventListener("DOMContentLoaded", () => {

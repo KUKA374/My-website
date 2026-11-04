@@ -43,6 +43,7 @@
       )}</select>${fields.map(([k, l]) => A.field(l, k + "-" + t.id, t[k], `data-task="${t.id}" data-key="${k}"`)).join("")}${stage?.kind === "group" ? `<label for="group-${t.id}">Қай топ орындайды?</label><select id="group-${t.id}" data-task="${t.id}" data-key="group"><option value="0">Барлық топ</option>${[1, 2, 3, 4, 5].map((n) => `<option value="${n}" ${t.group === n ? "selected" : ""}>${n}-топ</option>`).join("")}</select>` : ""}${!stage ? `<label class="check-line"><input type="checkbox" data-task="${t.id}" data-key="optional" ${t.optional ? "checked" : ""}>Қосымша үй тапсырмасы</label>` : ""}<h4>Бағалау дескрипторлары</h4>${t.descriptors.map((d, i) => `<div class="descriptor-row"><label for="desc-${t.id}-${i}">Дескриптор ${i + 1}</label><input id="desc-${t.id}-${i}" data-desc="${t.id}" data-index="${i}" data-key="text" value="${E(d.text)}"><label for="points-${t.id}-${i}">Ұпай</label><input id="points-${t.id}-${i}" type="number" min="0" max="100" step="1" data-desc="${t.id}" data-index="${i}" data-key="points" value="${d.points}"><button type="button" data-delete-desc="${t.id}" data-index="${i}">Дескрипторды жою</button></div>`).join("")}<button type="button" data-add-desc="${t.id}">Дескриптор қосу</button></article>`;
   }
   function render() {
+    const restore = A.rememberFocus();
     const x = A.doc,
       s = current();
     A.stageId = s.id;
@@ -107,6 +108,7 @@
           "",
         )}</select><label for="bankSearch">Шарттан іздеу</label><input id="bankSearch" value="${E(filters.search)}"><p>Банк деңгейі мен толық шешімі расталмаған есептерді мұғалім өзі тексеріп толықтырады. Бос қор басқа тақырыппен толтырылмайды.</p><div id="bankResults"></div>`;
     bank();
+    restore();
   }
   function pool() {
     const m = A.doc.meta;

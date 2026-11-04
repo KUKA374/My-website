@@ -21,6 +21,11 @@
     clearTimeout(timer);
     timer = null;
     try {
+      const invalid = [
+        ...document.querySelectorAll('#builderApp input[type="number"]'),
+      ].some((el) => el.value === "" || !el.checkValidity());
+      if (invalid)
+        throw Error("Сандық өрістегі қатені түзетіңіз. Өзгерістер сақталмады.");
       if (conflict && !copy)
         throw Error("Басқа қойындыда өзгеріс бар. Көшірме ретінде сақтаңыз.");
       let doc = A.doc;

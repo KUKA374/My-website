@@ -440,3 +440,26 @@
     overflow: visible;
   }
 }
+
+@media screen and (min-width: 1101px) {
+  .builder-grid {
+    align-items: start;
+  }
+  .builder-panel {
+    max-height: calc(100dvh - 210px);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+  #contextPanel,
+  .preview-panel {
+    position: sticky;
+    top: 16px;
+  }
+}
+@media print {
+  .builder-panel {
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+}

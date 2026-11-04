@@ -48,14 +48,15 @@ async function fixture(
     await browser.close();
     await new Promise((r) => server.close(r));
   });
-  const p = await browser.newPage({
-      viewport: { width, height: 950 },
-      hasTouch: width < 600,
-      reducedMotion: "reduce",
-    }),
+  const context = await browser.newContext({
+    viewport: { width, height: 950 },
+    hasTouch: width < 600,
+    reducedMotion: "reduce",
+  });
+  const p = await context.newPage(),
     errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
-  await p.route("**/auth.js", (r) =>
+  await p.context().route("**/auth.js", (r) =>
     r.fulfill({
       contentType: "application/javascript",
       body: `window.requireRole=()=>{};window.qaAuth={role:${JSON.stringify(role)},uid:${JSON.stringify(uid)},denied:${denied}};window.ensureFirebase=async()=>({auth:()=>({onAuthStateChanged(fn){window.qaNotify=fn;Promise.resolve().then(()=>fn(qaAuth.uid?{uid:qaAuth.uid}:null));return ()=>{};}}),firestore:()=>({collection:()=>({doc:()=>({get:async()=>({exists:!qaAuth.denied,data:()=>({role:qaAuth.role})})})})})});`,

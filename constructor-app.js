@@ -12,6 +12,35 @@
     mode: "teacher",
     answers: false,
     stageId: null,
+    rememberFocus() {
+      const old = document.activeElement,
+        id = old?.id;
+      const action = old
+        ?.getAttributeNames?.()
+        .find((k) =>
+          [
+            "data-add-desc",
+            "data-delete-desc",
+            "data-delete-task",
+            "data-bank",
+            "data-open-lesson",
+            "data-delete-lesson",
+            "data-remove-game",
+          ].includes(k),
+        );
+      const value = action ? old.getAttribute(action) : null;
+      return () => {
+        if (old?.isConnected) return;
+        let target = id
+          ? document.getElementById(id)
+          : action
+            ? document.querySelector(`[${action}="${CSS.escape(value)}"]`)
+            : null;
+        if (!target && old?.tagName === "BUTTON")
+          target = document.getElementById("editorPanel");
+        if (target?.getClientRects().length) target.focus();
+      };
+    },
     notify(message) {
       $("saveStatus").textContent = message;
     },
@@ -35,7 +64,7 @@
     refresh() {
       if (!A.doc) return;
       const x = A.doc,
-        w = M.warnings(x);
+        w = M.warnings(x).concat(V.warnings(x));
       $("lessonMetrics").innerHTML =
         `<span>${M.total(x)} / ${x.duration} минут</span><span>${M.tasks(x).length} тапсырма</span><span>${M.points(x)} ұпай</span><span>${w.length ? "Тексеру қажет" : "Толық жоспар"}</span>`;
       $("lessonWarnings").replaceChildren(
@@ -50,6 +79,7 @@
     },
     render() {
       if (!A.doc) return;
+      const restore = A.rememberFocus();
       metadata();
       blocks();
       $("reflectionMethod").value = A.doc.reflection.method;
@@ -57,6 +87,7 @@
       $("teacherNotes").value = A.doc.teacherNotes;
       for (const f of A.features) f.render?.();
       A.refresh();
+      restore();
     },
     load(doc) {
       A.doc = M.check(doc, A.owner.uid);
@@ -187,6 +218,10 @@
       });
       A.doc.title = row.title;
       A.changed(true);
+    } else {
+      A.doc.meta.topicId = "";
+      A.doc.meta.objective = "";
+      A.changed(true);
     }
     const c = LessonCatalog.content(g, s, q, n);
     $("catalogStatus").textContent = c
@@ -307,11 +342,12 @@
       (a) =>
         (a.onclick = () => {
           A.panel("editor");
-          setTimeout(
-            () =>
-              document.querySelector(a.getAttribute("href")).scrollIntoView(),
-            0,
-          );
+          setTimeout(() => {
+            const target = document.querySelector(a.getAttribute("href"));
+            target.tabIndex = -1;
+            target.focus();
+            target.scrollIntoView();
+          }, 0);
         }),
     );
     $("catalogGrade").onchange = () => {
