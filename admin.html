@@ -25,6 +25,7 @@
   <link rel="icon" href="assets/iustaz/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="iustaz-ui.css?v=1">
   <script src="iustaz-shell.js?v=1" defer></script>
+  <script src="iustaz-catalog.js?v=1" defer></script>
 </head>
 <body class="iu-page">
   <header class="header"><div class="container nav"><a class="logo" href="index.html"><img class="iu-logo" src="assets/iustaz/logo-light.svg" alt="iUSTAZ" width="184" height="48"></a><nav><button class="logout-button" id="logoutButton" type="button">Шығу</button></nav></div></header>
@@ -42,7 +43,7 @@
 
       <section class="admin-main">
         <div class="admin-top"><div><h1 id="panelTitle">Басқару панелі</h1><p id="roleDescription">Материалдарды және сабақ контентін басқару бөлімі.</p></div><div class="admin-top-right"><button class="logout-button" id="logoutButton2" type="button">Аккаунттан шығу</button></div></div>
-        <div class="admin-cards"><div class="admin-stat"><span>7–11</span><small>Қолданылатын сыныптар</small></div><div class="admin-stat"><span>2</span><small>Негізгі пәндер</small></div><div class="admin-stat"><span>8</span><small>Материал түрі</small></div></div>
+        <p class="iu-empty">Қазір осы редакторда қолжетімді: 7-сынып, алгебра, 1-тоқсан. Басқа сыныптардың КТП тақырыптарын «Сыныптар мен тақырыптар» бөлімінен ашыңыз.</p>
 
         <div class="admin-section" id="materialEditor">
           <h2>📚 Сабақ материалдарын басқару</h2><p>Сынып → пән → тоқсан → сабақ таңдап, материалды енгізіңіз. Материал ортақ Firebase Database-ке қосылғанда барлық қолданушыға көрінеді.</p>
