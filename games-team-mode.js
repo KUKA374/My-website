@@ -78,15 +78,17 @@
   function progress(index,total){
     document.getElementById('gameProgress').textContent=`${index+1} / ${total}`;
     state.locked=false;
+    window.GameSession?.present(index);
   }
 
   // Keep the answer visible until the player explicitly continues. The token
   // prevents old controls and animation callbacks from affecting a new game.
   function feedback(value,q,advance){
-    if(state.locked||!q)return;
+    if(state.locked||!q||window.GameSession&&!window.GameSession.canAnswer())return;
     state.locked=true;
     const token=state.token, box=document.getElementById('gameQuestion');
     const ok=answersMatch(value,q.answer);
+    window.GameSession?.record(state.id==='wheel'?state.wheel.index:state.index,ok,value);
     box.querySelectorAll('.answer-grid button').forEach(btn=>{
       btn.disabled=true;
       if(answersMatch(btn.textContent,q.answer))btn.classList.add('answer-correct');
@@ -124,6 +126,7 @@
     const winner=state.race.blue>state.race.red?'🔵 Көк команда':state.race.red>state.race.blue?'🔴 Қызыл команда':'🤝 Тең ойын', b=document.getElementById('gameQuestion');
     b.innerHTML=`<div class="team-game"><div class="team-card winner"><div class="winner-icon">🏆</div><h2>${winner}</h2><p>Математикалық жарыс аяқталды!</p><div class="teams"><div class="team-box blue"><div class="team-name">КӨК</div><div class="team-score">${state.race.blue}</div></div><div></div><div class="team-box red"><div class="team-name">ҚЫЗЫЛ</div><div class="team-score">${state.race.red}</div></div></div><button class="game-primary" id="raceReplay">🔄 Қайта ойнау</button></div></div>`;
     document.getElementById('raceReplay').onclick=()=>{if(typeof startSelectedGame==='function')startSelectedGame();};
+    window.GameSession?.finish();
   }
 
   function renderWheel() {
@@ -132,13 +135,13 @@
     progress(state.wheel.index,total);state.wheel.spinning=false;
     b.innerHTML=`<div class="team-game"><div class="team-hud"><span class="team-pill">🎡 СӘТТІЛІК ДӨҢГЕЛЕГІ</span><span class="team-pill">Тапсырма <strong>${state.wheel.index+1}/${total}</strong></span><span class="team-pill">Ұпай <strong>${state.wheel.score}</strong></span></div><div class="team-card"><div class="wheel-pointer">▼</div><div class="wheel-big" id="teamWheel">🎡</div><div class="wheel-legend"><span>🔹 10</span><span>🟣 20</span><span>🟡 30</span><span>🔴 40</span></div><button class="game-primary" id="spinTeamWheel">🎡 Айналдыру</button><div id="wheelTask"></div></div></div>`;
     document.getElementById('spinTeamWheel').onclick=()=>{
-      if(state.wheel.spinning||state.locked)return; state.wheel.spinning=true;
+      if(state.wheel.spinning||state.locked||window.GameSession&&!window.GameSession.canAnswer())return; state.wheel.spinning=true;
       document.getElementById('spinTeamWheel').disabled=true; const w=document.getElementById('teamWheel'); w.classList.add('spin');
       const token=state.token;
       const sector=Math.floor(Math.random()*4);
       state.wheel.bonus=[10,20,30,40][sector];
       w.style.transform=`rotate(${1440+315-90*sector}deg)`;
-      state.wheelTimeout=setTimeout(()=>{if(token!==state.token||state.id!=='wheel')return;w.classList.remove('spin');showWheelTask(q);},1100);
+      state.wheelTimeout=(window.GameSession?window.GameSession.defer:setTimeout)(()=>{if(token!==state.token||state.id!=='wheel')return;w.classList.remove('spin');showWheelTask(q);},1100);
     };
   }
 
@@ -152,6 +155,7 @@
     state.locked=true;document.getElementById("gameProgress").textContent="Нәтиже";
     const b=document.getElementById('gameQuestion');b.innerHTML=`<div class="team-game"><div class="team-card winner"><div class="winner-icon">🎡🏆</div><h2>Дөңгелек аяқталды!</h2><p>Жалпы нәтиже</p><div class="team-score">${state.wheel.score} ұпай</div><button class="game-primary" id="wheelReplay">🔄 Қайта ойнау</button></div></div>`;
     document.getElementById('wheelReplay').onclick=()=>{if(typeof startSelectedGame==='function')startSelectedGame();};
+    window.GameSession?.finish();
   }
 
   function renderTug(){
@@ -177,7 +181,23 @@
     const winner=state.tug.pos<0?'🔵 Көк команда':state.tug.pos>0?'🔴 Қызыл команда':'🤝 Тең ойын',b=document.getElementById('gameQuestion');
     b.innerHTML=`<div class="team-game"><div class="team-card winner"><div class="winner-icon">🪢🏆</div><h2>${winner}</h2><p>Арқан тартыс аяқталды!</p><div class="teams"><div class="team-box blue"><div class="team-name">КӨК</div><div class="team-score">${state.tug.blue}</div></div><div></div><div class="team-box red"><div class="team-name">ҚЫЗЫЛ</div><div class="team-score">${state.tug.red}</div></div></div><button class="game-primary" id="tugReplay">🔄 Қайта ойнау</button></div></div>`;
     document.getElementById('tugReplay').onclick=()=>{if(typeof startSelectedGame==='function')startSelectedGame();};
+    window.GameSession?.finish();
   }
+
+  if(window.GameSession)window.GameSession.adapters.teams={
+    setQuestions(qs){if(state.id){state.questions=qs;if(state.id==='wheel')state.wheel.questions=qs;}},
+    snapshot(){return JSON.parse(JSON.stringify(state));},
+    restore(s){Object.assign(state,s);const i=state.id==='wheel'?state.wheel.index:state.index;
+      const model=window.GameSession.current(),row=model.records[model.questions[i]?._sessionKey];
+      if(state.locked&&row){if(state.id==='math-race'){if(row.correct)state.race[state.race.turn]++;state.race.turn=state.race.turn==='blue'?'red':'blue';state.index++;}
+      else if(state.id==='tug-of-war'){if(row.correct){state.tug[state.tug.turn]++;state.tug.pos+=state.tug.turn==='blue'?-1:1;}state.tug.turn=state.tug.turn==='blue'?'red':'blue';state.index++;}
+      else {if(row.correct)state.wheel.score+=state.wheel.bonus;state.wheel.index++;}}
+      state.locked=false;
+      if(state.id==='math-race')renderRace();
+      else if(state.id==='tug-of-war'){if(Math.abs(state.tug.pos)>=3||state.index>=state.questions.length)finishTug();else renderTug();}
+      else {const wasSpinning=state.wheel.spinning;renderWheel();if(wasSpinning&&!row&&state.wheel.questions[state.wheel.index]){document.getElementById('spinTeamWheel').disabled=true;state.wheel.spinning=true;showWheelTask(state.wheel.questions[state.wheel.index]);}}
+    }
+  };
 
   window.cancelGameTeams=function(){state.locked=true;state.id=null;state.token++;clearTimeout(state.wheelTimeout);state.wheelTimeout=null;};
 

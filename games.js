@@ -9,7 +9,8 @@ let gameSession = 0;
 let quickInputLocked = false;
 let codeResults = [];
 let matchState={order:[],solved:new Set(),solvedRight:new Set(),selected:null,message:""};
-function cancelGameActions(){clearInterval(timerId);timerId=null;clearTimeout(pendingGameTimeout);pendingGameTimeout=null;gameSession++;}
+function gameDelay(fn,ms){return window.GameSession?window.GameSession.defer(fn,ms):setTimeout(fn,ms);}
+function cancelGameActions(){window.GameSession?.clearDelay(pendingGameTimeout);clearInterval(timerId);timerId=null;clearTimeout(pendingGameTimeout);pendingGameTimeout=null;gameSession++;}
 let quickDeadline = 0;
 let quickTimeLeft = 30;
 let quickStreak = 0;
@@ -46,14 +47,15 @@ function renderGameCards() {
       <div class="game-icon">${escapeGameHtml(game.title.split(" ")[0])}</div>
       <div class="game-card-content">
         <h3>${escapeGameHtml(game.title.substring(game.title.indexOf(" ") + 1))}</h3>
-        <p>${escapeGameHtml(game.description)}</p>
-        <div class="game-tags">${game.formats.map(x => `<span>${escapeGameHtml(x)}</span>`).join("")}</div>
+        <p>${escapeGameHtml(window.GameFinal?.description(game.id) || window.GameTimed?.description(game.id) || window.GameRacing?.description(game.id) || window.GameLogic?.description(game.id) || game.description)}</p>
+        <div class="game-tags">${(window.GameLearning?(["math-race","tug-of-war","auction"].includes(game.id)?["Екі команда"]:game.id==="wheel"?["Жеке","Екі команда"]:["Жеке"]):game.formats).map(x => `<span>${escapeGameHtml(x)}</span>`).join("")}</div>
       </div>
     </button>
   `).join("");
 }
 
 function selectGame(gameId) {
+  window.GameSession?.stop();
   cancelGameActions();
   if(typeof window.cancelGameExtra==='function')window.cancelGameExtra();
   if(typeof window.cancelGameTeams==='function')window.cancelGameTeams();
@@ -62,7 +64,7 @@ function selectGame(gameId) {
   const game = mathGames.find(x => x.id === gameId);
   document.getElementById("selectedGameTitle").textContent = game ? game.title : "";
   document.getElementById("selectedGameHeading").textContent = game ? game.title : "Ойынды баптау";
-  document.getElementById("selectedGameDescription").textContent = game ? game.description : "";
+  document.getElementById("selectedGameDescription").textContent = game ? (window.GameFinal?.description(gameId) || window.GameTimed?.description(gameId) || window.GameRacing?.description(gameId) || window.GameLogic?.description(gameId) || game.description) : "";
   document.getElementById("gamesLibrary").style.display = "none";
   document.getElementById("gameStage").style.display = "block";
   document.getElementById("gameSetup").style.display = "block";
@@ -70,11 +72,13 @@ function selectGame(gameId) {
   document.getElementById("gameMessage").style.display = "none";
   document.body.classList.add("presentation-mode");
   document.body.dataset.game = gameId;
+  window.GameSession?.setup(gameId);
   const heading=document.getElementById("selectedGameHeading");heading.tabIndex=-1;heading.focus();
   window.scrollTo(0,0);
 }
 
 function backToGames() {
+  window.GameSession?.stop();
   cancelGameActions();
   if(typeof window.cancelGameExtra==="function")window.cancelGameExtra();
   if(typeof window.cancelGameTeams==="function")window.cancelGameTeams();
@@ -88,6 +92,7 @@ function backToGames() {
   document.getElementById("gameStage").style.display = "none";
   document.getElementById("gamesLibrary").style.display = "block";
   document.querySelector(`[data-game-id="${previousGame}"]`)?.focus();
+  window.GameSession?.banner();
 }
 
 function getLessonKey() {
@@ -102,7 +107,8 @@ function startSelectedGame() {
   if (!selectedGameId) return;
   const lessonKey = getLessonKey();
   cancelGameActions();
-  currentQuestions = getGameQuestions(selectedGameId, lessonKey);
+  const source = getGameQuestions(selectedGameId, lessonKey);
+  currentQuestions = window.GameSession?window.GameSession.prepare(source,selectedGameId,lessonKey):source;
   if (!currentQuestions.length) {
     showGameMessage("Бұл тақырыпқа ойын тапсырмалары әлі енгізілмеген. Ойын механизмі дайын, енді осы тақырыптың есептерін базаға қосуға болады.");
     return;
@@ -124,6 +130,12 @@ function startSelectedGame() {
     tugTurn = "left";
     tugPosition = 0;
   }
+  window.GameSession?.begin(selectedGameId,lessonKey,currentQuestions);
+  window.GameMechanics?.start(selectedGameId,lessonKey,currentQuestions);
+  window.GameLogic?.start(selectedGameId,lessonKey,currentQuestions);
+  window.GameRacing?.start(selectedGameId,lessonKey,currentQuestions);
+  window.GameTimed?.start(selectedGameId,lessonKey,currentQuestions);
+  window.GameFinal?.start(selectedGameId,lessonKey,currentQuestions);
   document.getElementById("gameSetup").style.display = "none";
   document.getElementById("gameArea").style.display = "block";
   document.getElementById("gameResult").textContent = "";
@@ -132,6 +144,7 @@ function startSelectedGame() {
 
 function renderCurrentQuestion() {
   if (currentIndex >= currentQuestions.length) { finishGame(); return; }
+  window.GameSession?.present(currentIndex);
   const q = currentQuestions[currentIndex];
   const total = currentQuestions.length;
   const box = document.getElementById("gameQuestion");
@@ -149,30 +162,35 @@ function renderCurrentQuestion() {
     bindTextAnswer(); return;
   }
   if (currentGameMode === "detective") {
-    box.innerHTML = `<div class="detective-board"><div class="detective-heading"><span>🕵️ МАТЕМАТИКАЛЫҚ ДЕТЕКТИВ</span><b>Іс №${String(currentIndex + 1).padStart(2, "0")}</b></div><div class="detective-case"><div class="detective-stamp">EVIDENCE</div><div class="detective-clue"><span>🔍 ДӘЛЕЛ</span><p>${escapeGameHtml(q.clue)}</p></div><div class="detective-line"></div><label for="gameTextAnswer">Тергеу жауабы</label><input id="gameTextAnswer" aria-label="Жауабыңыз" inputmode="text" autocomplete="off" placeholder="Дәлелден шыққан жауап"><button type="button" class="game-primary detective-button" id="textAnswerButton">🕵️ Дәлелді тексеру</button></div><div class="detective-hint">Барлық дәлелдерді дұрыс шешсең, математикалық істің шешімі табылады.</div></div>`;
+    box.innerHTML = `<div class="detective-board"><div class="detective-heading"><span>🕵️ МАТЕМАТИКАЛЫҚ ДЕТЕКТИВ</span><b>Іс №${String(currentIndex + 1).padStart(2, "0")}</b></div><div class="detective-case"><div class="detective-stamp">ДӘЛЕЛ</div><div class="detective-clue"><span>🔍 ДӘЛЕЛ</span><p>${escapeGameHtml(q.clue)}</p></div><div class="detective-line"></div><label for="gameTextAnswer">Тергеу жауабы</label><input id="gameTextAnswer" aria-label="Жауабыңыз" inputmode="text" autocomplete="off" placeholder="Дәлелден шыққан жауап"><button type="button" class="game-primary detective-button" id="textAnswerButton">🕵️ Дәлелді тексеру</button></div><div class="detective-hint">Барлық дәлелдерді дұрыс шешсең, математикалық істің шешімі табылады.</div></div>`;
     bindTextAnswer();
   }
 }
 
 function renderMatchingBoard(){
  const box=document.getElementById("gameQuestion"),questions=currentQuestions,total=questions.length;
+ window.GameSession?.present(matchState.selected??questions.findIndex((_,i)=>!matchState.solved.has(i)));
  const done=matchState.solved,solvedRight=matchState.solvedRight,selected=matchState.selected;
  document.getElementById("gameProgress").textContent=`${done.size} / ${total} жұп`;
  const left=questions.map((q,i)=>`<button type="button" data-match-left="${i}" aria-pressed="${selected===i}" class="match-tile ${done.has(i)?"solved":selected===i?"selected":""}" ${done.has(i)?"disabled":""}><span class="match-num">${i+1}</span>${escapeGameHtml(q.left)}</button>`).join("");
  const right=matchState.order.map((i,pos)=>`<button type="button" data-match-right="${pos}" class="match-tile ${solvedRight.has(i)?"solved":""}" ${solvedRight.has(i)?"disabled":""}><span class="match-num">${String.fromCharCode(65+pos)}</span>${escapeGameHtml(questions[i].right)}</button>`).join("");
  box.innerHTML=`<div class="matching-game"><div class="match-banner"><div><b>🧩 СӘЙКЕСТЕНДІР</b><p>Сол жақтағы тапсырманы таңдап, оң жақтағы сәйкес жауабын бас.</p></div><span class="match-total">${done.size} / ${total} ✓</span></div><div class="matching-columns"><div><h3>📘 Тапсырмалар</h3><div class="matching-list">${left}</div></div><div class="match-connect">↔</div><div><h3>✨ Жауаптар</h3><div class="matching-list">${right}</div></div></div><div class="match-status" role="status">${escapeGameHtml(matchState.message||"Жұптарды тауып, тақтаны толық аш!")}</div></div>`;
  box.querySelectorAll("[data-match-left]").forEach(btn=>btn.onclick=()=>{
+   if(window.GameSession&&!window.GameSession.canAnswer())return;
    matchState.selected=Number(btn.dataset.matchLeft);matchState.message="Енді оң жақтан сәйкес жауапты таңда.";renderMatchingBoard();
  });
  box.querySelectorAll("[data-match-right]").forEach(btn=>btn.onclick=()=>{
+   if(window.GameSession&&!window.GameSession.canAnswer())return;
    const i=matchState.selected;if(i===null){matchState.message="Алдымен тапсырманы таңда.";renderMatchingBoard();return;}
    const target=matchState.order[Number(btn.dataset.matchRight)];
    if(solvedRight.has(target))return;
-   if(answersMatch(questions[i].right,questions[target].right)){
+   const correctPair=answersMatch(questions[i].right,questions[target].right);
+   window.GameSession?.record(i,correctPair,questions[target].right);
+   if(correctPair){
      done.add(i);solvedRight.add(target);
      matchState.message="✓ Дұрыс сәйкестік! Келесі жұпты тап.";currentScore=done.size;
      matchState.selected=null;renderMatchingBoard();
-     if(done.size===total){const session=gameSession;pendingGameTimeout=setTimeout(()=>{if(session===gameSession&&currentGameMode==="match")finishGame();},700);}
+     if(done.size===total){const session=gameSession;pendingGameTimeout=gameDelay(()=>{if(session===gameSession&&currentGameMode==="match")finishGame();},700);}
    }else{matchState.message="Қате жұп. Тағы бір рет тексер.";matchState.selected=null;renderMatchingBoard();}
  });
 }
@@ -183,39 +201,43 @@ function renderQuickAnswer(q) {
   document.getElementById("quickAnswerButton").addEventListener("click", submitQuickAnswer);
   input.addEventListener("keydown", event => { if (event.key === "Enter") { event.preventDefault(); submitQuickAnswer(); } });
   input.focus();
-  if (currentIndex === 0 && !timerId && !quickInputLocked) startQuickTimer();
+  if(window.GameSession)startQuickTimer();else if (currentIndex === 0 && !timerId && !quickInputLocked) startQuickTimer();
   updateQuickStats();
 }
 
 function startQuickTimer() {
+  if(window.GameSession){const seconds=window.GameSession.current().settings.seconds||30;window.GameSession.timer('quick',seconds,left=>{quickTimeLeft=left;updateQuickStats();},()=>finishQuickGame(true));return;}
   quickTimeLeft = 30; quickDeadline=performance.now()+30000; updateQuickStats();
   timerId = setInterval(() => { quickTimeLeft = Math.max(0,(quickDeadline-performance.now())/1000); if (quickTimeLeft <= 0) { quickTimeLeft = 0; updateQuickStats(); clearInterval(timerId); timerId = null; finishQuickGame(true); return; } updateQuickStats(); }, 100);
 }
 
 function updateQuickStats() {
   const timer = document.getElementById("quickTimer"), score = document.getElementById("quickScore"), streak = document.getElementById("quickStreak"), fill = document.getElementById("quickTimebarFill");
-  if (timer) timer.textContent = Math.ceil(quickTimeLeft); if (score) score.textContent = currentScore; if (streak) streak.textContent = quickStreak; if (fill) fill.style.width = `${Math.max(0, Math.min(100, (quickTimeLeft / 30) * 100))}%`;
+  if (timer) timer.textContent = Math.ceil(quickTimeLeft); if (score) score.textContent = currentScore; if (streak) streak.textContent = quickStreak; if (fill) fill.style.width = `${Math.max(0, Math.min(100, (quickTimeLeft / (window.GameSession?.current()?.settings.seconds||30)) * 100))}%`;
 }
 
 function submitQuickAnswer() {
+  if(window.GameSession&&!window.GameSession.canAnswer())return;
   if (currentGameMode !== "quick-answer" || quickTimeLeft <= 0 || quickInputLocked || currentIndex >= currentQuestions.length) return;
   const input = document.getElementById("quickAnswerInput"); if (!input||!input.value.trim()) return;
-  quickTimeLeft=Math.max(0,(quickDeadline-performance.now())/1000);
+  if(window.GameSession){if(window.GameSession.expired("quick")){window.GameSession.expireNow("quick");return;}}else quickTimeLeft=Math.max(0,(quickDeadline-performance.now())/1000);
   if(quickTimeLeft<=0){finishQuickGame(true);return;}
   quickInputLocked=true;input.disabled=true;
   const correct = answersMatch(input.value,currentQuestions[currentIndex].answer);
   const feedback = document.getElementById("quickFeedback"), button = document.getElementById("quickAnswerButton"); if (button) button.disabled = true;
-  if (correct) { quickStreak++; bestStreak = Math.max(bestStreak, quickStreak); currentScore += 10 + Math.max(0, quickStreak - 1) * 2; if (feedback) feedback.textContent = `✓ Дұрыс! +${10 + Math.max(0, quickStreak - 1) * 2} ұпай`; }
+  window.GameSession?.record(currentIndex,correct,input.value);
+  if (correct) { quickStreak++; bestStreak = Math.max(bestStreak, quickStreak); currentScore += 10 + Math.min(10,Math.max(0, quickStreak - 1) * 2); if (feedback) feedback.textContent = `✓ Дұрыс! +${10 + Math.min(10,Math.max(0, quickStreak - 1) * 2)} ұпай`; }
   else { quickStreak = 0; if (feedback) feedback.textContent = `✕ Қате. Дұрыс жауап: ${currentQuestions[currentIndex].answer}`; }
   updateQuickStats();
   const session=gameSession;
-  pendingGameTimeout=setTimeout(()=>{if(session!==gameSession||currentGameMode!=="quick-answer")return;quickInputLocked=false;currentIndex++;if(currentIndex>=currentQuestions.length)finishQuickGame(false);else renderCurrentQuestion();},350);
+  pendingGameTimeout=gameDelay(()=>{if(session!==gameSession||currentGameMode!=="quick-answer")return;quickInputLocked=false;currentIndex++;if(currentIndex>=currentQuestions.length)finishQuickGame(false);else renderCurrentQuestion();},350);
 }
 
 function finishQuickGame(timeUp) {
+  if(timeUp&&window.GameSession?.current()&&!window.GameSession.current().records[currentQuestions[currentIndex]?._sessionKey])window.GameSession.record(currentIndex,false,"",true);
   cancelGameActions(); quickInputLocked=true; document.getElementById("gameProgress").textContent = "Нәтиже";
   document.getElementById("gameQuestion").innerHTML = `<div class="game-finish quick-finish"><div class="finish-icon">${timeUp ? "⏱️" : "🏆"}</div><div class="quick-result-label">${timeUp ? "Уақыт аяқталды" : "Барлық сұрақ орындалды"}</div><h2>${currentScore} ұпай</h2><p>Ең ұзақ дұрыс жауап сериясы: <strong>${bestStreak}</strong></p><button type="button" class="game-primary" id="replayGameButton">↻ Қайта ойнау</button></div>`;
-  document.getElementById("replayGameButton").addEventListener("click", startSelectedGame); document.getElementById("gameResult").textContent = "Жылдам жауап аяқталды.";
+  document.getElementById("replayGameButton").addEventListener("click", startSelectedGame); document.getElementById("gameResult").textContent = "Жылдам жауап аяқталды.";window.GameSession?.finish();
 }
 
 function bindAnswerButtons() { document.querySelectorAll("#gameQuestion [data-answer]").forEach(button => button.addEventListener("click", () => submitGameAnswer(button.dataset.answer))); }
@@ -240,6 +262,7 @@ function finishTugGame(winnerByPosition) { clearInterval(timerId); const winner 
 
 function submitGameAnswer(value) { const q=currentQuestions[currentIndex];if(!q)return;if(answersMatch(value,q.right))currentScore++;nextGameQuestion(); }
 function submitTextAnswer(){
+ if(window.GameSession&&!window.GameSession.canAnswer())return;
  const input=document.getElementById("gameTextAnswer"),q=currentQuestions[currentIndex];
  if(!input||!q||input.disabled)return;
  const value=input.value.trim();if(!value)return;
@@ -247,6 +270,7 @@ function submitTextAnswer(){
   ? (q.answer!==undefined ? answersMatch(value,q.answer)||normalizedAnswer(value).includes(normalizedAnswer(q.correction))
     :normalizedAnswer(value).includes(normalizedAnswer(q.error))||normalizedAnswer(value).includes(normalizedAnswer(q.correction)))
   :answersMatch(value,q.answer);
+ window.GameSession?.record(currentIndex,correct,value);
  if(correct)currentScore++;
  if(currentGameMode==="math-code")codeResults[currentIndex]=correct?String(q.code??q.answer):"—";
  const btn=document.getElementById("textAnswerButton");if(btn)btn.disabled=true;
@@ -282,7 +306,7 @@ function finishGame(){
  document.getElementById("gameProgress").textContent="Нәтиже";
  document.getElementById("gameQuestion").innerHTML=`<div class="game-finish"><div class="finish-icon">${allUnlocked?"🔓":currentScore===total?"🏆":"⭐"}</div><h2>${isCode?"Математикалық код":isDetective?"Детектив ісі":"Ойын"} аяқталды!</h2><p>Нәтиже: <strong>${currentScore} / ${total}</strong> (${percent}%)</p>${extra}<button type="button" class="game-primary" id="replayGameButton">↻ Қайта ойнау</button></div>`;
  document.getElementById("replayGameButton").addEventListener("click",startSelectedGame);
- document.getElementById("gameResult").textContent="Бұл нәтиже тек осы ойын экранында көрсетіледі.";
+ document.getElementById("gameResult").textContent="Бұл нәтиже тек осы ойын экранында көрсетіледі.";window.GameSession?.finish();
 }
 function showGameMessage(message) { const box = document.getElementById("gameMessage"); if (!box) return; box.textContent = message; box.style.display = "block"; }
 function populateLessonSelect() {
@@ -307,3 +331,9 @@ function populateLessonSelect() {
 }
 
 document.addEventListener("DOMContentLoaded", function () { injectGameModeStyles(); renderGameCards(); populateLessonSelect(); document.getElementById("gamesGrid").addEventListener("click", event => { const card = event.target.closest("[data-game-id]"); if (card) selectGame(card.dataset.gameId); }); document.getElementById("startGameButton").addEventListener("click", startSelectedGame); document.getElementById("backToGamesButton").addEventListener("click", backToGames); });
+
+if(window.GameSession)window.GameSession.adapters.core={
+ setQuestions(qs){currentQuestions=qs;},
+ snapshot(){return {questions:currentQuestions,index:currentIndex,score:currentScore,mode:currentGameMode,code:codeResults,match:{...matchState,solved:[...matchState.solved],solvedRight:[...matchState.solvedRight]},streak:quickStreak,best:bestStreak,pending:currentGameMode==='quick-answer'?quickInputLocked:!!document.getElementById('gameTextAnswer')?.disabled,input:document.getElementById('gameTextAnswer')?.value||document.getElementById('quickAnswerInput')?.value||''};},
+ restore(s){currentQuestions=s.questions;currentIndex=s.index+(s.pending?1:0);currentScore=s.score;currentGameMode=s.mode;codeResults=s.code;matchState={...s.match,solved:new Set(s.match.solved),solvedRight:new Set(s.match.solvedRight)};quickStreak=s.streak;bestStreak=s.best;quickInputLocked=false;if(currentGameMode==='match'&&matchState.solved.size===currentQuestions.length)finishGame();else if(currentGameMode==='quick-answer'&&currentIndex>=currentQuestions.length)finishQuickGame(false);else renderCurrentQuestion();const input=document.getElementById('gameTextAnswer')||document.getElementById('quickAnswerInput');if(input&&!s.pending)input.value=s.input;}
+};
