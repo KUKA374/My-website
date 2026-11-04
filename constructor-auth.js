@@ -25,7 +25,7 @@
               blocked("Бұл рөлге сабақ конструкторы қолжетімсіз.");
               return;
             }
-            ready({ uid: user.uid, role });
+            await ready({ uid: user.uid, role });
           } catch {
             if (v === version)
               blocked("Рөлді тексеру мүмкін болмады. Қайта кіріп көріңіз.");

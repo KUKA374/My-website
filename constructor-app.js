@@ -16,6 +16,7 @@
       $("saveStatus").textContent = message;
     },
     panel(name) {
+      if (name !== "preview") document.body.classList.remove("projector");
       document.querySelector(".builder-grid").dataset.activePanel = name;
       document
         .querySelectorAll("[data-panel]")
@@ -61,6 +62,7 @@
       A.doc = M.check(doc, A.owner.uid);
       A.stageId = A.doc.stages[0].id;
       A.render();
+      syncSelection(A.doc);
     },
     field(label, id, value, extra = "") {
       return `<label for="${id}">${E(label)}</label><textarea id="${id}" ${extra}>${E(value)}</textarea>`;
@@ -192,6 +194,63 @@
       : "Дайын материал жоқ. Мазмұнды өзіңіз енгізіңіз.";
     $("useMaterial").disabled = !c;
   }
+  async function syncSelection(doc) {
+    const m = { ...doc.meta },
+      id = doc.id;
+    if (
+      !curriculum[m.grade] ||
+      !curriculum[m.grade].subjects.some((s) => s.id === m.subjectId)
+    )
+      return;
+    $("catalogGrade").value = m.grade;
+    subjects();
+    $("catalogSubject").value = m.subjectId;
+    $("catalogQuarter").value = m.quarter;
+    try {
+      await LessonCatalog.grade(m.grade);
+      if (
+        A.doc?.id !== id ||
+        A.doc.meta.grade !== m.grade ||
+        A.doc.meta.subjectId !== m.subjectId ||
+        A.doc.meta.quarter !== m.quarter
+      )
+        return;
+      const rows = LessonCatalog.rows(m.grade, m.subjectId, m.quarter);
+      options(
+        $("catalogSection"),
+        [
+          ["", "Барлық бөлімдер"],
+          ...[...new Set(rows.map((r) => r.section))]
+            .filter(Boolean)
+            .map((v) => [v, v]),
+        ],
+        m.section,
+      );
+      options(
+        $("catalogTopic"),
+        [
+          ["", "Қолмен енгізу"],
+          ...rows
+            .filter((r) => !m.section || r.section === m.section)
+            .map((r) => [r.number, r.number + ". " + r.title]),
+        ],
+        m.topicId,
+      );
+      const c = LessonCatalog.content(
+        m.grade,
+        m.subjectId,
+        m.quarter,
+        m.topicId,
+      );
+      $("useMaterial").disabled = !c;
+      $("catalogStatus").textContent = c
+        ? "Осы тақырыпқа қолданыстағы материал бар."
+        : "Осы тақырыпқа дайын материал жоқ. Қолмен енгізіңіз.";
+    } catch {
+      $("catalogStatus").textContent =
+        "КТП таңдауын қалпына келтіру мүмкін болмады. Жоспар мазмұны сақталған.";
+    }
+  }
   async function ready(owner) {
     if (A.owner?.uid === owner.uid) return;
     const ticket = ++A.authTicket;
@@ -212,15 +271,32 @@
     if (ticket !== A.authTicket) return;
     for (const f of A.features) await f.init?.();
     A.render();
+    $("builderApp").dataset.ready = "true";
   }
   function blocked(message) {
+    delete $("builderApp").dataset.ready;
+    for (const f of A.features) f.beforeLock?.();
     A.authTicket++;
     A.owner = null;
     A.doc = null;
     $("builderApp").hidden = true;
     $("authGate").hidden = false;
     $("authMessage").textContent = message;
-    $("preview").replaceChildren();
+    for (const id of [
+      "preview",
+      "metadataFields",
+      "blockEditor",
+      "stageControls",
+      "stageEditor",
+      "taskLibrary",
+      "homeworkEditor",
+      "gameEditor",
+      "storageEditor",
+      "libraryActions",
+    ])
+      $(id).replaceChildren();
+    $("reflectionQuestions").value = "";
+    $("teacherNotes").value = "";
     for (const f of A.features) f.lock?.();
   }
   document.addEventListener("DOMContentLoaded", () => {

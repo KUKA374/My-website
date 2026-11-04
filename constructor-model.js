@@ -164,6 +164,8 @@
       typeof x.reviewed !== "boolean" ||
       !str(x.createdAt) ||
       !str(x.updatedAt) ||
+      !Number.isFinite(Date.parse(x.createdAt)) ||
+      !Number.isFinite(Date.parse(x.updatedAt)) ||
       !str(x.teacherNotes) ||
       !x.reflection ||
       !str(x.reflection.method) ||
@@ -172,7 +174,7 @@
       fail();
     const ids = new Set();
     const unique = (v) => {
-      if (!str(v) || !v || ids.has(v)) fail();
+      if (!str(v) || !/^[A-Za-z0-9:_-]{1,180}$/.test(v) || ids.has(v)) fail();
       ids.add(v);
     };
     unique(x.id);

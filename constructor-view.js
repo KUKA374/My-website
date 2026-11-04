@@ -80,8 +80,8 @@
     if (b.type === "heading") return "<h3>" + esc(b.body) + "</h3>";
     return `<section class="content-block block-${b.type}"><h4>${esc(LessonModel.blockTypes[b.type])}</h4><p>${esc(b.body)}</p></section>`;
   }
-  function task(t, answers) {
-    return `<article class="print-task"><h4>${esc(t.level === "unclassified" ? "Деңгейі белгіленбеген" : t.level + " деңгейі")} · ${esc(LessonModel.types[t.type])}${t.optional ? " · Қосымша" : ""}${t.group ? " · " + t.group + "-топ" : ""}</h4><p>${esc(t.prompt)}</p>${t.instruction ? "<p>" + esc(t.instruction) + "</p>" : ""}${t.criteria ? "<p>Бағалау критерийі: " + esc(t.criteria) + "</p>" : ""}${t.descriptors.length ? "<ul>" + t.descriptors.map((d) => "<li>" + esc(d.text) + " — " + d.points + " ұпай</li>").join("") + "</ul>" : ""}${answers ? "<details open><summary>Мұғалімге: жауап және шешім</summary><p>" + esc(t.answer) + "</p><p>" + esc(t.solution || "Шешу жолы енгізілмеген.") + "</p></details>" : '<div class="answer-space" aria-label="Жауап жазу орны"></div>'}</article>`;
+  function task(t, answers, assessment = true) {
+    return `<article class="print-task"><h4>${esc(t.level === "unclassified" ? "Деңгейі белгіленбеген" : t.level + " деңгейі")} · ${esc(LessonModel.types[t.type])}${t.optional ? " · Қосымша" : ""}${t.group ? " · " + t.group + "-топ" : ""}</h4><p>${esc(t.prompt)}</p>${t.instruction ? "<p>" + esc(t.instruction) + "</p>" : ""}${assessment && t.criteria ? "<p>Бағалау критерийі: " + esc(t.criteria) + "</p>" : ""}${assessment && t.descriptors.length ? "<ul>" + t.descriptors.map((d) => "<li>" + esc(d.text) + " — " + d.points + " ұпай</li>").join("") + "</ul>" : ""}${answers ? "<details open><summary>Мұғалімге: жауап және шешім</summary><p>" + esc(t.answer) + "</p><p>" + esc(t.solution || "Шешу жолы енгізілмеген.") + "</p></details>" : '<div class="answer-space" aria-label="Жауап жазу орны"></div>'}</article>`;
   }
   function render(x, mode = "teacher", answers = false) {
     const pupil = mode === "student",
@@ -91,7 +91,9 @@
       return (
         h +
         "<h2>Үй тапсырмасы</h2>" +
-        x.homework.map((t) => task(t, answers)).join("")
+        x.homework
+          .map((t) => task(t, answers, (!pupil && !home) || answers))
+          .join("")
       );
     if (!pupil) {
       h +=
@@ -132,7 +134,7 @@
                   )
                   .join("")
               : ""
-          }${s.tasks.map((t) => task(t, answers)).join("")}</section>`,
+          }${s.tasks.map((t) => task(t, answers, (!pupil && !home) || answers)).join("")}</section>`,
       )
       .join("");
     if (!pupil)
@@ -144,7 +146,9 @@
         .join("");
     h +=
       "<h2>Үй тапсырмасы</h2>" +
-      x.homework.map((t) => task(t, answers)).join("") +
+      x.homework
+        .map((t) => task(t, answers, (!pupil && !home) || answers))
+        .join("") +
       "<section><h2>Рефлексия: " +
       esc(x.reflection.method) +
       "</h2><p>" +

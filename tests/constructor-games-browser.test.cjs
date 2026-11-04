@@ -1,3 +1,39 @@
-const {test}=require('node:test'),assert=require('node:assert/strict');const {fixture,editor}=require('./helpers/constructor.cjs');
-test('D: all 20 games can be added with their own rule and planned minutes',async t=>{const p=await fixture(t);const ids=await p.locator('#builderGame option').evaluateAll(es=>es.map(e=>e.value));assert.equal(ids.length,20);for(const id of ids){await p.locator('#builderGame').selectOption(id);await p.locator('#gameTopic').selectOption('6-math-1-1');await p.locator('#addLessonGame').click();}assert.equal(await p.evaluate(()=>ConstructorApp.doc.games.length),20);assert.equal(await p.evaluate(()=>LessonModel.total(ConstructorApp.doc)),145);assert.equal(await p.locator('#gameEditor a[href*="?"]').count(),0);assert.equal(await p.evaluate(()=>new Set(ConstructorApp.doc.games.map(g=>g.rule)).size),20)});
-test('D: unsupported grade never silently becomes a supported game topic; catalogue opens intact',async t=>{const p=await fixture(t);await p.locator('#gameGrade').selectOption('');assert.equal(await p.locator('#addLessonGame').isDisabled(),true);await p.locator('#gameGrade').selectOption('6');await p.locator('#gameTopic').selectOption('6-math-1-3');await p.locator('#addLessonGame').click();const link=await p.locator('#gameEditor .game-link').getAttribute('href');await p.goto(new URL(link,p.url()).href);await p.locator('[data-game-id="match"]').waitFor();assert.equal(await p.locator('[data-game-id]').count(),20)});
+const { test } = require("node:test"),
+  assert = require("node:assert/strict");
+const { fixture, editor } = require("./helpers/constructor.cjs");
+test("D: all 20 games can be added with their own rule and planned minutes", async (t) => {
+  const p = await fixture(t);
+  const ids = await p
+    .locator("#builderGame option")
+    .evaluateAll((es) => es.map((e) => e.value));
+  assert.equal(ids.length, 20);
+  for (const id of ids) {
+    await p.locator("#builderGame").selectOption(id);
+    await p.locator("#gameTopic").selectOption("6-math-1-1");
+    await p.locator("#addLessonGame").click();
+  }
+  assert.equal(await p.evaluate(() => ConstructorApp.doc.games.length), 20);
+  assert.equal(
+    await p.evaluate(() => LessonModel.total(ConstructorApp.doc)),
+    145,
+  );
+  assert.equal(await p.locator('#gameEditor a[href*="?"]').count(), 0);
+  assert.equal(
+    await p.evaluate(
+      () => new Set(ConstructorApp.doc.games.map((g) => g.rule)).size,
+    ),
+    20,
+  );
+});
+test("D: unsupported grade never silently becomes a supported game topic; catalogue opens intact", async (t) => {
+  const p = await fixture(t);
+  await p.locator("#gameGrade").selectOption("");
+  assert.equal(await p.locator("#addLessonGame").isDisabled(), true);
+  await p.locator("#gameGrade").selectOption("6");
+  await p.locator("#gameTopic").selectOption("6-math-1-3");
+  await p.locator("#addLessonGame").click();
+  const link = await p.locator("#gameEditor .game-link").getAttribute("href");
+  await p.goto(new URL(link, p.url()).href);
+  await p.locator('[data-game-id="match"]').waitFor();
+  assert.equal(await p.locator("[data-game-id]").count(), 20);
+});

@@ -75,6 +75,8 @@ async function fixture(
       .locator('#catalogTopic option[value="1"]')
       .waitFor({ state: "attached" });
   }
+  if (!denied && ["teacher", "admin", "super_admin"].includes(role) && uid)
+    await p.locator('#builderApp[data-ready="true"]').waitFor();
   t.after(() => assert.deepEqual(errors, []));
   return p;
 }
