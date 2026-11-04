@@ -1,3 +1,4 @@
+function escapeSearchHtml(value) { return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"})[c]); }
 // ==========================================
 // MATH TEACHER — ІЗДЕУ ЖҮЙЕСІ
 // ==========================================
@@ -68,7 +69,7 @@ function searchLessons() {
     resultsList.innerHTML = `
       <div class="admin-box">
         <h3>Нәтиже табылмады</h3>
-        <p>«${input.value.trim()}» бойынша сабақ табылмады. Басқа сөзбен іздеп көріңіз.</p>
+        <p>«${escapeSearchHtml(input.value.trim())}» бойынша сабақ табылмады. Басқа сөзбен іздеп көріңіз.</p>
       </div>
     `;
     return;
@@ -82,14 +83,14 @@ function searchLessons() {
       const lesson = item.lesson;
       return `
         <a
-          href="lesson.html?class=${item.classId}&subject=${item.subjectId}&quarter=${item.quarterId}&lesson=${lesson.id}"
+          href="lesson.html?class=${item.classId}&subject=${item.subjectId}&quarter=${item.quarterId}&lesson=${encodeURIComponent(lesson.id)}"
           class="lesson-card"
         >
-          <div class="lesson-number">${lesson.number}</div>
+          <div class="lesson-number">${escapeSearchHtml(lesson.number)}</div>
           <div class="lesson-info">
             <span style="font-size:13px;color:#667085;">${item.classId}-сынып • ${item.subjectTitle} • ${item.quarterTitle}</span>
-            <h3>${lesson.title}</h3>
-            ${lesson.objective ? `<p style="margin:6px 0 0;color:#667085;">${lesson.objective}</p>` : ""}
+            <h3>${escapeSearchHtml(lesson.title)}</h3>
+            ${lesson.objective ? `<p style="margin:6px 0 0;color:#667085;">${escapeSearchHtml(lesson.objective)}</p>` : ""}
           </div>
           <div class="lesson-arrow">→</div>
         </a>
