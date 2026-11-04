@@ -1,0 +1,140 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasRole(role) {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    function isAdmin() {
+      return hasRole('admin') || hasRole('super_admin');
+    }
+
+    function isSuperAdmin() {
+      return hasRole('super_admin');
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow create, update, delete: if false;
+    }
+
+    match /lessonMaterials/{lessonId} {
+      allow read: if signedIn() && (
+        hasRole('teacher') ||
+        hasRole('admin') ||
+        hasRole('super_admin')
+      );
+      allow create, update, delete: if isAdmin();
+    }
+
+
+    // Stage 8A candidate. Not deployed. Existing rules above remain unchanged.
+    function lessonReader() {
+      return hasRole('teacher') || isAdmin();
+    }
+    function knownLesson(id) {
+      return id.size() <= 600
+        && exists(/databases/$(database)/documents/curriculumLessonRefs/$(id));
+    }
+    function validPresentationReference(ref) {
+      return ref == null || (
+        ref is map && ref.keys().hasAll(['id', 'startSlide', 'endSlide'])
+        && ref.keys().hasOnly(['id', 'startSlide', 'endSlide'])
+        && ref.id is string && ref.id.size() > 0 && ref.id.size() <= 120
+        && ref.startSlide is int && ref.endSlide is int
+        && ref.startSlide >= 1 && ref.startSlide <= ref.endSlide && ref.endSlide <= 15
+        && exists(/databases/$(database)/documents/lessonPresentations/$(ref.id))
+        && ref.endSlide <= get(/databases/$(database)/documents/lessonPresentations/$(ref.id)).data.slideCount
+      );
+    }
+    match /curriculumLessonRefs/{lessonId} {
+      allow get: if lessonReader();
+      allow list, create, update, delete: if false;
+    }
+    match /lessonPresentations/{presentationId} {
+      allow get: if isAdmin() || (lessonReader() && resource.data.status == 'published');
+      allow list: if false;
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasAll(['schemaVersion','presentationId','title','status','slideCount','slides','updatedBy','updatedAt'])
+        && request.resource.data.keys().hasOnly(['schemaVersion','presentationId','title','status','slideCount','slides','updatedBy','updatedAt'])
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.presentationId == presentationId
+        && request.resource.data.title is string && request.resource.data.title.size() <= 500
+        && request.resource.data.status in ['draft','published']
+        && request.resource.data.slideCount is int
+        && request.resource.data.slideCount >= 10 && request.resource.data.slideCount <= 15
+        && request.resource.data.slides is list
+        && request.resource.data.slides.size() == request.resource.data.slideCount
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+    match /lessonContentV1/{lessonId} {
+      allow get: if isAdmin() || (lessonReader() && resource.data.status == 'published');
+      allow list: if false;
+      allow create, update: if isAdmin() && knownLesson(lessonId)
+        && request.resource.data.keys().hasAll(['schemaVersion','lessonId','status','material','updatedBy','updatedAt'])
+        && request.resource.data.keys().hasOnly(['schemaVersion','lessonId','status','material','updatedBy','updatedAt'])
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.lessonId == lessonId
+        && request.resource.data.status in ['draft','published']
+        && request.resource.data.material is map
+        && request.resource.data.material.schemaVersion == 1
+        && request.resource.data.material.lessonId == lessonId
+        && request.resource.data.material.keys().hasOnly(['schemaVersion','lessonId','reviewRequired','video','theory','examples','lessonPlan','pairWork','groupWork','individualWork','games','assessment','homework','qmj','presentation'])
+        && validPresentationReference(request.resource.data.material.presentation)
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+    match /lessonVideoMetadata/{lessonId} {
+      allow get: if isAdmin() || (lessonReader() && resource.data.status == 'published');
+      allow list: if false;
+      allow create, update: if isAdmin() && knownLesson(lessonId)
+        && request.resource.data.keys().hasAll(['schemaVersion','lessonId','provider','videoId','title','status','updatedBy','updatedAt'])
+        && request.resource.data.keys().hasOnly(['schemaVersion','lessonId','provider','videoId','title','status','updatedBy','updatedAt'])
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.lessonId == lessonId
+        && request.resource.data.provider == 'youtube'
+        && request.resource.data.videoId is string
+        && request.resource.data.videoId.matches('^[A-Za-z0-9_-]{11}$')
+        && request.resource.data.title is string && request.resource.data.title.size() <= 500
+        && request.resource.data.status in ['draft','published']
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+    match /teacherLessonOverrides/{ownerId}/lessons/{lessonId} {
+      function ownsLesson() { return lessonReader() && request.auth.uid == ownerId; }
+      function validPersonal() {
+        return ownsLesson() && knownLesson(lessonId)
+          && request.resource.data.keys().hasAll(['schemaVersion','ownerId','lessonId','homeworkText','notes','revision','updatedAt'])
+          && request.resource.data.keys().hasOnly(['schemaVersion','ownerId','lessonId','homeworkText','notes','revision','updatedAt'])
+          && request.resource.data.schemaVersion == 1
+          && request.resource.data.ownerId == ownerId
+          && request.resource.data.lessonId == lessonId
+          && request.resource.data.homeworkText is string && request.resource.data.homeworkText.size() <= 10000
+          && request.resource.data.notes is string && request.resource.data.notes.size() <= 10000
+          && request.resource.data.revision is int
+          && request.resource.data.revision >= 1 && request.resource.data.revision <= 1000000000
+          && request.resource.data.updatedAt == request.time;
+      }
+      allow get: if ownsLesson();
+      allow list: if false;
+      allow create: if validPersonal() && request.resource.data.revision == 1;
+      allow update: if validPersonal()
+        && request.resource.data.revision == resource.data.revision + 1;
+      allow delete: if ownsLesson();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,53 @@
+# Stage 8A — шолу
+
+Мақсат: КТП-ны өзгертпей, бір сабақтың материалын ғана жүктейтін кеңейтілетін үлгі.
+Негіз: main `971f205650a18f141705b4e55607d7f578812d88`.
+Тармақ: `stage-8a-lesson-architecture`.
+
+Демо: `lesson-material.html?class=6&subject=math&quarter=1&lesson=1` (мұғалім рөлі).
+Бұрынғы сабақ бетіндегі «Модульдік сабақ көрінісі (демо)» сілтемесі де осы контексті ашады.
+
+- [Бастапқы аудит](AUDIT.md)
+- [Модель, жүктеу, презентация және көшіру жоспары](ARCHITECTURE.md)
+- [Жергілікті сақтау және серверлік қауіпсіздік қақпасы](SECURITY.md)
+- [Тест нәтижелері және командалар](TESTING.md)
+- [Pull Request мәтіні](PULL_REQUEST.md)
+
+206 тест өтті. 7 Firestore emulator тесті желілік шектеуден орындалмады; серверлік сақтау
+іске қосылмаған. Демоны review жасауға болады, жаңа cloud қауіпсіздігін production-ға
+дайын деп санауға болмайды. Main-ға автоматты merge немесе жариялау рұқсаты жоқ.
+
+## Өзгерген файлдар
+
+Бұрынғы екі файлда бір жолдан қосылды:
+
+- `lesson.html` — тек жаңа opt-in сілтемесінің defer модулі.
+- `tests/helpers/iustaz.cjs` — жергілікті HTTP тест серверіндегі JSON MIME түрі.
+
+Жаңа файлдар:
+
+| Топ | Файлдар |
+|---|---|
+| Демо бет | `lesson-material.html` |
+| Деректер модульдері | `lesson-materials/model.js`, `loader.js`, `ktp.js`, `private.js`, `legacy.js` |
+| Көрініс және байланыс | `lesson-materials/demo.js`, `demo.css`, `entry.js` |
+| Бір демо мазмұн | `lesson-materials/content/6/math/q1/1.json` |
+| Шағын индекс | `lesson-materials/index/6/math/q1.json` |
+| Ортақ презентация | `lesson-materials/presentations/fractions-review-v1.json` |
+| Белсенді емес rules кандидаты | `security/lesson-materials-v1.rules` |
+| Эмулятор конфигурациясы | `tests/emulator/firebase.json` |
+| Автоматты тесттер | `tests/lesson-material-model.test.cjs`, `lesson-material-loader.test.cjs`, `lesson-material-browser.test.cjs`, `lesson-material-rules.test.cjs` |
+| Сақталу эталондары | `tests/fixtures/stage8a-preserved.json`, `stage8a-ktp-contexts.json` |
+| QA runner | `tests/run-lesson-material-qa.py` |
+| Құжаттар | `docs/stage-8a/README.md`, `AUDIT.md`, `ARCHITECTURE.md`, `SECURITY.md`, `TESTING.md`, `PULL_REQUEST.md` |
+
+КТП, 5–7 есептер банкі, ойын қозғалтқыштары, constructor модульдері, Auth,
+production Firebase конфигурациясы және белсенді `firestore.rules` өзгермеді.
+
+## Шектеулер
+
+Бір ғана толық демо бар. Екінші КТП сабағында тек ортақ слайд диапазоны, басқа сабақтарда бос
+модульдік бөлімдер болуы қалыпты. 64 КТП контексті барлық сабақтың материалы дайын дегенді білдірмейді.
+Бұрынғы сабақ беті bulk жүктеуін сақтайды. Жеке сақтау тек осы браузерде, шифрланбаған;
+бұлтқа көшіру және жаңа admin publication workflow кейінгі бекітілетін кезең.
+Демода шынайы видео жоқ. Ойындар каталог арқылы ашылады, демо мазмұн конструкторға автоматты көшірілмейді.

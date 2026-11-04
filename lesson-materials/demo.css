@@ -1,0 +1,232 @@
+.material-demo {
+  max-width: 1100px;
+  margin: auto;
+  color: var(--iu-ink);
+}
+.material-heading {
+  margin: 22px 0;
+}
+.material-heading h1 {
+  font-size: clamp(25px, 3vw, 36px);
+  line-height: 1.25;
+  letter-spacing: -0.6px;
+}
+.material-heading code {
+  display: block;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  color: var(--iu-muted);
+}
+#materialObjective {
+  background: var(--iu-soft);
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+.material-notice {
+  padding: 15px;
+  border: 1px solid #dfd5ef;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #59456d;
+}
+.material-section {
+  margin: 20px 0;
+}
+.material-section h2 {
+  font-size: 21px;
+}
+.material-section h3 {
+  font-size: 17px;
+}
+.material-section p,
+.material-section li {
+  font-size: 14px;
+  line-height: 1.75;
+}
+.material-section .iu-muted {
+  font-size: 12px;
+}
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.material-task {
+  padding: 16px;
+  border: 1px solid var(--iu-line);
+  border-radius: 12px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.material-task details {
+  margin-top: 12px;
+}
+.material-task summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: #5730be;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.material-task pre {
+  white-space: pre-wrap;
+  font: 14px/1.7 var(--iu-font);
+}
+.material-plan-row {
+  display: grid;
+  grid-template-columns: 170px 1fr 1fr;
+  gap: 15px;
+  border-bottom: 1px solid var(--iu-line);
+  padding: 14px 0;
+  font-size: 13px;
+}
+.material-plan-row p {
+  margin: 0;
+}
+.material-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+.material-section label {
+  margin: 14px 0;
+}
+.material-heading[hidden],
+.material-demo [hidden] {
+  display: none !important;
+}
+.material-demo dialog {
+  width: min(780px, calc(100% - 28px));
+  box-sizing: border-box;
+  border: 1px solid var(--iu-line);
+  border-radius: 18px;
+  padding: 24px;
+  color: var(--iu-ink);
+  max-height: 90dvh;
+  overflow: auto;
+  box-shadow: 0 20px 80px #17132930;
+}
+.material-demo dialog::backdrop {
+  background: #17132980;
+}
+.material-dialog-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+.material-dialog-head h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.material-demo dialog :focus-visible {
+  outline: 3px solid var(--iu-primary);
+  outline-offset: 3px;
+}
+#slideBody {
+  padding: 20px 0;
+  min-height: 180px;
+}
+#slideBody h3 {
+  font-size: clamp(21px, 3vw, 29px);
+}
+#slideBody p {
+  line-height: 1.8;
+}
+#slideBody .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 0;
+}
+.material-fraction-bar {
+  display: flex;
+  gap: 3px;
+  margin: 22px 0;
+  max-width: 450px;
+}
+.material-fraction-bar span {
+  flex: 1;
+  min-height: 55px;
+  border: 2px solid #6c3bff;
+  background: #ede9ff;
+}
+.material-fraction-bar .filled {
+  background: #6c3bff;
+}
+#videoBody iframe {
+  border: 0;
+  aspect-ratio: 16/9;
+  width: 100%;
+}
+.material-demo a:focus-visible {
+  outline: 3px solid var(--iu-primary);
+  outline-offset: 3px;
+}
+.material-demo textarea {
+  box-sizing: border-box;
+  resize: vertical;
+}
+.material-task + .material-task {
+  margin-top: 12px;
+}
+.material-grid .material-task {
+  margin-top: 0;
+}
+@media (max-width: 700px) {
+  .material-grid {
+    grid-template-columns: 1fr;
+  }
+  .material-plan-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .material-section {
+    padding: 19px;
+  }
+  .material-dialog-head {
+    align-items: flex-start;
+  }
+  .material-demo dialog {
+    padding: 17px;
+  }
+  .material-actions > .iu-button {
+    flex: 1;
+  }
+  .material-task {
+    padding: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .material-demo * {
+    scroll-behavior: auto !important;
+  }
+}
+@media print {
+  .material-demo dialog,
+  .material-notice,
+  .material-actions,
+  #privateHomework,
+  #nextPair,
+  #openPresentation,
+  #playVideo {
+    display: none !important;
+  }
+  .material-demo .iu-card {
+    box-shadow: none;
+    border: 0;
+    padding: 0;
+  }
+  .material-plan-row,
+  .material-task {
+    break-inside: avoid;
+  }
+}
+.material-demo pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  font: 14px/1.7 var(--iu-font);
+}

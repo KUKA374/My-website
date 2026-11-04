@@ -28,6 +28,7 @@ async function fixture(
         ".js": "application/javascript",
         ".css": "text/css",
         ".html": "text/html",
+        ".json": "application/json",
         ".svg": "image/svg+xml",
         ".woff2": "font/woff2",
         ".woff": "font/woff",

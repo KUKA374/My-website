@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "lessons": [
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "content": "content/6/math/q1/1.json",
+      "presentation": {
+        "id": "fractions-review-v1",
+        "startSlide": 1,
+        "endSlide": 8
+      }
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "content": null,
+      "presentation": {
+        "id": "fractions-review-v1",
+        "startSlide": 9,
+        "endSlide": 12
+      }
+    }
+  ]
+}
