@@ -71,13 +71,15 @@
     );
   }
   function text(html) {
-    const d = new DOMParser().parseFromString(String(html || ""), "text/html");
+    const template = document.createElement("template");
+    template.innerHTML = String(html || "");
+    const d = template.content;
     d.querySelectorAll("script,style,iframe,object,embed,template").forEach(
       (e) => e.remove(),
     );
     d.querySelectorAll("br").forEach((e) => e.replaceWith("\n"));
     d.querySelectorAll("p,li,h1,h2,h3,tr").forEach((e) => e.append("\n"));
-    return d.body.textContent.trim();
+    return d.textContent.trim();
   }
   function blocks(c) {
     if (!c) return [];
@@ -105,20 +107,35 @@
       ["individualWork", "individual"],
       ["homework", "homework"],
     ]) {
-      const d = new DOMParser().parseFromString(
-        String(c[k] || ""),
-        "text/html",
-      );
+      const template = document.createElement("template");
+      template.innerHTML = String(c[k] || "");
+      const d = template.content;
       d.querySelectorAll("script,style,iframe,object,embed").forEach((e) =>
         e.remove(),
       );
       for (const li of d.querySelectorAll("li")) {
         const detail = li.querySelector("details");
-        if (!detail) continue;
-        const ans = text(
-          detail.innerHTML.replace(/<summary[^>]*>[\s\S]*?<\/summary>/i, ""),
-        );
-        detail.remove();
+        let ans = "";
+        if (detail) {
+          ans = text(
+            detail.innerHTML.replace(/<summary[^>]*>[\s\S]*?<\/summary>/i, ""),
+          );
+          detail.remove();
+        } else {
+          const marker = [...li.querySelectorAll("strong,b")].find((el) =>
+            /^Жауабы\s*:/i.test(el.textContent.trim()),
+          );
+          if (!marker) continue;
+          let next = marker.nextSibling;
+          while (next) {
+            const node = next;
+            next = next.nextSibling;
+            ans += node.textContent;
+            node.remove();
+          }
+          marker.remove();
+          ans = ans.trim();
+        }
         const prompt = li.textContent.trim();
         if (!prompt || !ans) continue;
         result.push({

@@ -287,6 +287,34 @@
     if (x.games.some((g) => !g.supported))
       a.push("Таңдалған ойын тақырыбына тапсырма қолдауы расталмаған.");
     if (x.blocks.some((b) => !b.body.trim())) a.push("Бос мазмұн блогы бар.");
+    if (!tasks(x).length) a.push("Математикалық тапсырмалар қосылмаған.");
+    if (!x.blocks.length) a.push("Тақырып түсіндірмесі енгізілмеген.");
+    if (x.stages.some((s) => !s.instructions.trim()))
+      a.push("Кезең нұсқаулықтарын толықтырыңыз.");
+    if (
+      tasks(x).some(
+        (t) =>
+          t.level === "unclassified" ||
+          !t.objective.trim() ||
+          !t.criteria.trim() ||
+          t.descriptors.some((d) => !d.text.trim()),
+      )
+    )
+      a.push(
+        "Тапсырмалардың деңгейін, оқу мақсатын және бағалау мәліметін тексеріңіз.",
+      );
+    if (
+      x.stages.some(
+        (s) =>
+          s.kind === "group" &&
+          (s.tasks.some((t) => t.group > s.groupCount) ||
+            (s.groupMode === "different" &&
+              Array.from({ length: s.groupCount }, (_, i) => i + 1).some(
+                (n) => !s.tasks.some((t) => t.group === n),
+              ))),
+      )
+    )
+      a.push("Әр топқа сәйкес тапсырма тағайындаңыз.");
     if (!x.reviewed) a.push("Мазмұнды мұғалім әлі тексермеген.");
     return a;
   }
