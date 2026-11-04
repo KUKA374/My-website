@@ -33,11 +33,11 @@
   <main class="section"><div class="container"><a class="back-link" href="index.html">← Басты бетке қайту</a>
     <div class="admin-layout" id="adminPanel">
       <aside class="admin-sidebar">
-        <div class="admin-profile"><strong id="profileName">👤 iUSTAZ</strong><span class="role-badge" id="roleLabel">Admin</span></div>
+        <div class="admin-profile"><strong id="profileName">👤 iUSTAZ</strong><span class="role-badge" id="roleLabel">Әкімші</span></div>
         <div class="admin-menu">
           <button class="active" type="button">📊 Басты панель</button><button type="button" onclick="document.getElementById('materialEditor').scrollIntoView({behavior:'smooth'})">📚 Материалдар</button>
           <button type="button" onclick="focusField('videoUrl')">🎥 Видеосабақтар</button><button type="button" onclick="focusField('pairWork')">👥 Жұптық жұмыс</button><button type="button" onclick="focusField('groupWork')">👨‍👩‍👧‍👦 Топтық жұмыс</button><button type="button" onclick="focusField('individualWork')">📝 Жеке жұмыс</button><button type="button" onclick="focusField('game')">🎮 Ойындар</button><button type="button" onclick="focusField('assessment')">✅ Бағалау</button><button type="button" onclick="focusField('homework')">🏠 Үй тапсырмасы</button>
-          <button class="super-only" type="button">👤 Админдер</button><button class="super-only" type="button">🏫 Сыныптар мен пәндер</button><button class="super-only" type="button">📋 КТП басқару</button><button class="super-only" type="button">⚙️ Сайт баптаулары</button>
+          <button class="super-only" type="button">👤 Әкімшілер</button><button class="super-only" type="button">🏫 Сыныптар мен пәндер</button><button class="super-only" type="button">📋 КТП басқару</button><button class="super-only" type="button">⚙️ Сайт баптаулары</button>
         </div>
       </aside>
 
@@ -85,10 +85,10 @@
     if (user) {
       const isSuper = user.role === "super_admin";
       document.getElementById("adminPanel").classList.toggle("super-mode", isSuper);
-      document.getElementById("roleLabel").textContent = isSuper ? "Бас әкімші" : "Admin";
+      document.getElementById("roleLabel").textContent = isSuper ? "Бас әкімші" : "Әкімші";
       document.getElementById("roleLabel").classList.toggle("super-badge", isSuper);
       document.getElementById("profileName").textContent = (isSuper ? "👑 " : "👤 ") + user.name;
-      document.getElementById("panelTitle").textContent = isSuper ? "Super Басқару панелі" : "Басқару панелі";
+      document.getElementById("panelTitle").textContent = isSuper ? "Бас әкімші панелі" : "Басқару панелі";
       document.getElementById("roleDescription").textContent = isSuper ? "Сайттың материалдарын және негізгі құрылымын басқару бөлімі." : "Материалдарды және сабақ контентін басқару бөлімі.";
     }
 

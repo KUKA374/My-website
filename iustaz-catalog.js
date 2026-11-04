@@ -1,12 +1,194 @@
 /* Page adapters: read existing curriculum/bank and reuse existing URL/control contracts. */
-(function(){'use strict';const $=s=>document.querySelector(s),el=(tag,cls,text)=>{const x=document.createElement(tag);x.className=cls||'';if(text)x.textContent=text;return x;};
-function lesson(){const root=$('#lessonPage');if(!root)return;function update(){const p=new URLSearchParams(location.search),g=p.get('class'),s=p.get('subject'),q=p.get('quarter'),n=p.get('lesson');const link=root.querySelector('a[href="constructor.html"]');if(link){link.href='constructor.html#lesson='+encodeURIComponent([g,s,q,n].join('|'));link.textContent='Сабақ конструкторында ашу';}const plan=root.querySelector('.lesson-page');if(plan&&!plan.querySelector('.iu-examples')){const c=window.savedContent?.([g,s,q,n].join('_'))||{};const detail=el('details','block iu-examples'),summary=el('summary','','Мысалдар'),body=el('div','body');if(c.examples){const template=document.createElement('template');template.innerHTML=String(c.examples);template.content.querySelectorAll('script,style,iframe,object,embed').forEach(x=>x.remove());template.content.querySelectorAll('p,li,br').forEach(x=>x.append('\n'));body.textContent=template.content.textContent.trim();body.style.whiteSpace='pre-line';}else body.append(el('p','note','Бұл тақырыпқа жеке мысал материалы әзірге қосылмаған.'));detail.append(summary,body);plan.querySelector('.block').after(detail);}root.querySelectorAll('.note').forEach(x=>{if(/кейін қосылады|әзірге қосылмаған|арқылы қосуға болады|толық жоспар кейін/.test(x.textContent)&&!x.querySelector('.iu-badge'))x.prepend(el('span','iu-badge','Материал әзірге жоқ'));});}new MutationObserver(update).observe(root,{childList:true});update();}
-function classes(){const root=$('#classPage');if(!root)return;function update(){root.querySelectorAll('.available-label').forEach(x=>{if(x.textContent.trim()!=='КТП тақырыптарын ашу →')x.textContent='КТП тақырыптарын ашу →';});}new MutationObserver(update).observe(root,{childList:true,subtree:true});update();}
-function games(){const grid=$('#gamesGrid');if(!grid)return;const keys=Object.keys(window.gameQuestionBank||{}).filter(k=>window.GameLearning?.lessons[k]);const bar=el('section','iu-game-filters');bar.setAttribute('aria-label','Тапсырмалар бойынша сүзу');bar.innerHTML='<label class="iu-field" for="iuGameGrade">Сынып<select class="iu-select" id="iuGameGrade"><option value="">Барлық сынып</option></select></label><label class="iu-field" for="iuGameTopic">Тақырып<select class="iu-select" id="iuGameTopic"><option value="">Барлық тақырып</option></select></label><p id="iuGameFilterStatus" role="status">Тек қолданыстағы 5–7-сынып тапсырмалары көрсетіледі.</p>';$('.design-search').before(bar);const grade=$('#iuGameGrade'),topic=$('#iuGameTopic');for(const g of [...new Set(keys.map(k=>k.split('-')[0]))])grade.add(new Option(g+'-сынып',g));
-function topics(){topic.replaceChildren(new Option('Барлық тақырып',''));for(const key of keys.filter(k=>!grade.value||k.startsWith(grade.value+'-')))topic.add(new Option(key.split('-')[0]+'-сынып · '+GameLearning.lessons[key][0],key));status();}
-function status(){$('#iuGameFilterStatus').textContent=topic.value?`Таңдалған тақырып барлық 20 ойынға қолжетімді. Ойынды ашқанда осы баптау қолданылады.`:grade.value?`${grade.value}-сынып: ${keys.filter(k=>k.startsWith(grade.value+'-')).length} тақырып. 20 ойынның механикасы сақталған.`:'Тек қолданыстағы 5–7-сынып тапсырмалары көрсетіледі. Тақырып таңдасаңыз, ойын баптауы соған ауысады.';}
-grade.addEventListener('change',topics);topic.addEventListener('change',status);topics();
-function cards(){for(const card of grid.querySelectorAll('.game-card')){if(card.querySelector('.iu-game-launch'))continue;card.querySelector('.game-card-content').append(el('span','iu-game-launch','Ойынды ашу ↗'));}}new MutationObserver(cards).observe(grid,{childList:true});cards();
-document.addEventListener('click',e=>{if(!e.target.closest('.game-card')||(!grade.value&&!topic.value))return;const key=topic.value||(keys.find(k=>k.startsWith(grade.value+'-'))||'');if(!key)return;const[g,s,q,...n]=key.split('-');const set=(id,value)=>{const x=$('#'+id);if([...x.options].some(o=>o.value===value)){x.value=value;x.dispatchEvent(new Event('change',{bubbles:true}));}};set('gradeSelect',g);set('subjectSelect',s);set('quarterSelect',q);set('lessonSelect',n.join('-'));});}
-function admin(){const title=$('#panelTitle');if(!title)return;const update=()=>{if(/Admin Panel|Super Admin/.test(title.textContent))title.textContent=title.textContent.replace('Super Admin','Бас әкімші').replace('Admin Panel','Басқару панелі');};new MutationObserver(update).observe(title,{childList:true});update();document.querySelectorAll('.super-only').forEach(x=>{if(x.tagName==='BUTTON'&&!x.getAttribute('onclick')){x.disabled=true;x.title='Жақында';x.append(document.createTextNode(' · Жақында'));}});}
-function start(){lesson();classes();games();admin();}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();})();
+(function () {
+  "use strict";
+  const $ = (s) => document.querySelector(s),
+    el = (tag, cls, text) => {
+      const x = document.createElement(tag);
+      x.className = cls || "";
+      if (text) x.textContent = text;
+      return x;
+    };
+  function lesson() {
+    const root = $("#lessonPage");
+    if (!root) return;
+    function update() {
+      const p = new URLSearchParams(location.search),
+        g = p.get("class"),
+        s = p.get("subject"),
+        q = p.get("quarter"),
+        n = p.get("lesson");
+      const link = root.querySelector('a[href="constructor.html"]');
+      if (link) {
+        link.href =
+          "constructor.html#lesson=" +
+          encodeURIComponent([g, s, q, n].join("|"));
+        link.textContent = "Сабақ конструкторында ашу";
+      }
+      const plan = root.querySelector(".lesson-page");
+      if (plan && !plan.querySelector(".iu-examples")) {
+        const c = Object.assign(
+          {},
+          g === "7" && s === "algebra" && q === "1"
+            ? window.savedContent?.(n)
+            : {},
+          window.savedContent?.([g, s, q, n].join("_")) || {},
+        );
+        const detail = el("details", "block iu-examples"),
+          summary = el("summary", "", "Мысалдар"),
+          body = el("div", "body");
+        if (c.examples) {
+          const template = document.createElement("template");
+          template.innerHTML = String(c.examples);
+          template.content
+            .querySelectorAll("script,style,iframe,object,embed")
+            .forEach((x) => x.remove());
+          template.content
+            .querySelectorAll("p,li,br")
+            .forEach((x) => x.append("\n"));
+          body.textContent = template.content.textContent.trim();
+          body.style.whiteSpace = "pre-line";
+        } else
+          body.append(
+            el(
+              "p",
+              "note",
+              "Бұл тақырыпқа жеке мысал материалы әзірге қосылмаған.",
+            ),
+          );
+        detail.append(summary, body);
+        plan.querySelector(".block").after(detail);
+      }
+      root.querySelectorAll(".note").forEach((x) => {
+        if (
+          /кейін қосылады|әзірге қосылмаған|арқылы қосуға болады|толық жоспар кейін/.test(
+            x.textContent,
+          ) &&
+          !x.querySelector(".iu-badge")
+        )
+          x.prepend(el("span", "iu-badge", "Материал әзірге жоқ"));
+      });
+    }
+    new MutationObserver(update).observe(root, { childList: true });
+    update();
+  }
+  function classes() {
+    const root = $("#classPage");
+    if (!root) return;
+    function update() {
+      root.querySelectorAll(".available-label").forEach((x) => {
+        if (x.textContent.trim() !== "КТП тақырыптарын ашу →")
+          x.textContent = "КТП тақырыптарын ашу →";
+      });
+    }
+    new MutationObserver(update).observe(root, {
+      childList: true,
+      subtree: true,
+    });
+    update();
+  }
+  function games() {
+    const grid = $("#gamesGrid");
+    if (!grid) return;
+    const keys = Object.keys(window.gameQuestionBank || {}).filter(
+      (k) => window.GameLearning?.lessons[k],
+    );
+    const bar = el("section", "iu-game-filters");
+    bar.setAttribute("aria-label", "Тапсырмалар бойынша сүзу");
+    bar.innerHTML =
+      '<label class="iu-field" for="iuGameGrade">Сынып<select class="iu-select" id="iuGameGrade"><option value="">Барлық сынып</option></select></label><label class="iu-field" for="iuGameTopic">Тақырып<select class="iu-select" id="iuGameTopic"><option value="">Барлық тақырып</option></select></label><p id="iuGameFilterStatus" role="status">Тек қолданыстағы 5–7-сынып тапсырмалары көрсетіледі.</p>';
+    $(".design-search").before(bar);
+    const grade = $("#iuGameGrade"),
+      topic = $("#iuGameTopic");
+    for (const g of [...new Set(keys.map((k) => k.split("-")[0]))])
+      grade.add(new Option(g + "-сынып", g));
+    function topics() {
+      topic.replaceChildren(new Option("Барлық тақырып", ""));
+      for (const key of keys.filter(
+        (k) => !grade.value || k.startsWith(grade.value + "-"),
+      ))
+        topic.add(
+          new Option(
+            key.split("-")[0] + "-сынып · " + GameLearning.lessons[key][0],
+            key,
+          ),
+        );
+      status();
+    }
+    function status() {
+      $("#iuGameFilterStatus").textContent = topic.value
+        ? `Таңдалған тақырып барлық 20 ойынға қолжетімді. Ойынды ашқанда осы баптау қолданылады.`
+        : grade.value
+          ? `${grade.value}-сынып: ${keys.filter((k) => k.startsWith(grade.value + "-")).length} тақырып. 20 ойынның механикасы сақталған.`
+          : "Тек қолданыстағы 5–7-сынып тапсырмалары көрсетіледі. Тақырып таңдасаңыз, ойын баптауы соған ауысады.";
+    }
+    grade.addEventListener("change", topics);
+    topic.addEventListener("change", status);
+    topics();
+    function cards() {
+      for (const card of grid.querySelectorAll(".game-card")) {
+        if (card.querySelector(".iu-game-launch")) continue;
+        card
+          .querySelector(".game-card-content")
+          .append(el("span", "iu-game-launch", "Ойынды ашу ↗"));
+      }
+    }
+    new MutationObserver(cards).observe(grid, { childList: true });
+    cards();
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".game-card") || (!grade.value && !topic.value))
+        return;
+      const key =
+        topic.value || keys.find((k) => k.startsWith(grade.value + "-")) || "";
+      if (!key) return;
+      const [g, s, q, ...n] = key.split("-");
+      const set = (id, value) => {
+        const x = $("#" + id);
+        if ([...x.options].some((o) => o.value === value)) {
+          x.value = value;
+          x.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      };
+      set("gradeSelect", g);
+      set("subjectSelect", s);
+      set("quarterSelect", q);
+      set("lessonSelect", n.join("-"));
+    });
+  }
+  function admin() {
+    const title = $("#panelTitle");
+    if (!title) return;
+    const update = () => {
+      if (/Admin Panel|Super Admin/.test(title.textContent))
+        title.textContent = title.textContent
+          .replace("Super Admin", "Бас әкімші")
+          .replace("Admin Panel", "Басқару панелі");
+    };
+    new MutationObserver(update).observe(title, { childList: true });
+    update();
+    const help = $(".editor-help");
+    if (help) {
+      const translate = () => {
+        const text = help.textContent.replace(/\bTeacher\b/g, "Мұғалім");
+        if (text !== help.textContent) help.textContent = text;
+      };
+      new MutationObserver(translate).observe(help, { childList: true });
+      translate();
+    }
+    document.querySelectorAll(".super-only").forEach((x) => {
+      if (x.tagName === "BUTTON" && !x.getAttribute("onclick")) {
+        x.disabled = true;
+        x.title = "Жақында";
+        x.append(document.createTextNode(" · Жақында"));
+      }
+    });
+  }
+  function start() {
+    lesson();
+    classes();
+    games();
+    admin();
+  }
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", start);
+  else start();
+})();
