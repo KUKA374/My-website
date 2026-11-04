@@ -1,109 +1,173 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="kk">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Сабақ конструкторы | Math Teacher</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .constructor-page{max-width:1100px;margin:0 auto;padding:32px 0 60px}
-    .constructor-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
-    .constructor-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px;box-shadow:0 3px 12px rgba(0,0,0,.04)}
-    .constructor-card h2{margin:0 0 16px;font-size:20px}
-    .constructor-form label{display:block;margin:12px 0 6px;font-weight:600;font-size:14px}
-    .constructor-form input,.constructor-form textarea,.constructor-form select{width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:9px;padding:10px;font:inherit;background:#fff}
-    .constructor-form textarea{min-height:90px;resize:vertical}
-    .constructor-form textarea.short{min-height:60px}
-    .constructor-section{margin-top:20px;padding-top:18px;border-top:1px solid #eef0f4}
-    .constructor-section:first-of-type{margin-top:0;padding-top:0;border-top:0}
-    .constructor-section h3{margin:0 0 10px;font-size:16px}
-    .constructor-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-    .constructor-button{border:0;border-radius:9px;padding:10px 14px;background:#4f46e5;color:#fff;cursor:pointer;font-weight:600}
-    .constructor-button.secondary{background:#eef2ff;color:#4338ca}
-    .constructor-preview h1{margin-top:0;font-size:28px}
-    .preview-meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 18px}
-    .preview-badge{display:inline-block;background:#eef2ff;color:#4338ca;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:600}
-    .preview-section{padding:12px 0;border-bottom:1px solid #eef0f4}
-    .preview-section:last-child{border-bottom:0}
-    .preview-section h3{margin:0 0 6px;font-size:15px}
-    .preview-section p{margin:0;color:#687386;white-space:pre-wrap;line-height:1.5}
-    .preview-empty{color:#687386;line-height:1.5}
-    .saved-message{margin-top:10px;color:#15803d;font-size:14px;min-height:20px}
-    @media(max-width:700px){.constructor-grid{grid-template-columns:1fr}.constructor-page{padding:20px 0 40px}}
-  </style>
-</head>
-<body>
-  <header class="header">
-    <div class="container nav">
-      <a class="logo" href="index.html">📐 Math Teacher</a>
-      <nav><a href="index.html">← Басты бет</a></nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Сабақ конструкторы | Math AI</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="vendor/katex/katex.min.css" />
+    <link rel="stylesheet" href="constructor.css?v=1" />
+  </head>
+  <body class="builder-body">
+    <a class="builder-skip" href="#editorPanel">Редакторға өту</a>
+    <header class="builder-header">
+      <a href="index.html">📐 Math AI</a>
+      <div>
+        <span class="eyebrow">Мұғалімнің жұмыс кеңістігі</span>
+        <h1>Сабақ конструкторы</h1>
+      </div>
+      <a href="index.html">Басты бетке қайту</a>
+    </header>
+    <section id="authGate" class="auth-gate" role="status">
+      <p id="authMessage">Жүйеге кіру тексерілуде.</p>
+      <a href="login.html">Жүйеге кіру</a>
+    </section>
+    <div id="builderApp" hidden>
+      <div class="builder-top">
+        <p id="saveStatus" role="status">Өзгерістер әлі сақталмады.</p>
+        <div id="libraryActions" class="actions"></div>
+      </div>
+      <nav class="builder-tabs" aria-label="Жұмыс аймағы">
+        <button type="button" data-panel="context" aria-pressed="true">
+          Таңдау</button
+        ><button type="button" data-panel="editor" aria-pressed="false">
+          Өңдеу</button
+        ><button type="button" data-panel="preview" aria-pressed="false">
+          Алдын ала көру
+        </button>
+      </nav>
+      <main class="builder-grid" data-active-panel="context">
+        <aside id="contextPanel" class="builder-panel" data-area="context">
+          <h2>Сабақты таңдау</h2>
+          <label for="catalogGrade">Сынып</label
+          ><select id="catalogGrade"></select
+          ><label for="catalogSubject">Пән</label
+          ><select id="catalogSubject"></select
+          ><label for="catalogQuarter">Тоқсан</label
+          ><select id="catalogQuarter">
+            <option value="1">1-тоқсан</option>
+            <option value="2">2-тоқсан</option>
+            <option value="3">3-тоқсан</option>
+            <option value="4">4-тоқсан</option></select
+          ><label for="catalogSection">Бөлім</label
+          ><select id="catalogSection"></select
+          ><label for="catalogTopic">Тақырып</label
+          ><select id="catalogTopic"></select>
+          <p id="catalogStatus" role="status"></p>
+          <button id="useMaterial" type="button">
+            Қолда бар материалды қосу
+          </button>
+          <nav aria-label="Сабақ бөлімдері" class="section-nav">
+            <a href="#metaSection">Негізгі мәліметтер</a
+            ><a href="#contentSection">Түсіндіру</a
+            ><a href="#stagesSection">Кезеңдер мен тапсырмалар</a
+            ><a href="#gamesSection">Математикалық ойындар</a
+            ><a href="#homeworkSection">Үй тапсырмасы және рефлексия</a
+            ><a href="#exportSection">Кітапхана және экспорт</a>
+          </nav>
+          <p class="local-note">
+            Жоспарлар осы құрылғыда ғана сақталады. Ортақ компьютерде басқа
+            адамдар браузер деректерін оқи алады.
+          </p>
+        </aside>
+        <section
+          id="editorPanel"
+          class="builder-panel editor-panel"
+          data-area="editor"
+          tabindex="-1"
+        >
+          <section id="metaSection">
+            <h2>Негізгі мәліметтер</h2>
+            <p>
+              «Міндетті» белгісі бар өрістерді толтырыңыз. Дерек жоқ болса,
+              өзіңіз енгізіңіз.
+            </p>
+            <div id="metadataFields" class="field-grid"></div>
+          </section>
+          <section id="contentSection">
+            <h2>Тақырыпты түсіндіру</h2>
+            <div class="actions">
+              <label for="blockType">Мазмұн түрі</label
+              ><select id="blockType"></select
+              ><button id="addBlock" type="button">Мазмұн блогын қосу</button>
+            </div>
+            <div id="blockEditor"></div>
+          </section>
+          <section id="stagesSection">
+            <h2>Кезеңдер мен тапсырмалар</h2>
+            <div id="stageControls"></div>
+            <div id="stageEditor"></div>
+            <div id="taskLibrary"></div>
+          </section>
+          <section id="gamesSection">
+            <h2>Математикалық ойындар</h2>
+            <div id="gameEditor"></div>
+          </section>
+          <section id="homeworkSection">
+            <h2>Үй тапсырмасы және рефлексия</h2>
+            <div id="homeworkEditor"></div>
+            <label for="reflectionMethod">Кері байланыс әдісі</label
+            ><select id="reflectionMethod">
+              <option>Бағдаршам</option>
+              <option>Басбармақ</option>
+              <option>Екі жұлдыз, бір тілек</option>
+              <option>БББ кестесі</option>
+              <option>Шығу билеті</option></select
+            ><label for="reflectionQuestions">Рефлексия сұрақтары</label
+            ><textarea id="reflectionQuestions"></textarea>
+            <p>Рефлексия уақыты кезеңдер тізімінде есептеледі.</p>
+          </section>
+          <section id="exportSection">
+            <h2>Кітапхана және экспорт</h2>
+            <div id="storageEditor"></div>
+            <label for="teacherNotes">Мұғалімнің қосымша жазбалары</label
+            ><textarea id="teacherNotes"></textarea>
+          </section>
+        </section>
+        <aside
+          id="previewPanel"
+          class="builder-panel preview-panel"
+          data-area="preview"
+        >
+          <h2>Сабақ көрінісі</h2>
+          <div id="lessonMetrics" class="metrics" aria-live="polite"></div>
+          <ul id="lessonWarnings" class="warnings"></ul>
+          <label class="check-line"
+            ><input id="reviewed" type="checkbox" />Математикалық мазмұнды және
+            оқу мақсаттарына сәйкестігін тексердім</label
+          >
+          <div id="previewControls"></div>
+          <div id="preview" class="lesson-document"></div>
+        </aside>
+      </main>
     </div>
-  </header>
-
-  <main class="container constructor-page">
-    <a class="back-link" href="index.html">← Басты бетке қайту</a>
-    <div class="page-heading"><span class="badge">🛠 Сабақ конструкторы</span><h1>Өз сабағыңды құрастыр</h1><p>Сабақтың негізгі мәліметтерін, теориясын және тапсырмаларын бір жерде құрастырыңыз.</p></div>
-
-    <div class="constructor-grid">
-      <section class="constructor-card constructor-form">
-        <h2>Сабақ мәліметтері</h2>
-
-        <div class="constructor-section">
-          <h3>📚 Негізгі ақпарат</h3>
-          <label for="lessonGrade">Сынып</label>
-          <select id="lessonGrade"><option value="">Сыныпты таңдаңыз</option><option>5-сынып</option><option>6-сынып</option><option>7-сынып</option><option>8-сынып</option><option>9-сынып</option><option>10-сынып</option><option>11-сынып</option></select>
-          <label for="lessonSubject">Пән</label>
-          <select id="lessonSubject"><option value="">Пәнді таңдаңыз</option><option>Математика</option><option>Алгебра</option><option>Геометрия</option></select>
-          <label for="lessonQuarter">Тоқсан</label>
-          <select id="lessonQuarter"><option value="">Тоқсанды таңдаңыз</option><option>1-тоқсан</option><option>2-тоқсан</option><option>3-тоқсан</option><option>4-тоқсан</option></select>
-          <label for="lessonTitle">Сабақ атауы</label><input id="lessonTitle" placeholder="Мысалы: Пропорция">
-          <label for="lessonNumber">Сабақ нөмірі</label><input id="lessonNumber" type="number" min="1" placeholder="Мысалы: 12">
-          <label for="lessonDuration">Сабақ ұзақтығы</label><select id="lessonDuration"><option value="45">45 минут</option><option value="40">40 минут</option><option value="80">80 минут</option></select>
-          <label for="lessonGoal">Сабақ мақсаты</label><textarea id="lessonGoal" placeholder="Сабақ соңында оқушы нені білуі немесе орындай алуы керек?"></textarea>
-          <label for="lessonObjective">Оқу мақсаты</label><textarea id="lessonObjective" class="short" placeholder="Оқу бағдарламасындағы оқу мақсаты"></textarea>
-        </div>
-
-        <div class="constructor-section">
-          <h3>📖 Сабақ материалы</h3>
-          <label for="lessonExplain">Теория / түсіндіру</label><textarea id="lessonExplain" placeholder="Негізгі теорияны, ережені, формуланы жазыңыз"></textarea>
-          <label for="lessonExamples">Мысалдар</label><textarea id="lessonExamples" placeholder="Шешімімен бірге мысалдар"></textarea>
-          <label for="lessonMistakes">Жиі кездесетін қателер</label><textarea id="lessonMistakes" placeholder="Оқушылар жиі жіберетін қателер"></textarea>
-        </div>
-
-        <div class="constructor-section">
-          <h3>👥 Тапсырмалар</h3>
-          <label for="lessonPair">Жұптық жұмыс</label><textarea id="lessonPair" placeholder="Жұпқа арналған тапсырма"></textarea>
-          <label for="lessonGroup">Топтық жұмыс</label><textarea id="lessonGroup" placeholder="Топқа арналған тапсырма"></textarea>
-          <label for="lessonIndividual">Жеке жұмыс</label><textarea id="lessonIndividual" placeholder="Деңгейлік тапсырмалар"></textarea>
-          <label for="lessonGame">🎮 Ойын / интерактив</label><textarea id="lessonGame" placeholder="Ойынның атауы, ережесі және тапсырмасы"></textarea>
-        </div>
-
-        <div class="constructor-section">
-          <h3>📊 Бағалау және үй жұмысы</h3>
-          <label for="lessonAssessment">Бағалау</label><textarea id="lessonAssessment" placeholder="Бағалау критерийлері, дескрипторлар, ұпайлар"></textarea>
-          <label for="lessonHomework">Үй тапсырмасы</label><textarea id="lessonHomework" placeholder="Үй тапсырмасын жазыңыз"></textarea>
-        </div>
-
-        <div class="constructor-actions"><button class="constructor-button" onclick="saveLesson()">💾 Сақтау</button><button class="constructor-button secondary" onclick="window.print()">🖨 Басып шығару</button></div>
-        <div id="savedMessage" class="saved-message"></div>
-      </section>
-
-      <section class="constructor-card constructor-preview"><h2>👁️ Алдын ала көру</h2><div id="preview"></div></section>
-    </div>
-  </main>
-
-  <script src="auth.js"></script>
-  <script>requireRole(["teacher", "admin", "super_admin"]);</script>
-  <script>
-    const fields={lessonGrade:"Сынып",lessonSubject:"Пән",lessonQuarter:"Тоқсан",lessonTitle:"Сабақ атауы",lessonNumber:"Сабақ нөмірі",lessonDuration:"Сабақ ұзақтығы",lessonGoal:"Сабақ мақсаты",lessonObjective:"Оқу мақсаты",lessonExplain:"Теория / түсіндіру",lessonExamples:"Мысалдар",lessonMistakes:"Жиі кездесетін қателер",lessonPair:"Жұптық жұмыс",lessonGroup:"Топтық жұмыс",lessonIndividual:"Жеке жұмыс",lessonGame:"Ойын / интерактив",lessonAssessment:"Бағалау",lessonHomework:"Үй тапсырмасы"};
-    function getFormData(){const result={};Object.keys(fields).forEach(function(id){result[id]=document.getElementById(id).value.trim();});return result;}
-    function escapeHtml(value){return String(value||"").replace(/[&<>'"]/g,function(char){return {"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[char];});}
-    function addPreviewSection(html,title,value,icon){if(!value)return html;return html+`<div class="preview-section"><h3>${icon} ${title}</h3><p>${escapeHtml(value)}</p></div>`;}
-    function renderPreview(){const data=getFormData();const preview=document.getElementById("preview");let html=`<h1>${escapeHtml(data.lessonTitle||"Жаңа сабақ")}</h1>`;const meta=[data.lessonGrade,data.lessonSubject,data.lessonQuarter,data.lessonDuration?data.lessonDuration+" минут":""].filter(Boolean);if(meta.length)html+=`<div class="preview-meta">${meta.map(function(item){return `<span class="preview-badge">${escapeHtml(item)}</span>`;}).join("")}</div>`;html=addPreviewSection(html,"Сабақ мақсаты",data.lessonGoal,"🎯");html=addPreviewSection(html,"Оқу мақсаты",data.lessonObjective,"📌");html=addPreviewSection(html,"Теория / түсіндіру",data.lessonExplain,"📚");html=addPreviewSection(html,"Мысалдар",data.lessonExamples,"🧮");html=addPreviewSection(html,"Жиі кездесетін қателер",data.lessonMistakes,"⚠️");html=addPreviewSection(html,"Жұптық жұмыс",data.lessonPair,"👥");html=addPreviewSection(html,"Топтық жұмыс",data.lessonGroup,"👨‍👩‍👧‍👦");html=addPreviewSection(html,"Жеке жұмыс",data.lessonIndividual,"✏️");html=addPreviewSection(html,"Ойын / интерактив",data.lessonGame,"🎮");html=addPreviewSection(html,"Бағалау",data.lessonAssessment,"✅");html=addPreviewSection(html,"Үй тапсырмасы",data.lessonHomework,"🏠");if(Object.values(data).every(function(value){return !value;}))html+=`<p class="preview-empty">Сол жақтағы өрістерді толтырсаңыз, сабақтың алдын ала көрінісі осында шығады.</p>`;preview.innerHTML=html;}
-    function saveLesson(){const data=getFormData();localStorage.setItem("mathTeacherCustomLesson",JSON.stringify(data));document.getElementById("savedMessage").textContent="✓ Сабақ осы браузерде сақталды.";}
-    function loadLesson(){try{const saved=JSON.parse(localStorage.getItem("mathTeacherCustomLesson")||"null");if(!saved)return;Object.keys(fields).forEach(function(id){document.getElementById(id).value=saved[id]||"";});}catch(error){}renderPreview();}
-    Object.keys(fields).forEach(function(id){document.getElementById(id).addEventListener("input",renderPreview);document.getElementById(id).addEventListener("change",renderPreview);});
-    loadLesson();
-  </script>
-</body>
+    <script src="auth.js"></script>
+    <script>
+      requireRole(["teacher", "admin", "super_admin"]);
+    </script>
+    <script src="curriculum-data.js"></script>
+    <script src="ktp-data.js"></script>
+    <script src="ktp-5-q1.js"></script>
+    <script src="ktp-5-q2.js"></script>
+    <script src="ktp-5-q2-loader.js"></script>
+    <script src="ktp-5-q3.js"></script>
+    <script src="ktp-5-q4.js"></script>
+    <script src="ktp-6-q1.js"></script>
+    <script src="ktp-6-q2.js"></script>
+    <script src="ktp-6-q3.js"></script>
+    <script src="ktp-6-q4-topics.js"></script>
+    <script src="ktp-7.js"></script>
+    <script src="ktp-7-q2.js"></script>
+    <script src="ktp-7-q3.js"></script>
+    <script src="ktp-7-q4.js"></script>
+    <script src="ktp-upper-tools.js"></script>
+    <script src="lesson-content-6.js"></script>
+    <script src="lesson-content-6-q1-full.js"></script>
+    <script src="vendor/katex/katex.min.js"></script>
+    <script src="constructor-model.js?v=1"></script>
+    <script src="constructor-catalog.js?v=1"></script>
+    <script src="constructor-view.js?v=1"></script>
+    <script src="constructor-auth.js?v=1"></script>
+    <script src="constructor-app.js?v=1"></script>
+  </body>
 </html>
