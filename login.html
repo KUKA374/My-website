@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Кіру | Math Teacher</title>
+  <title>Кіру | iUSTAZ</title>
   <link rel="stylesheet" href="style.css">
   <script src="firebase-config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -23,22 +23,25 @@
     .login-error{display:none;padding:11px 12px;border-radius:10px;background:#fff1f2;color:#be123c;font-size:13px}
     .login-info{margin-top:18px;padding:12px;border-radius:10px;background:#f8fafc;color:var(--muted);font-size:12px;line-height:1.5}
   </style>
+  <meta name="theme-color" content="#6C3BFF">
+  <link rel="icon" href="assets/iustaz/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="iustaz-ui.css?v=1">
 </head>
-<body>
+<body class="iu-page">
   <main class="login-wrap">
     <section class="login-card">
-      <div class="login-logo">📐 Math Teacher</div>
+      <div class="login-logo"><img class="iu-logo" src="assets/iustaz/logo-light.svg" alt="iUSTAZ" width="184" height="48"></div>
       <p class="login-subtitle">Платформаға кіру</p>
 
       <form id="loginForm" class="login-form">
-        <label>Логин<input id="login" type="text" autocomplete="username" placeholder="teacher немесе admin" required></label>
+        <label>Логин<input id="login" type="text" autocomplete="username" placeholder="Логиніңіз" required></label>
         <label>Пароль<input id="password" type="password" autocomplete="current-password" required></label>
         <div id="loginError" class="login-error"></div>
         <button class="login-button" type="submit">Кіру</button>
       </form>
 
       <div class="login-info">
-        Teacher аккаунты үшін <strong>teacher</strong>, Admin аккаунты үшін <strong>admin</strong> деп енгізіңіз. Рөл автоматты анықталады.
+        Мұғалім аккаунты үшін <strong>teacher</strong>, Әкімші аккаунты үшін <strong>admin</strong> деп енгізіңіз. Рөл автоматты анықталады.
       </div>
     </section>
   </main>
