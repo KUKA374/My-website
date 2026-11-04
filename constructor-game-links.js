@@ -1,0 +1,6 @@
+(function(root){'use strict';const names={match:'Сәйкестендір','find-error':'Қатені тап','quick-answer':'Жылдам жауап','math-code':'Математикалық код',detective:'Математикалық детектив','tug-of-war':'Арқан тартыс','math-race':'Математикалық жарыс',wheel:'Сәттілік дөңгелегі',auction:'Математикалық аукцион',blitz:'Блиц',cards:'Карточкалар',quest:'Математикалық квест','secret-number':'Құпия сан',puzzle:'Пазл',rocket:'Зымыран жарысы',castle:'Қамалды қорғау','car-race':'Көлік жарысы',target:'Нысана',bridge:'Көпірден өт','math-king':'Математика патшасы'};
+ function list(metadata){return Object.entries(names).map(([id,title])=>({id,title,purpose:metadata.rules[id][0],rule:metadata.rules[id][1],formats:['tug-of-war','math-race','auction'].includes(id)?['Топтық']:id==='wheel'?['Жеке','Топтық']:['car-race','quick-answer','blitz','cards','math-king'].includes(id)?['Жеке']:['Жеке','Жұптық','Топтық']}));}
+ function topics(metadata,grade){return Object.entries(metadata.lessons).filter(([key])=>key.split('-')[0]===String(grade)).map(([key,row])=>({key,title:row[0]}));}
+ function link(){return 'games.html';} // The existing launcher accepts no query parameters.
+ const api={list,topics,link};if(typeof module!=='undefined')module.exports=api;else root.ConstructorGameLinks=api;
+})(typeof window!=='undefined'?window:globalThis);
