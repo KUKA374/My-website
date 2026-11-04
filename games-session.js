@@ -67,6 +67,7 @@
           "Бұл ойынның механикасы жаңартылды. Бұрынғы сессияны жаңа механикада жалғастыру мүмкін емес; жаңа ойын бастаңыз.";
         return null;
       }
+      GameProgress.envelope(data, window.gameQuestionBank, GameLearning.rules);
       return data;
     } catch {
       storageError = "Сақталған прогресс оқылмады. Жаңа ойын бастауға болады.";
@@ -473,6 +474,7 @@
       window.GameFinal?.restoreSettings(saved.model);
       startSelectedGame();
       if (!model) throw Error();
+      GameProgress.engine(saved.engine, adapter().snapshot());
       model = Object.assign(new LearningSession(), saved.model);
       active = saved.active;
       clock.clear();
@@ -645,7 +647,8 @@
       if (left <= 0) expireNow(name);
     }
     const e = byId("sharedElapsed");
-    if (e) e.textContent = Math.floor(clock.time() / 1000) + " секунд";
+    const label = Math.floor(clock.time() / 1000) + " секунд";
+    if (e && e.textContent !== label) e.textContent = label;
   }, 50);
   let lastSaved = 0;
   setInterval(() => {
