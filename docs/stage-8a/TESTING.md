@@ -14,6 +14,8 @@
 | Бұрынғы сабақ/КТП/каталог/админ беттері | 11 | Өтті |
 | Бұрынғы iUSTAZ қорғалған келісімдері | 2 | Өтті |
 | **Жергілікті барлығы** | **208** | **Өтті** |
+| Нақты Firestore Emulator қауіпсіздік тесттері, GitHub Actions | 7 | Өтті |
+| **Бірегей тесттердің жалпы саны** | **215** | **Өтті** |
 
 Бір тесттің бірнеше қайта орындалуы қосымша тест болып саналмайды. Бұл кезеңде ескі барлық
 565 тест қайта жүргізілді деп мәлімденбейді: таңдалған негізгі регрессия 20 ойынның әрқайсысын
@@ -47,9 +49,9 @@
 `Illegal invocation`, 320px формула overflow, асинхронды фокус және мобильді профиль атауының
 ақаулары түзетіліп, соңғы жиынтықта қайта тексерілді. Бұрынғы сәтсіз айналымдар жасырылмайды.
 
-**7 Firestore security тесті орындалмады.** Ресми emulator JAR-ы `storage.googleapis.com`
-желілік саясатына байланысты алынбады. Сондықтан жаңа ережелердің компиляциясы/серверлік
-рұқсаттары расталмаған; `security/lesson-materials-v1.rules` тек review кандидаты.
+**7 Firestore security тесті жергілікті ортада орындалмады, GitHub Actions-та 7/7 өтті.**
+Ресми emulator JAR-ы жергілікті ортада `storage.googleapis.com` желілік саясатына байланысты алынбады.
+Жазылған жеті сценарий CI-де нақты эмулятор арқылы орындалды; кандидат production-ға жарияланбады.
 Нақты Firebase, Firefox/WebKit, production CDN, шынайы видео ойнату тексерілмеді.
 Демода `video: null`; ол жұмыс істейтін видеосабақ деп саналмайды.
 
@@ -84,7 +86,12 @@ PR #5 қайта тексеру логтары: `/workspace/audit-math-ai/stage8
 
 Жергілікті emulator іске қосу әлі JAR жүктеуінде тоқтайды:
 `Failed to make request to https://storage.googleapis.com/firebase-preview-drop/emulator/cloud-firestore-emulator-v1.22.0.jar`.
-CI workflow дайындығы оның орындалу нәтижесі емес. Нақты run нәтижесін PR checks пен Actions-та тексеру керек.
+CI workflow дайындығы оның орындалу нәтижесі емес. Нақты орындалуы:
+[Actions run 41967078208 — Success](https://github.com/KUKA374/My-website/actions/runs/41967078208),
+commit `f0da3f8`, `Firestore emulator (7 security tests)` job және нақты тест қадамы Success.
+Runner 7/7 pass, 0 fail/skip/cancel/todo шарты орындалмайынша success бермейді.
+Node.js 20 ескіру ескертуі native Node.js 24 actions SHA-ларына ауыстыру арқылы түзетілді;
+соңғы head нәтижесі [PR #5 checks](https://github.com/KUKA374/My-website/pull/5/checks) бетінде.
 
 ## Қайта орындау
 

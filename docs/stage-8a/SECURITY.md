@@ -39,10 +39,11 @@ pipeline толық `model.js` валидациясы мен педагогик�
 
 ## Міндетті іске қосу қақпасы
 
-Кандидат rules-ты production-ға жарияламаңыз. 7 нақты Firestore emulator тесті жазылды,
-бірақ осы ортада ресми emulator JAR жүктелуі `storage.googleapis.com` желілік саясатына
-байланысты бұғатталды. **Rules компиляциясы мен серверлік рұқсаттар әлі расталған жоқ.**
-UI тесттері немесе мәтіндік ереже салыстыруы осы қақпаны алмастырмайды.
+Кандидат rules-ты production-ға жарияламаңыз. 7 нақты Firestore emulator тесті GitHub Actions-та өтті:
+[run 41967078208](https://github.com/KUKA374/My-website/actions/runs/41967078208), commit `f0da3f8`.
+Осы CI іске қосылуы Rules компиляциясы мен тексерілген серверлік рұқсаттарды растайды.
+Жергілікті ортада ресми JAR жүктелуі `storage.googleapis.com` желілік саясатына байланысты әлі бұғатталған.
+UI тесттері немесе мәтіндік ереже салыстыруы нақты emulator қақпасын алмастырмайды.
 
 Бекітілген CI құралдарын орнату (Node >=24.12, осы workflow-да 24.19.0; Java 21):
 
@@ -67,7 +68,8 @@ gateway-де тексеріледі. Қазіргі браузерлік саб�
 ## PR #5 GitHub Actions қақпасы
 
 `.github/workflows/stage-8a-security.yml` main-ға бағытталған pull_request оқиғасында,
-draft PR үшін де, және workflow_dispatch арқылы орындалады. `pull_request_target` қолданылмайды.
+draft PR үшін де орындалады. Default branch-та болғанда workflow_dispatch та қолжетімді.
+`pull_request_target` қолданылмайды.
 Тек `contents: read`; checkout credentials сақталмайды, Firebase/GCP secret, id-token, deploy,
 Pages немесе main-ға push қадамдары жоқ. Ресми actions өзгермейтін SHA-мен бекітілген.
 
@@ -80,5 +82,9 @@ Runner тек `127.0.0.1:8187` қабылдайды; TAP-та дәл 7 pass, 0 f
 Job summary, JSON/TAP және эмулятор диагностикасы artifact ретінде 7 күн сақталады.
 
 `Firestore emulator (7 security tests)` нақты жасыл нәтиже бермейінше merge дайындығы расталмайды.
+PR #5-тің алғашқы CI іске қосылуы Success болды. Actions HTML-інен job және тест қадамының
+сәтті аяқталуы тексерілді; API бұл ортада Forbidden қайтарады. Жеке TAP/JSON artifact CI-де сақталады.
+Алғашқы run-дағы Node.js 20 ескіру ескертуінен кейін барлық actions native Node.js 24 нұсқаларының
+ресми репозиторийден тексерілген SHA-ларына ауыстырылды; соңғы head check PR бетінде көрінеді.
 Репозиторий иесі осы status check-ті branch protection-да міндетті ете алады; бұл жұмыс branch
 protection баптауларын өзгертпейді. Жергілікті құрылымдық екі тест серверлік тесттерді алмастырмайды.
