@@ -1,0 +1,110 @@
+# Stage 8A — тексеру есебі және қайта орындау
+
+## Сәтті өткен тексерулер
+
+| Жиынтық | Саны | Нәтиже |
+|---|---:|---|
+| Жаңа модель/ID/демо арифметикасы/legacy адаптер/қорғалған файлдар | 9 | Өтті |
+| Lazy loader, кэш, retry, abort, timeout, MIME, көлем және жол шектеулері | 6 | Өтті |
+| Жаңа сабақ бетінің Chromium тексерулері | 15 | Өтті |
+| Production rules сақталуы және CLI эмулятор каталогының дұрыстығы | 2 | Өтті |
+| Ойындардың бұрынғы модульдік/дерек/Auth тесттері | 67 | Өтті |
+| Барлық 20 ойынның негізгі браузерлік регрессиясы | 49 | Өтті |
+| Stage 6 сабақ конструкторының толық жиынтығы | 47 | Өтті |
+| Бұрынғы сабақ/КТП/каталог/админ беттері | 11 | Өтті |
+| Бұрынғы iUSTAZ қорғалған келісімдері | 2 | Өтті |
+| **Жергілікті барлығы** | **208** | **Өтті** |
+| Нақты Firestore Emulator қауіпсіздік тесттері, GitHub Actions | 7 | Өтті |
+| **Бірегей тесттердің жалпы саны** | **215** | **Өтті** |
+
+Бір тесттің бірнеше қайта орындалуы қосымша тест болып саналмайды. Бұл кезеңде ескі барлық
+565 тест қайта жүргізілді деп мәлімденбейді: таңдалған негізгі регрессия 20 ойынның әрқайсысын
+5/6/7 сыныптарда desktop/mobile көріністерінде басынан аяғына дейін орындайды — 120 ойын аяқталуы.
+Қосымша scoring/double-submit/timeout/cancellation/keyboard/320px жағдайлары тексеріледі.
+
+Жаңа браузерлік тесттер нақты Chromium және localhost HTTP арқылы жүргізілді. Firebase Auth
+шекарасы тесттік UID/рөлмен алмастырылған; тірі Firebase аккаунттарына сұрау/жазу жасалмады.
+
+Нақты тексерілгені:
+
+- Бастапқы main-нан алынған 111 root JS/CSS/rules файлы byte-identical.
+- 64 КТП контексті, 1 526 жолдың JSON snapshot SHA-256 мәндері, реті және бірегей ID-лері сәйкес.
+  Басқа сыныптың не тоқсанның материал JSON-ы ашылмаған.
+- Бір толық демо; көрші сабақта материалдың бос болуы қалыпты. Ортақ 12 слайдтық ресурс екі сабаққа
+  диапазонмен байланыстырылып, бір рет жүктеледі. KaTeX тек презентация ашылғанда келеді.
+  Қайта тексеруде барлық 12 слайд ретімен ашылды, әр слайдтағы мазмұн және диапазон шектері тексерілді.
+- 3 жұптық тапсырманың кезекпен ашылуы, 4 топ, A/B/C, 45 минут, 20 ойын сілтемесі.
+- Ескі конструктор жаңа legacy проекциядан 15 тапсырманы таниды. Ескі сабақтың 9 бөлімі сақталған,
+  opt-in сілтемесі нақты КТП контекстін ашады; 7-сыныптың ескі қысқа contentKey мысалдары көрінеді.
+- UID және сабақ арасында жеке мәтін араласпайды; reload сақтайды; signout тазалайды;
+  екінші қойындының ескі revision-ы жаңа мәтінді үстінен жазбайды; v2 кітапхана өзгермейді.
+- 503/retry, XSS мәтіні, ескі сұрауды abort ету, басқа сабаққа кеш келген жауапты қабылдамау.
+- 320/390/768/1440 px: overflow жоқ, touch/Enter/Escape, диалог фокусы. Скриншоттар түсіріліп,
+  телефон және desktop көріністері қолмен қаралды. axe-core 4.10.3 бойынша бет пен ашық презентацияда
+  тексерілген WCAG A/AA ережелерінің бұзылуы жоқ; бұл толық қолжетімділік сертификаты емес.
+
+## Өтпеген және орындалмаған тексерулер
+
+Соңғы орындалған жиынтықта өтпеген тест — **0**. Алғашқы айналымдағы native fetch
+`Illegal invocation`, 320px формула overflow, асинхронды фокус және мобильді профиль атауының
+ақаулары түзетіліп, соңғы жиынтықта қайта тексерілді. Бұрынғы сәтсіз айналымдар жасырылмайды.
+
+**7 Firestore security тесті жергілікті ортада орындалмады, GitHub Actions-та 7/7 өтті.**
+Ресми emulator JAR-ы жергілікті ортада `storage.googleapis.com` желілік саясатына байланысты алынбады.
+Жазылған жеті сценарий CI-де нақты эмулятор арқылы орындалды; кандидат production-ға жарияланбады.
+Нақты Firebase, Firefox/WebKit, production CDN, шынайы видео ойнату тексерілмеді.
+Демода `video: null`; ол жұмыс істейтін видеосабақ деп саналмайды.
+
+## Өнімділік өлшемі
+
+Жергілікті HTTP, compression жоқ, тесттік Auth, Chromium. Сабақ дерегі — 444 байт индекс +
+12 889 байт мазмұн = **13 333 байт**. Бұл бүкіл беттің өлшемі емес: HTML, script, CSS, КТП
+метадеректерін қосқан бастапқы response body **257 317 байт (251 KiB)**;
+нақты өлшем `performance.json` артефактісінде. Презентация/видео/сурет алдын ала сұралмады.
+
+Сабақтар арасында 24 ауысудан кейін JSON желілік сұрауы 2 күйінде қалды, кэш 13 333 байт,
+Chromium GC-ден кейін JS heap өсімі шамамен 0,91 MiB, тест шегі 5 MiB.
+Кэш шегі: 8 жазба/512 KiB. Бұл жалпы браузер жады, production latency, көп пайдаланушы жүктемесі
+немесе мыңдаған материалмен load-test нәтижесі емес.
+
+Артефактілер (репозиторийден тыс): `/workspace/audit-math-ai/stage8a/`:
+`materials/summary.json`, `games/summary.json`, `constructor/summary.json`,
+`performance.json`, `demo-{320,390,768,1440}.png`.
+PR #5 қайта тексеру логтары: `/workspace/audit-math-ai/stage8a-pr5/`.
+Жаңа 32 тесттің қорытындысы `materials-final/summary.json` ішінде; қалғандары games/constructor логтарында.
+
+## PR #5 үшін табылған және түзетілген ақаулар
+
+- Firebase CLI 15.35.0 бұрынғы `../../security/lesson-materials-v1.rules` жолын
+  `is outside of project directory` деп қабылдады. Эмулятор конфигурациясы rules-пен бір каталогқа
+  көшірілді, регрессиялық тексеру қосылды. CLI енді осы қадамнан өтіп, ресми JAR жүктеуіне жетеді.
+- Workflow-дың бастапқы нұсқасында job env ішінде рұқсат етілмейтін `runner.temp` контексті болды.
+  GitHub workspace жолына түзетілді; ресми actionlint 1.7.7 тексеруі өтті.
+- 7 security тестінің бір-біріне тәуелді fixture деректері әр тест алдында тазартылып, қайта жасалады.
+  Мұғалім/admin/super_admin/student/anonymous және бұрынғы материалдар рұқсаттарының тексеруі кеңейтілді.
+- Node талабы құжатта нақтыланды: rules-unit-testing 6.0.0 үшін >=24.12 қажет, CI Node 24.19.0 қолданады.
+
+Жергілікті emulator іске қосу әлі JAR жүктеуінде тоқтайды:
+`Failed to make request to https://storage.googleapis.com/firebase-preview-drop/emulator/cloud-firestore-emulator-v1.22.0.jar`.
+CI workflow дайындығы оның орындалу нәтижесі емес. Нақты орындалуы:
+[Actions run 41967078208 — Success](https://github.com/KUKA374/My-website/actions/runs/41967078208),
+commit `f0da3f8`, `Firestore emulator (7 security tests)` job және нақты тест қадамы Success.
+Runner 7/7 pass, 0 fail/skip/cancel/todo шарты орындалмайынша success бермейді.
+Node.js 20 ескіру ескертуі native Node.js 24 actions SHA-ларына ауыстыру арқылы түзетілді;
+соңғы head нәтижесі [PR #5 checks](https://github.com/KUKA374/My-website/pull/5/checks) бетінде.
+
+## Қайта орындау
+
+Қолданыстағы `playwright` және `/usr/bin/chromium` керек. axe файлының жолын
+`IUSTAZ_AXE_PATH` арқылы көрсетуге болады. Осы ортада `/tmp/math-ai-axe/extracted/package/axe.min.js`.
+
+```sh
+python tests/run-lesson-material-qa.py
+python tests/run-constructor-qa.py
+node tests/iustaz-contract.test.cjs
+node tests/iustaz-catalog-browser.test.cjs
+python tests/run-games-qa.py games-runtime.test.cjs games-learning.test.cjs games-regression.test.cjs grade6-first-three.test.js games-mechanics-models.test.cjs games-logic-models.test.cjs games-racing-models.test.cjs games-timed-models.test.cjs games-final-models.test.cjs games-progress.test.cjs auth-qa.test.cjs games-browser.test.cjs
+```
+
+Толық ескі ойын жиынтығы қажет болса: `python tests/run-games-qa.py`.
+Серверлік security қақпасының нақты командалары — `SECURITY.md`.

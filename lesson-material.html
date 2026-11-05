@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="kk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Сабақ материалының үлгісі | iUSTAZ</title>
+    <link rel="icon" href="assets/iustaz/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="iustaz-ui.css?v=1" />
+    <link rel="stylesheet" href="lesson-materials/demo.css?v=1" />
+    <script src="auth.js" defer></script>
+    <script src="curriculum-data.js" defer></script>
+    <script src="ktp-upper-tools.js" defer></script>
+    <script src="constructor-catalog.js" defer></script>
+    <script src="constructor-auth.js" defer></script>
+    <script src="lesson-materials/model.js" defer></script>
+    <script src="lesson-materials/loader.js" defer></script>
+    <script src="lesson-materials/ktp.js" defer></script>
+    <script src="lesson-materials/private.js" defer></script>
+    <script src="games-learning.js" defer></script>
+    <script src="constructor-game-links.js" defer></script>
+    <script src="iustaz-shell.js?v=1" defer></script>
+    <script src="lesson-materials/demo.js" defer></script>
+  </head>
+  <body class="iu-page">
+    <main class="material-demo">
+      <nav class="iu-breadcrumb" aria-label="Бет жолы">
+        <a href="index.html#classes">Сыныптар мен тақырыптар</a
+        ><span> / Сабақ материалының үлгісі</span>
+      </nav>
+      <header class="material-heading">
+        <span class="iu-badge">Stage 8A · Демонстрациялық материал</span>
+        <h1 id="materialTitle">Сабақ тексерілуде…</h1>
+        <p id="materialContext"></p>
+        <p id="materialObjective"></p>
+        <code id="materialId"></code>
+      </header>
+      <p class="material-notice">
+        Бұл — жүктеу архитектурасының үлгісі. Демо мазмұнды сабақта қолданар
+        алдында мұғалім тексеруі тиіс. КТП мәліметтері өзгертілмейді.
+      </p>
+      <p id="materialStatus" role="status" aria-live="polite">
+        Жүйеге кіру тексерілуде.
+      </p>
+      <div id="materialActions" class="material-actions">
+        <a id="materialLogin" class="iu-button" href="login.html">Жүйеге кіру</a
+        ><button id="previousLesson" class="iu-button" type="button" hidden>
+          Алдыңғы КТП сабағы</button
+        ><button id="nextLesson" class="iu-button" type="button" hidden>
+          Келесі КТП сабағы</button
+        ><button id="retryMaterial" class="iu-button" type="button" hidden>
+          Қайта жүктеу</button
+        ><a id="legacyMaterial" class="iu-button" href="lesson.html" hidden
+          >Бұрынғы сабақ материалын ашу</a
+        ><a
+          id="constructorMaterial"
+          class="iu-button"
+          href="constructor.html"
+          hidden
+          >Конструкторда КТП-ны ашу</a
+        >
+      </div>
+      <div id="materialBody" hidden>
+        <section class="iu-card material-section">
+          <h2>Видеосабақ</h2>
+          <p id="videoStatus"></p>
+          <button id="playVideo" class="iu-button" type="button" hidden>
+            Видеоны ашу
+          </button>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Тақырыпты түсіндіру</h2>
+          <div id="materialTheory"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Көрнекі мысалдар</h2>
+          <div id="materialExamples"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Ортақ презентация</h2>
+          <p id="presentationStatus"></p>
+          <button
+            id="openPresentation"
+            class="iu-button primary"
+            type="button"
+            hidden
+          >
+            Презентацияны ашу
+          </button>
+          <p class="iu-muted">
+            Слайдтар мен формула кітапханасы тек осы батырманы басқанда
+            жүктеледі.
+          </p>
+        </section>
+        <section class="iu-card material-section">
+          <h2>45 минуттық сабақ жоспары</h2>
+          <div id="materialPlan"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Жұптық жұмыс</h2>
+          <p>
+            Тапсырмалар кезекпен ашылады. Бір тапсырманың нәтижесін талқылап,
+            келесісіне өтіңіз.
+          </p>
+          <div id="materialPairs"></div>
+          <button id="nextPair" class="iu-button" type="button" hidden>
+            Келесі жұптық тапсырманы ашу
+          </button>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Төрт топқа арналған жұмыс</h2>
+          <div id="materialGroups" class="material-grid"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>A/B/C жеке жұмыстар</h2>
+          <div id="materialIndividual"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Математикалық ойындар</h2>
+          <p>
+            Қолданыстағы каталог ашылады. Ойын, сынып және тақырып сол жерде
+            таңдалады; автоматты іске қосу параметрі қосылмайды.
+          </p>
+          <div id="materialGames" class="material-grid"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Бағалау критерийлері мен дескрипторлар</h2>
+          <div id="materialAssessment"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>Ортақ үй тапсырмасы</h2>
+          <div id="materialHomework"></div>
+        </section>
+        <section class="iu-card material-section">
+          <h2>ҚМЖ деректері</h2>
+          <div id="materialQmj"></div>
+          <p class="iu-muted">
+            Тақырып пен оқу мақсаты жоғарыдағы КТП-дан алынады. Конструктор
+            сілтемесі сол КТП-ны таңдайды; демо мәтіні автоматты көшірілмейді.
+          </p>
+        </section>
+      </div>
+      <section id="privateHomework" class="iu-card material-section" hidden>
+        <h2>Мұғалімнің жеке өзгерістері</h2>
+        <p>
+          Бұл үлгіде жеке үй тапсырмасы расталған Firebase UID-іне және сабақ
+          ID-іне байланысып, осы браузерде ғана сақталады. Бұл серверлік не
+          шифрланған сақтау емес. Бұрынғы сабақ кітапханасы өзгермейді.
+        </p>
+        <label class="iu-field" for="personalHomework"
+          >Жеке үй тапсырмасы<textarea
+            class="iu-input"
+            id="personalHomework"
+            maxlength="10000"
+            rows="4"
+          ></textarea></label
+        ><label class="iu-field" for="personalNotes"
+          >Жеке жазба<textarea
+            class="iu-input"
+            id="personalNotes"
+            maxlength="10000"
+            rows="3"
+          ></textarea></label
+        ><button id="savePersonal" class="iu-button" type="button">
+          Осы браузерде сақтау
+        </button>
+        <p id="personalStatus" role="status"></p>
+      </section>
+      <dialog id="presentationDialog" aria-labelledby="presentationTitle">
+        <div class="material-dialog-head">
+          <h2 id="presentationTitle">Презентация</h2>
+          <button id="closePresentation" class="iu-button" type="button">
+            Жабу
+          </button>
+        </div>
+        <p id="slidePosition" role="status"></p>
+        <div id="slideBody"></div>
+        <div class="material-actions">
+          <button id="previousSlide" class="iu-button" type="button">
+            Алдыңғы слайд</button
+          ><button id="nextSlide" class="iu-button" type="button">
+            Келесі слайд
+          </button>
+        </div>
+      </dialog>
+      <dialog id="videoDialog" aria-labelledby="videoTitle">
+        <div class="material-dialog-head">
+          <h2 id="videoTitle">Видеосабақ</h2>
+          <button id="closeVideo" class="iu-button" type="button">Жабу</button>
+        </div>
+        <div id="videoBody"></div>
+      </dialog>
+    </main>
+  </body>
+</html>

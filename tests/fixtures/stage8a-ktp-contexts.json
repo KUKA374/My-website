@@ -1,0 +1,454 @@
+{
+  "base": "971f205650a18f141705b4e55607d7f578812d88",
+  "rows": 1526,
+  "contexts": [
+    {
+      "grade": "5",
+      "subject": "math",
+      "quarter": "1",
+      "count": 39,
+      "sha256": "449365dfaee83cdaeda6966818068a056718afcb70fe4192190a9ce43cd33fd8"
+    },
+    {
+      "grade": "5",
+      "subject": "math",
+      "quarter": "2",
+      "count": 40,
+      "sha256": "d0c0f317d054b8665e91fab7e3cae5d637c0c4336f5ee7217fb6a38fd1f10bcf"
+    },
+    {
+      "grade": "5",
+      "subject": "math",
+      "quarter": "3",
+      "count": 50,
+      "sha256": "0c8c7a5fb114c5a467943319f88bf4f080beb842ccc138c783e50bdfd0da2496"
+    },
+    {
+      "grade": "5",
+      "subject": "math",
+      "quarter": "4",
+      "count": 41,
+      "sha256": "9b31d39eaa7a7d6f5434f8ef1975205ac4ae12a4ee06f744aebadc931ad70991"
+    },
+    {
+      "grade": "6",
+      "subject": "math",
+      "quarter": "1",
+      "count": 39,
+      "sha256": "0ab291191de2d33c8a87e275bc0ee9eb4e89107efb3fc921e0f31d469b899c22"
+    },
+    {
+      "grade": "6",
+      "subject": "math",
+      "quarter": "2",
+      "count": 40,
+      "sha256": "0e4826caca504b08be133e8b2274ce3ecc80f44bf3580fa295e126b687e4dfdc"
+    },
+    {
+      "grade": "6",
+      "subject": "math",
+      "quarter": "3",
+      "count": 50,
+      "sha256": "b958c0d37e49098774d816355edbc009f49d01500ee3347549540fd412231140"
+    },
+    {
+      "grade": "6",
+      "subject": "math",
+      "quarter": "4",
+      "count": 41,
+      "sha256": "700e8747e8cc4dd3b0c7f9da095d65912faa5962829d87bce495a6aea52104c0"
+    },
+    {
+      "grade": "7",
+      "subject": "algebra",
+      "quarter": "1",
+      "count": 24,
+      "sha256": "275a3820d0f934e66b5dcce390976d668296dd141f884f8c7bfcfe6e730824b0"
+    },
+    {
+      "grade": "7",
+      "subject": "algebra",
+      "quarter": "2",
+      "count": 24,
+      "sha256": "7c1d278566927ff84673cd307f049ef0bcc219ab3b2316f1666d25d28711ce88"
+    },
+    {
+      "grade": "7",
+      "subject": "algebra",
+      "quarter": "3",
+      "count": 30,
+      "sha256": "42da7a9e1c9004feaadf4ca1bfdf31222e3a3d3c8ca9f86532c61871edca3845"
+    },
+    {
+      "grade": "7",
+      "subject": "algebra",
+      "quarter": "4",
+      "count": 24,
+      "sha256": "56e82c2d2d59a58be24ef171573c8ff23757e31b102ab40ee8ae6b7c1826a9aa"
+    },
+    {
+      "grade": "7",
+      "subject": "geometry",
+      "quarter": "1",
+      "count": 15,
+      "sha256": "a2d7dc0fd1bf7c6069ca572f23cf21b01f0ea33bb94f217cad12e2b9bf84cd8a"
+    },
+    {
+      "grade": "7",
+      "subject": "geometry",
+      "quarter": "2",
+      "count": 16,
+      "sha256": "573679f76ce785f35a6e06738bbbc8d82e9cb61fd4bda3b5fff7099099ec00e4"
+    },
+    {
+      "grade": "7",
+      "subject": "geometry",
+      "quarter": "3",
+      "count": 19,
+      "sha256": "bf0c467362c9499de7d4f319e6485c3c8d3def8470a5a3eb8d892dcb1590ad28"
+    },
+    {
+      "grade": "7",
+      "subject": "geometry",
+      "quarter": "4",
+      "count": 17,
+      "sha256": "0b56c4fd71fc3cfcbc838bcf05586ac74a0a6d840b5747464d40b42375ad89a5"
+    },
+    {
+      "grade": "8",
+      "subject": "algebra",
+      "quarter": "1",
+      "count": 24,
+      "sha256": "8a53c0a3d006acf401f77f21a61de9eeeb2fcacbc1ebf663e6d8f43b255b6cbe"
+    },
+    {
+      "grade": "8",
+      "subject": "algebra",
+      "quarter": "2",
+      "count": 24,
+      "sha256": "e7b6734a323fa8d63673a62567493e627446986daa65edbc98619d593c185466"
+    },
+    {
+      "grade": "8",
+      "subject": "algebra",
+      "quarter": "3",
+      "count": 30,
+      "sha256": "273a019d739894a5790a25c98b354e09d69f82616e0475e561198d0597609564"
+    },
+    {
+      "grade": "8",
+      "subject": "algebra",
+      "quarter": "4",
+      "count": 24,
+      "sha256": "a55305292f1c66e8f2b416862213dc09643c77b35bae807dc8f036ad87849eb9"
+    },
+    {
+      "grade": "8",
+      "subject": "geometry",
+      "quarter": "1",
+      "count": 15,
+      "sha256": "be34a5a80850183fdea64b26da2d1eda474416dbe5c195d8a47155f1c437ca7d"
+    },
+    {
+      "grade": "8",
+      "subject": "geometry",
+      "quarter": "2",
+      "count": 16,
+      "sha256": "2fceb7cf9c7f479e45777ad41510bf062b152cf399f394e894c40688ff067be8"
+    },
+    {
+      "grade": "8",
+      "subject": "geometry",
+      "quarter": "3",
+      "count": 20,
+      "sha256": "ed3a67796e87af2726f392dbbf195dce41e038c19129bd470ac7703f4e153568"
+    },
+    {
+      "grade": "8",
+      "subject": "geometry",
+      "quarter": "4",
+      "count": 17,
+      "sha256": "e7dd880a4b186337fe8a4b928daf25be9eb79eccf42c232d231ceaca7ea72787"
+    },
+    {
+      "grade": "9",
+      "subject": "algebra",
+      "quarter": "1",
+      "count": 24,
+      "sha256": "2f89ed86a10310d1c2e25ebe325368a4417006f50db47e1955b65d6b3be11bba"
+    },
+    {
+      "grade": "9",
+      "subject": "algebra",
+      "quarter": "2",
+      "count": 24,
+      "sha256": "b5e2c8041088a73224cee585c277916751001dbba6b7d378a1ac1359721aba96"
+    },
+    {
+      "grade": "9",
+      "subject": "algebra",
+      "quarter": "3",
+      "count": 30,
+      "sha256": "d2dbd2d27ec339835317019b54728ea8793c41ba0fb5dc8e7397ff4bf28723bb"
+    },
+    {
+      "grade": "9",
+      "subject": "algebra",
+      "quarter": "4",
+      "count": 24,
+      "sha256": "908e1de06f738f9e57f4556b8e0ef8c4bd055c7d3f879649437ebdba90e9eac8"
+    },
+    {
+      "grade": "9",
+      "subject": "geometry",
+      "quarter": "1",
+      "count": 15,
+      "sha256": "faeaa8400aade079ae3cbc008cfb2fa6c3484a39bbbe65f468270a61b21282cb"
+    },
+    {
+      "grade": "9",
+      "subject": "geometry",
+      "quarter": "2",
+      "count": 16,
+      "sha256": "ae06acc9b441ac4f6c4cb6e5f4813f91c1a6a03fd8e9dd4aee44f920c4371063"
+    },
+    {
+      "grade": "9",
+      "subject": "geometry",
+      "quarter": "3",
+      "count": 20,
+      "sha256": "2ee7b3689c1150877538b8629fd2e44d2eaebcfea9a64d90ce3d14c6af30c50e"
+    },
+    {
+      "grade": "9",
+      "subject": "geometry",
+      "quarter": "4",
+      "count": 17,
+      "sha256": "b74247a24406e24ab8c24266371218ce1c3afd838f07f0dbc064e4d3eb891759"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ЖМБ",
+      "quarter": "1",
+      "count": 31,
+      "sha256": "272a09e728e7b007e9c62e438728ed877e6955125123d9818336775707639de1"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ЖМБ",
+      "quarter": "2",
+      "count": 32,
+      "sha256": "f9e3b8e741782f618f0cd5ace9c940dc0ca4ac2b0b92db648d2eb6314ead4db9"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ЖМБ",
+      "quarter": "3",
+      "count": 40,
+      "sha256": "33bac32578934f4110d7f6c63d983e5ffd2bb1e6b6f5a8f785f9f445e2d77876"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ЖМБ",
+      "quarter": "4",
+      "count": 33,
+      "sha256": "b4507d92aaf46cbebf329b8ffbf29ff610cad28a21480d71c12c754915084117"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ЖМБ",
+      "quarter": "1",
+      "count": 15,
+      "sha256": "09289dc15b8ff1620fc50e66a18921e282085b86d1b28c850d589f64493ce377"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ЖМБ",
+      "quarter": "2",
+      "count": 16,
+      "sha256": "e359b3354a35e447f8813564c3c45a1895b0ad2f2c8673f2c6e47f2a394cfabf"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ЖМБ",
+      "quarter": "3",
+      "count": 17,
+      "sha256": "e4f4048b80cebdb45896f451a49f312dccf86a3863caa5ebee34c86092a2c75c"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ЖМБ",
+      "quarter": "4",
+      "count": 17,
+      "sha256": "3c84d70bcc6a4af19ed688f31c617f2bed87fa3dfb61e5b5fcd8c72235d28170"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ҚГБ",
+      "quarter": "1",
+      "count": 24,
+      "sha256": "fb3907fb52d10855161365361a9c2d89e30199c0fb38edeb055c9bc736745091"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ҚГБ",
+      "quarter": "2",
+      "count": 24,
+      "sha256": "672d8c47a75922dceebfe2aa1617652295d08131ae6a8239f1bbb14136160242"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ҚГБ",
+      "quarter": "3",
+      "count": 30,
+      "sha256": "ce22b5886a2f7a038baf0a397fc646ccf638e727046e7c17c627b8da9d180c65"
+    },
+    {
+      "grade": "10",
+      "subject": "algebra_ҚГБ",
+      "quarter": "4",
+      "count": 24,
+      "sha256": "434308e09ff4f716d25165fa4a3f1ca0c9d8a8a29221e78ddf77a724ba38b91e"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ҚГБ",
+      "quarter": "1",
+      "count": 8,
+      "sha256": "4273021d9033b861eceee797e1fca6b1e8b4d895aed59d73487784991ef72dfa"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ҚГБ",
+      "quarter": "2",
+      "count": 8,
+      "sha256": "3eeb136956c2707a8fee2c79378ef1d0f27926a37e0b93fe2b9d43ff6874633b"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ҚГБ",
+      "quarter": "3",
+      "count": 10,
+      "sha256": "1eac716387206f4c54eb06f80216931ecd3d044c29265401c18f7f945bc6ac3d"
+    },
+    {
+      "grade": "10",
+      "subject": "geometry_ҚГБ",
+      "quarter": "4",
+      "count": 8,
+      "sha256": "730151808dde0b5574a4ad3c12ab6c9223f26830c24950a72c95c827d292d5af"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ЖМБ",
+      "quarter": "1",
+      "count": 31,
+      "sha256": "20aa90d39bdc1d1212e0f831bc79b3c2e86677ccda311f159c5f5bde324e62a7"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ЖМБ",
+      "quarter": "2",
+      "count": 32,
+      "sha256": "f4ad3cf9cbf5587114bb9b48cdc193f85b19476c4fa954829301915c4ccb37ec"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ЖМБ",
+      "quarter": "3",
+      "count": 40,
+      "sha256": "5ddae53277db2dd64c9837ad1c98efbaefcb5a67a3074f070a5c13c3f0a26841"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ЖМБ",
+      "quarter": "4",
+      "count": 33,
+      "sha256": "a6cdc90da98b7bb74557cb5bdfa2182441748b6e298fab1be690fcc2e753bed5"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ЖМБ",
+      "quarter": "1",
+      "count": 15,
+      "sha256": "1a908426f7629e4719c521a0cac570a1544b5e8e63f9569ba84d36b4d30702ef"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ЖМБ",
+      "quarter": "2",
+      "count": 16,
+      "sha256": "3a4a986c01f753b91ab60ddbbec99c03e6dfbd7a343ea5acc2f06b745b7523e4"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ЖМБ",
+      "quarter": "3",
+      "count": 20,
+      "sha256": "67866349182938f26d3dc2205353f65233b4adeb36064205923c771aa7033e0c"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ЖМБ",
+      "quarter": "4",
+      "count": 17,
+      "sha256": "8d0ffef864cb4b4bc01084e2ce666e779571a28c2824d226470bdf2f07242ba4"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ҚГБ",
+      "quarter": "1",
+      "count": 24,
+      "sha256": "d4274ec8186e5a1b7260adc346030a781afa3a48adf3898d93855391c2a7a446"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ҚГБ",
+      "quarter": "2",
+      "count": 24,
+      "sha256": "8ae4f8a33e44c00b200aa0fb09bdc31ae69079aaef4590be4b50250d38adbfda"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ҚГБ",
+      "quarter": "3",
+      "count": 30,
+      "sha256": "f1c4626f73e56ffbc2e4a596bb2c6847c7388fe82f2e595824752d812a67c9ce"
+    },
+    {
+      "grade": "11",
+      "subject": "algebra_ҚГБ",
+      "quarter": "4",
+      "count": 24,
+      "sha256": "28d47f3d187b98a9ee42d6127a427014720da7bd4be52614579a38e43093b469"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ҚГБ",
+      "quarter": "1",
+      "count": 8,
+      "sha256": "68d9b7994d40cbac0cefd1545caa50f51068865f2b1f2c54798613865fd1c927"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ҚГБ",
+      "quarter": "2",
+      "count": 8,
+      "sha256": "06bf84f07dfbe4523d3c72cf2189888619483c677e8ba017aba6fe5970dae9b2"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ҚГБ",
+      "quarter": "3",
+      "count": 10,
+      "sha256": "9eb80709965d22c45425749cc6cb853911175cbeaa9a9a5eb7cd5ae3ddef8096"
+    },
+    {
+      "grade": "11",
+      "subject": "geometry_ҚГБ",
+      "quarter": "4",
+      "count": 8,
+      "sha256": "cfc9f32186d4c4b542425bf7549445e73f3794deced499256b31cf73cc3249b3"
+    }
+  ]
+}
