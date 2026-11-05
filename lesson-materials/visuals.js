@@ -21,7 +21,11 @@
         ? `${v.parts} тең бөліктің ${v.filled} бөлігі боялған`
         : v.kind === "number-line"
           ? "Сан сәулесі: " + v.marks.map((m) => m.label).join(", ")
-          : `${v.yLabel}; ${v.xLabel}`;
+          : v.kind === "venn"
+            ? `${v.leftLabel} және ${v.rightLabel} жиындары. Ортақ элементтер: ${v.common.join(", ") || "жоқ"}.`
+            : v.kind === "bar-chart"
+              ? v.categories.map((c) => `${c.label}: ${c.value}`).join("; ")
+              : `${v.yLabel}; ${v.xLabel}`;
     const box = el("figure", undefined, "lesson-visual");
     box.dataset.visual = v.kind;
     if (v.kind === "fraction-bar") {
@@ -69,6 +73,96 @@
             svg("text", { x, y: 32, "text-anchor": "middle" }, m.label),
           );
         }
+      } else if (v.kind === "venn") {
+        picture.classList.add("visual-venn");
+        picture.setAttribute("viewBox", "0 0 480 280");
+        picture.append(
+          svg("rect", {
+            x: 10,
+            y: 10,
+            width: 460,
+            height: 260,
+            rx: 12,
+            fill: "white",
+            stroke: "#c9b8ea",
+          }),
+          svg("ellipse", {
+            cx: 185,
+            cy: 143,
+            rx: 115,
+            ry: 100,
+            fill: "#ece3ff",
+            "fill-opacity": 0.8,
+            stroke: "#7651bc",
+          }),
+          svg("ellipse", {
+            cx: 295,
+            cy: 143,
+            rx: 115,
+            ry: 100,
+            fill: "#e0edff",
+            "fill-opacity": 0.7,
+            stroke: "#466b9b",
+          }),
+          svg("text", { x: 126, y: 38, "text-anchor": "middle" }, v.leftLabel),
+          svg("text", { x: 354, y: 38, "text-anchor": "middle" }, v.rightLabel),
+        );
+        for (const [region, x, y] of [
+          ["leftOnly", 135, 105],
+          ["common", 240, 105],
+          ["rightOnly", 345, 105],
+          ["outside", 40, 75],
+        ])
+          (v[region].length ? v[region] : ["∅"]).forEach((value, i) =>
+            picture.append(
+              svg("text", { x, y: y + i * 30, "text-anchor": "middle" }, value),
+            ),
+          );
+      } else if (v.kind === "bar-chart") {
+        picture.classList.add("visual-bar-chart");
+        picture.setAttribute("viewBox", "0 0 480 260");
+        for (let i = 0; i <= 4; i++) {
+          const y = 210 - i * 43;
+          picture.append(
+            svg("line", {
+              x1: 43,
+              y1: y,
+              x2: 465,
+              y2: y,
+              class: "visual-grid",
+            }),
+            svg(
+              "text",
+              { x: 34, y: y + 5, "text-anchor": "end" },
+              String((v.max * i) / 4),
+            ),
+          );
+        }
+        const step = 410 / v.categories.length;
+        v.categories.forEach((c, i) => {
+          const x = 49 + i * step,
+            height = (c.value / v.max) * 172;
+          picture.append(
+            svg("rect", {
+              x: x + step * 0.17,
+              y: 210 - height,
+              width: step * 0.66,
+              height,
+              rx: 4,
+              fill: i % 2 ? "#9164da" : "#6840b8",
+            }),
+            svg(
+              "text",
+              { x: x + step / 2, y: 200 - height, "text-anchor": "middle" },
+              String(c.value),
+            ),
+            svg(
+              "text",
+              { x: x + step / 2, y: 241, "text-anchor": "middle" },
+              c.label,
+            ),
+          );
+        });
       } else {
         const x = (n) => 46 + (n / v.maxX) * 390,
           y = (n) => 184 - (n / v.maxY) * 132;

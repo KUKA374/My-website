@@ -1,0 +1,7 @@
+/* Only the new content figures. Stage 8B layout and QMJ styles stay unchanged. */
+.lesson-visual svg.visual-venn text {
+  font-size: 22px;
+}
+.lesson-visual svg.visual-bar-chart text {
+  font-size: 19px;
+}

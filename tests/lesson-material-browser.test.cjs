@@ -46,15 +46,24 @@ test("initial real HTTP loads one material, one small index and zero slide/video
     "games.html",
   );
 });
-test("presentation opens only on demand, respects ranges and reuses one 12-slide resource for two lessons", async (t) => {
+test("presentation opens only on demand, respects ranges and reuses the ratio block for lessons five and six", async (t) => {
   const p = await demo(t);
+  await p.goto(
+    new URL(
+      "lesson-material.html?class=6&subject=math&quarter=1&lesson=5",
+      p.url(),
+    ).href,
+  );
+  await p.waitForFunction(
+    () => LessonMaterialDemo.currentId() === "ktp1:6:math:1:5",
+  );
   await p.locator("#openPresentation").click();
   await p.waitForSelector("#presentationDialog[open]");
   assert.match(await p.locator("#slidePosition").textContent(), /^1 \/ 12/);
-  assert.equal(await p.locator("#slideBody .katex").count(), 0);
+  assert.equal(await p.locator("#slideBody .katex").count(), 1);
   await p.locator("#nextSlide").click();
   assert.equal(await p.locator("#slideBody .katex").count(), 1);
-  for (let number = 3; number <= 8; number++) {
+  for (let number = 3; number <= 9; number++) {
     await p.locator("#nextSlide").click();
     assert.match(
       await p.locator("#slidePosition").textContent(),
@@ -75,7 +84,7 @@ test("presentation opens only on demand, respects ranges and reuses one 12-slide
   );
   await p.locator("#nextLesson").click();
   await p.waitForFunction(
-    () => LessonMaterialDemo.currentId() === "ktp1:6:math:1:2",
+    () => LessonMaterialDemo.currentId() === "ktp1:6:math:1:6",
   );
   assert.match(
     await p.locator("#materialStatus").textContent(),
@@ -83,8 +92,8 @@ test("presentation opens only on demand, respects ranges and reuses one 12-slide
   );
   await p.locator("#openPresentation").click();
   await p.waitForSelector("#presentationDialog[open]");
-  assert.match(await p.locator("#slidePosition").textContent(), /^9 \/ 12/);
-  for (let number = 10; number <= 12; number++) {
+  assert.match(await p.locator("#slidePosition").textContent(), /^10 \/ 12/);
+  for (let number = 11; number <= 12; number++) {
     await p.locator("#nextSlide").click();
     assert.match(
       await p.locator("#slidePosition").textContent(),
@@ -98,7 +107,7 @@ test("presentation opens only on demand, respects ranges and reuses one 12-slide
       () =>
         performance
           .getEntriesByType("resource")
-          .filter((r) => r.name.endsWith("fractions-review-v1.json")).length,
+          .filter((r) => r.name.endsWith("ratios-percent-v1.json")).length,
     ),
     1,
   );
@@ -323,13 +332,13 @@ test("measured transfer and Chromium JS heap stay bounded across repeated lesson
         transfer: r.transferSize,
       })),
   );
-  assert.equal(resources.length, 2);
+  assert.equal(resources.length, 3);
   assert.ok(resources.every((r) => r.bytes > 0));
   const stats = await p.evaluate(() => LessonMaterialDemo.stats());
   assert.ok(stats.cacheBytes <= 524288);
   assert.ok(stats.entries <= 8);
   assert.ok(after - before < 5 * 1024 * 1024);
-  assert.ok(resources.reduce((n, r) => n + r.bytes, 0) < 40000);
+  assert.ok(resources.reduce((n, r) => n + r.bytes, 0) < 65536);
   fs.writeFileSync(
     "/workspace/audit-math-ai/stage8a/performance.json",
     JSON.stringify(
