@@ -106,9 +106,9 @@ test("worked examples reveal one step at a time and share safe mathematical visu
     1,
   );
   await p.keyboard.press("End");
-  assert.match(await p.locator("#slidePosition").textContent(), /^8 \/ 12/);
+  assert.match(await p.locator("#slidePosition").textContent(), /^12 \/ 12/);
   await p.keyboard.press("ArrowRight");
-  assert.match(await p.locator("#slidePosition").textContent(), /^8 \/ 12/);
+  assert.match(await p.locator("#slidePosition").textContent(), /^12 \/ 12/);
   await p.keyboard.press("Home");
   assert.match(await p.locator("#slidePosition").textContent(), /^1 \/ 12/);
 });

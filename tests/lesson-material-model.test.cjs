@@ -70,11 +70,11 @@ test("one 12-slide block can be used by two lessons with distinct ranges", () =>
     fs.readFileSync("lesson-materials/index/6/math/q1.json"),
   );
   assert.equal(
-    index.lessons[0].presentation.id,
-    index.lessons[1].presentation.id,
+    index.lessons[4].presentation.id,
+    index.lessons[5].presentation.id,
   );
-  assert.notEqual(index.lessons[0].lessonId, index.lessons[1].lessonId);
-  assert.equal(index.lessons[1].content, null);
+  assert.notEqual(index.lessons[4].lessonId, index.lessons[5].lessonId);
+  assert.equal(index.lessons[5].content, null);
 });
 test("personal homework is bound to UID and lesson and never changes constructor storage", () => {
   const data = new Map([["math-ai-lessons-v2:alice", "existing"]]);

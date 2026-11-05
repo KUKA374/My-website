@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parent.parent
 FILES = ['lesson-material-model.test.cjs', 'lesson-material-loader.test.cjs',
          'lesson-material-security-contract.test.cjs',
          'lesson-material-browser.test.cjs', 'lesson-experience-model.test.cjs',
-         'lesson-experience-browser.test.cjs']
+         'lesson-experience-browser.test.cjs', 'grade6-q1-content.test.cjs',
+         'grade6-q1-content-browser.test.cjs']
 logs = Path(os.environ.get('LESSON_MATERIAL_QA_LOG_DIR', '/tmp/iustaz-lesson-material-qa'))
 logs.mkdir(parents=True, exist_ok=True)
 results = []

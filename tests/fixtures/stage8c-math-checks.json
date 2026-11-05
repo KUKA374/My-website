@@ -1,0 +1,1702 @@
+{
+  "schemaVersion": 1,
+  "lessons": [
+    "ktp1:6:math:1:1",
+    "ktp1:6:math:1:2",
+    "ktp1:6:math:1:3",
+    "ktp1:6:math:1:4",
+    "ktp1:6:math:1:5"
+  ],
+  "proofs": [
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "example",
+      "id": "addition",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2/7+3/14",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "2/7 = 4/14",
+        "4/14 + 3/14 = 7/14 = 1/2"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "example",
+      "id": "division",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "3/8/(9/10)",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "3/8 × 10/9 = 30/72",
+        "30/72 = 5/12"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "example",
+      "id": "subtraction",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "7/9-1/3",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "1/3 = 3/9",
+        "7/9 − 3/9 = 4/9"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "example",
+      "id": "multiplication",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "4/7*7/12",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "4/7 × 7/12 = 28/84",
+        "28/84 = 1/3"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "pair-1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "1/2+1/4",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "pair-2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "3/4-1/6",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "pair-3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2/3/(4/5)",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "group-task-1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "1/3+1/6",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "group-task-2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "12*3/4",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} км",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "group-task-3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2/5*3/4",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "group-task-4",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "(1/2+1/3)/(5/6)",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "a1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "1/4+1/4",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "a2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "3/5-1/5",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "b1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "5/6-1/4",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "b2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2/3*9/10",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "c1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "(3/4-1/6)/(7/8)",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "c2",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "20*3/5",
+          "b": "20-20*3/5"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "homework-1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2/3+1/6",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:1",
+      "kind": "task",
+      "id": "homework-2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "3/5/(9/10)",
+          "format": "fraction"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-p1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "4.2*3",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "42 × 3 = 126",
+        "126/10 = 12,6"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-p2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "6.75*1.2",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "675 × 12 = 8100",
+        "8100/1000 = 8,1"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-p3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "9.36/1.3",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "93,6/13 = 7,2",
+        "7,2 × 1,3 = 9,36"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-g1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "840*1.75",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": [
+        "840 × 1,75 = 1470"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-g2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "8.4/0.7",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} бөлік",
+      "equations": [
+        "8,4/0,7 = 84/7 = 12"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-g3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "7.65/3",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} кг",
+      "equations": [
+        "7,65/3 = 2,55",
+        "2,55 × 3 = 7,65"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-g4",
+      "parts": [
+        {
+          "op": "number",
+          "expression": ".45*4+.6*2",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} л",
+      "equations": [
+        "0,45 × 4 = 1,8",
+        "0,6 × 2 = 1,2",
+        "1,8 + 1,2 = 3"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-a1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "1.8*4",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "18 × 4 = 72",
+        "72/10 = 7,2"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-a2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "6.3/7",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "63/7 = 9",
+        "9/10 = 0,9"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-b1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "3.6*.25",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "36 × 25 = 900",
+        "900/1000 = 0,9"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-b2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "5.04/.6",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "50,4/6 = 8,4",
+        "8,4 × 0,6 = 5,04"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-c1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "(7.5-2.7)/.8",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "7,5 − 2,7 = 4,8",
+        "4,8/0,8 = 6"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-c2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "3.75*1.6",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} м²",
+      "equations": [
+        "3,75 × 1,6 = 6"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-h1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2.08*1.5",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "208 × 15 = 3120",
+        "3120/1000 = 3,12"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "task",
+      "id": "l2-h2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "12.6/.35",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "1260/35 = 36",
+        "36 × 0,35 = 12,6"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "example",
+      "id": "l2-e1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "1.35*4",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "135 × 4 = 540",
+        "540/100 = 5,4"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "example",
+      "id": "l2-e2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2.4*.35",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "24 × 35 = 840",
+        "840/1000 = 0,84"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:2",
+      "kind": "example",
+      "id": "l2-e3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "4.32/.12",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "432/12 = 36",
+        "36 × 0,12 = 4,32"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-p1",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              1,
+              3,
+              5,
+              7
+            ],
+            [
+              3,
+              4,
+              7,
+              8
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-p2",
+      "parts": [
+        {
+          "op": "set",
+          "action": "union",
+          "sets": [
+            [
+              2,
+              6,
+              10
+            ],
+            [
+              6,
+              8,
+              12
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-p3",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              2,
+              3,
+              6
+            ],
+            [
+              3,
+              5,
+              6,
+              9
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "action": "union",
+          "sets": [
+            [
+              2,
+              3,
+              6
+            ],
+            [
+              3,
+              5,
+              6,
+              9
+            ]
+          ]
+        }
+      ],
+      "template": "A∩B={0}; A∪B={1}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-g1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "16+12-5",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} оқушы",
+      "equations": [
+        "16 + 12 − 5 = 23"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-g2",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              "а",
+              "ә",
+              "е",
+              "о"
+            ],
+            [
+              "е",
+              "и",
+              "о",
+              "ұ"
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-g3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "4+3+5",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} элемент",
+      "equations": [
+        "4 + 3 + 5 = 12"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-g4",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              2,
+              4,
+              6
+            ],
+            [
+              1,
+              3,
+              5
+            ]
+          ]
+        },
+        {
+          "op": "set",
+          "action": "union",
+          "sets": [
+            [
+              2,
+              4,
+              6
+            ],
+            [
+              1,
+              3,
+              5
+            ]
+          ]
+        }
+      ],
+      "template": "A∩B={0}; A∪B={1}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-a1",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              2,
+              5,
+              8
+            ],
+            [
+              5,
+              8,
+              9
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-a2",
+      "parts": [
+        {
+          "op": "set",
+          "action": "union",
+          "sets": [
+            [
+              1,
+              4
+            ],
+            [
+              4,
+              9
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-b1",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              2,
+              4,
+              6,
+              8
+            ],
+            [
+              4,
+              6,
+              10
+            ],
+            [
+              1,
+              4,
+              6
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-b2",
+      "parts": [
+        {
+          "op": "set",
+          "action": "union",
+          "sets": [
+            [
+              1,
+              2,
+              7
+            ],
+            [
+              2,
+              4,
+              7
+            ],
+            [
+              4,
+              6,
+              8
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-c1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "31-(19+14-6)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} оқушы",
+      "equations": [
+        "19 + 14 − 6 = 27",
+        "31 − 27 = 4"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-c2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "18+17-29",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} элемент",
+      "equations": [
+        "18 + 17 − 29 = 6"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-h1",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              2,
+              3,
+              5,
+              7
+            ],
+            [
+              1,
+              3,
+              5,
+              9
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "task",
+      "id": "l3-h2",
+      "parts": [
+        {
+          "op": "set",
+          "action": "union",
+          "sets": [
+            [
+              10,
+              20,
+              30
+            ],
+            [
+              20,
+              40,
+              50
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "example",
+      "id": "l3-e1",
+      "parts": [
+        {
+          "op": "set",
+          "action": "intersection",
+          "sets": [
+            [
+              1,
+              2,
+              4,
+              6
+            ],
+            [
+              2,
+              3,
+              6,
+              8
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "example",
+      "id": "l3-e2",
+      "parts": [
+        {
+          "op": "set",
+          "action": "union",
+          "sets": [
+            [
+              3,
+              6,
+              9
+            ],
+            [
+              6,
+              10,
+              12
+            ]
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:3",
+      "kind": "example",
+      "id": "l3-e3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "20+13-8",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} оқушы",
+      "equations": [
+        "20 + 13 = 33",
+        "33 − 8 = 25"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-p1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "240*15/100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "240 × 15/100 = 36"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-p2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "15/(9+15+6)*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "9 + 15 + 6 = 30",
+        "15/30 × 100 = 50"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-p3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "3600*(1-20/100)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": [
+        "3600 × 20/100 = 720",
+        "3600 − 720 = 2880"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-g1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "120*35/100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} кітап",
+      "equations": [
+        "120 × 35/100 = 42"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-g2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "10/(18+12+10)*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "18 + 12 + 10 = 40",
+        "10/40 × 100 = 25"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-g3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "4800*(1+12.5/100)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": [
+        "4800 × 12,5/100 = 600",
+        "4800 + 600 = 5400"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-g4",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "4500/(1-25/100)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": [
+        "4500/(75/100) = 6000"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-a1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "350*10/100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "350 × 10/100 = 35"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-a2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "7/20*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "7/20 = 35/100",
+        "7/20 × 100 = 35"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-b1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "72/240*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "72/240 × 100 = 30"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-b2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "8/(5+8+7)*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "5 + 8 + 7 = 20",
+        "8/20 × 100 = 40"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-c1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "18/(60/100)-18",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} қыз",
+      "equations": [
+        "18/(60/100) = 30",
+        "30 − 18 = 12"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-c2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "5000*1.1*1.2",
+          "format": "decimal"
+        },
+        {
+          "op": "number",
+          "expression": "(5000*1.1*1.2-5000)/5000*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге; {1}%",
+      "equations": [
+        "5000 × 1,1 = 5500",
+        "5500 × 1,2 = 6600",
+        "(6600 − 5000)/5000 × 100 = 32"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-h1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "625*8/100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "625 × 8/100 = 50"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "task",
+      "id": "l4-h2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "9000*(1-15/100)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": [
+        "9000 × 15/100 = 1350",
+        "9000 − 1350 = 7650"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "example",
+      "id": "l4-e1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "200*12/100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "200 × 12/100 = 24"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "example",
+      "id": "l4-e2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "16/(12+8+16+4)*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "12 + 8 + 16 + 4 = 40",
+        "16/40 × 100 = 40"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:4",
+      "kind": "example",
+      "id": "l4-e3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "6400/(1-20/100)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": [
+        "100 − 20 = 80",
+        "6400/(80/100) = 8000"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-p1",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "18",
+          "b": "30"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "18/6 = 3",
+        "30/6 = 5",
+        "18:30 = 3:5"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-p2",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "2*100",
+          "b": "80"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "200/40 = 5",
+        "80/40 = 2"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-p3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "21/84*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "21/84 × 100 = 25"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-g1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "550/(4+7)*4",
+          "format": "decimal"
+        },
+        {
+          "op": "number",
+          "expression": "550/(4+7)*7",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} мл шырын; {1} мл су",
+      "equations": [
+        "4 + 7 = 11",
+        "550/11 = 50",
+        "50 × 4 = 200",
+        "50 × 7 = 350"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-g2",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "14",
+          "b": "21"
+        },
+        {
+          "op": "number",
+          "expression": "14/(14+21)*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}%",
+      "equations": [
+        "14:21 = 2:3",
+        "14 + 21 = 35",
+        "14/35 × 100 = 40"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-g3",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "1.2*1000",
+          "b": "800"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "1200/400 = 3",
+        "800/400 = 2"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-g4",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "24/(5+3)*5",
+          "format": "decimal"
+        },
+        {
+          "op": "number",
+          "expression": "24/(5+3)*3",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} қызыл; {1} көк",
+      "equations": [
+        "5 + 3 = 8",
+        "24/8 = 3",
+        "3 × 5 = 15",
+        "3 × 3 = 9"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-a1",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "8",
+          "b": "20"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "8/4 = 2",
+        "20/4 = 5"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-a2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "12/4",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} есе",
+      "equations": [
+        "12/4 = 3"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-b1",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "45",
+          "b": "1.5*60"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "45/45 = 1",
+        "90/45 = 2"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-b2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "22/55*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "22/55 × 100 = 40"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-c1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "66/(3+8)*3",
+          "format": "decimal"
+        },
+        {
+          "op": "number",
+          "expression": "66/(3+8)*8",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": [
+        "3 + 8 = 11",
+        "66/11 = 6",
+        "6 × 3 = 18",
+        "6 × 8 = 48"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-c2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "18/(7-5)*7",
+          "format": "decimal"
+        },
+        {
+          "op": "number",
+          "expression": "18/(7-5)*5",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": [
+        "7 − 5 = 2",
+        "18/2 = 9",
+        "9 × 7 = 63",
+        "9 × 5 = 45"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-h1",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "27",
+          "b": "63"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "27/9 = 3",
+        "63/9 = 7"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "task",
+      "id": "l5-h2",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "18",
+          "b": "12"
+        },
+        {
+          "op": "number",
+          "expression": "18/(18+12)*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}%",
+      "equations": [
+        "18:12 = 3:2",
+        "18 + 12 = 30",
+        "18/30 × 100 = 60"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "example",
+      "id": "l5-e1",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "6",
+          "b": "9"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "6/3 = 2",
+        "9/3 = 3",
+        "6:9 = 2:3"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "example",
+      "id": "l5-e2",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": "3*100",
+          "b": "120"
+        }
+      ],
+      "template": "{0}",
+      "equations": [
+        "300/60 = 5",
+        "120/60 = 2"
+      ]
+    },
+    {
+      "lessonId": "ktp1:6:math:1:5",
+      "kind": "example",
+      "id": "l5-e3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "6/(6+9)*100",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}%",
+      "equations": [
+        "6 + 9 = 15",
+        "6/15 × 100 = 40"
+      ]
+    }
+  ]
+}
