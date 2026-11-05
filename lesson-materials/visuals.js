@@ -1,0 +1,137 @@
+/* Reusable, typed mathematical figures. No authored SVG/HTML or external assets. */
+(function () {
+  "use strict";
+  const el = (tag, text, cls) => {
+    const e = document.createElement(tag);
+    if (text !== undefined) e.textContent = text;
+    if (cls) e.className = cls;
+    return e;
+  };
+  function svg(tag, attrs = {}, text) {
+    const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const [key, value] of Object.entries(attrs))
+      e.setAttribute(key, value);
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  function figure(input, caption = "") {
+    const v = LessonMaterialsModel.visual(input);
+    caption ||=
+      v.kind === "fraction-bar"
+        ? `${v.parts} тең бөліктің ${v.filled} бөлігі боялған`
+        : v.kind === "number-line"
+          ? "Сан сәулесі: " + v.marks.map((m) => m.label).join(", ")
+          : `${v.yLabel}; ${v.xLabel}`;
+    const box = el("figure", undefined, "lesson-visual");
+    box.dataset.visual = v.kind;
+    if (v.kind === "fraction-bar") {
+      const bar = el("div", undefined, "material-fraction-bar");
+      bar.setAttribute("role", "img");
+      bar.setAttribute(
+        "aria-label",
+        `${v.parts} тең бөліктің ${v.filled} бөлігі боялған`,
+      );
+      for (let i = 0; i < v.parts; i++)
+        bar.append(el("span", undefined, i < v.filled ? "filled" : ""));
+      box.append(bar);
+    } else {
+      const picture = svg("svg", {
+        viewBox: "0 0 480 230",
+        role: "img",
+        "aria-label": caption || "Математикалық сызба",
+      });
+      if (v.kind === "number-line") {
+        picture.setAttribute("viewBox", "0 0 480 130");
+        picture.append(
+          svg("path", {
+            d: "M30 65H452L443 59M452 65L443 71",
+            class: "visual-axis",
+          }),
+        );
+        for (let i = 0; i <= v.divisions; i++) {
+          const x = 36 + (i * 400) / v.divisions;
+          picture.append(
+            svg("line", { x1: x, x2: x, y1: 58, y2: 72, class: "visual-axis" }),
+          );
+          if (i === 0 || i === v.divisions)
+            picture.append(
+              svg(
+                "text",
+                { x, y: 98, "text-anchor": "middle" },
+                String(i === 0 ? 0 : 1),
+              ),
+            );
+        }
+        for (const m of v.marks) {
+          const x = 36 + (m.tick * 400) / v.divisions;
+          picture.append(
+            svg("circle", { cx: x, cy: 65, r: 7, class: "visual-point" }),
+            svg("text", { x, y: 32, "text-anchor": "middle" }, m.label),
+          );
+        }
+      } else {
+        const x = (n) => 46 + (n / v.maxX) * 390,
+          y = (n) => 184 - (n / v.maxY) * 132;
+        for (let i = 0; i <= 4; i++) {
+          picture.append(
+            svg("path", {
+              d: `M46 ${y((v.maxY * i) / 4)}H436M${x((v.maxX * i) / 4)} 52V184`,
+              class: "visual-grid",
+            }),
+          );
+          picture.append(
+            svg(
+              "text",
+              { x: x((v.maxX * i) / 4), y: 207, "text-anchor": "middle" },
+              String((v.maxX * i) / 4),
+            ),
+            svg(
+              "text",
+              { x: 29, y: y((v.maxY * i) / 4) + 5, "text-anchor": "end" },
+              String((v.maxY * i) / 4),
+            ),
+          );
+        }
+        picture.append(
+          svg("path", { d: "M46 42V184H451", class: "visual-axis" }),
+          svg("polyline", {
+            points: v.points.map((p) => `${x(p.x)},${y(p.y)}`).join(" "),
+            class: "visual-line",
+          }),
+        );
+        for (const p of v.points)
+          picture.append(
+            svg("circle", {
+              cx: x(p.x),
+              cy: y(p.y),
+              r: 5,
+              class: "visual-point",
+            }),
+          );
+        picture.append(
+          svg("text", { x: 48, y: 24 }, v.yLabel),
+          svg("text", { x: 450, y: 228, "text-anchor": "end" }, v.xLabel),
+        );
+      }
+      box.append(picture);
+    }
+    if (caption) box.append(el("figcaption", caption));
+    return box;
+  }
+  function formula(text) {
+    const line = el("div", undefined, "material-formula");
+    line.setAttribute("role", "math");
+    line.setAttribute("aria-label", text);
+    // Stacked simple fractions, safe text for every other symbol. KaTeX remains slide-only and lazy.
+    for (const part of text.split(/(\b(?:\d+|[a-z])\/(?:\d+|[a-z])\b)/g)) {
+      if (/^(?:\d+|[a-z])\/(?:\d+|[a-z])$/.test(part)) {
+        const f = el("span", undefined, "math-fraction");
+        const [a, b] = part.split("/");
+        f.append(el("span", a), el("span", b));
+        line.append(f);
+      } else line.append(document.createTextNode(part));
+    }
+    return line;
+  }
+  window.LessonVisuals = { figure, formula };
+})();

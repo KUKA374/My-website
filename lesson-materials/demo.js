@@ -22,18 +22,24 @@
     slides = null,
     slideIndex = 0,
     katexReady = null,
-    dialogOwner = null;
-  function message(text, error = false) {
+    dialogOwner = null,
+    answersShown = false,
+    selectedLevel = "A",
+    selectedGame = null,
+    slideStepCount = 0,
+    qmjOwner = null;
+  function message(text, error = false, quiet = false) {
     $("materialStatus").textContent = text;
-    $("materialStatus").className = error ? "iu-error" : "";
+    $("materialStatus").className = error ? "iu-error" : quiet ? "iu-sr" : "";
     $("retryMaterial").hidden = !error;
   }
   function closeDialogs() {
-    for (const id of ["presentationDialog", "videoDialog"])
+    for (const id of ["presentationDialog", "videoDialog", "qmjDialog"])
       if ($(id).open) $(id).close();
     $("videoBody").replaceChildren();
     $("slideBody").replaceChildren();
     slides = null;
+    $("qmjPreview").replaceChildren();
   }
   function clearPrivate() {
     privateStore = null;
@@ -41,6 +47,10 @@
     $("privateHomework").hidden = true;
     $("personalHomework").value = "";
     $("personalNotes").value = "";
+    for (const id of ["textbookParagraph", "textbookExercise"]) {
+      $(id).value = "";
+      $(id).disabled = true;
+    }
     $("personalStatus").textContent = "";
     $("savePersonal").disabled = true;
     $("personalHomework").disabled = true;
@@ -77,12 +87,20 @@
   function showTask(t) {
     const box = node("article", undefined, "material-task");
     box.append(node("p", t.prompt));
-    const d = node("details"),
-      summary = node("summary", "Жауап пен шешімді қарау");
+    const d = node("div", undefined, "lesson-task-answer");
+    d.dataset.taskAnswer = "true";
+    d.hidden = !answersShown;
     d.append(
-      summary,
-      node("pre", [t.answer, t.solution].filter(Boolean).join("\n")),
+      node("strong", "Жауабы: " + t.answer),
+      node("p", t.solution),
+      node("p", "Критерий: " + t.criteria),
     );
+    const descriptors = node("ul");
+    for (const descriptor of t.descriptors)
+      descriptors.append(
+        node("li", `${descriptor.text} — ${descriptor.points} ұпай`),
+      );
+    d.append(descriptors);
     box.append(d);
     return box;
   }
@@ -93,13 +111,130 @@
     if (!tasks.length) empty(target);
     else for (const t of tasks.slice(0, pairCount)) target.append(showTask(t));
     $("nextPair").hidden = pairCount >= tasks.length;
+    $("pairPosition").textContent = tasks.length
+      ? `${pairCount} / ${tasks.length} тапсырма ашылды`
+      : "Тапсырмалар әзірге қосылмаған";
+  }
+  function answerVisibility() {
+    document
+      .querySelectorAll("[data-task-answer]")
+      .forEach((e) => (e.hidden = !answersShown));
+    $("toggleAnswers").setAttribute("aria-pressed", String(answersShown));
+    $("toggleAnswers").textContent = answersShown
+      ? "Жауаптарды жасыру"
+      : "Жауаптарды көрсету";
+    $("answerStatus").textContent = answersShown
+      ? "Жауаптар көрсетілуде · мұғалім көрінісі"
+      : "Жауаптар жасырылған";
+  }
+  function chooseLevel(level) {
+    selectedLevel = level;
+    document
+      .querySelectorAll("[data-work-level]")
+      .forEach((e) => (e.hidden = e.dataset.workLevel !== level));
+    document
+      .querySelectorAll("[data-level-select]")
+      .forEach((e) =>
+        e.setAttribute("aria-pressed", String(e.dataset.levelSelect === level)),
+      );
+  }
+  function chooseGame() {
+    const games = ConstructorGameLinks.list(GameLearning);
+    selectedGame = games.find((g) => g.id === $("chooseGame").value) || null;
+    $("gameChoice").replaceChildren();
+    if (selectedGame)
+      $("gameChoice").append(
+        node("h3", selectedGame.title),
+        node("p", selectedGame.purpose),
+        node("p", selectedGame.rule),
+        node("span", selectedGame.formats.join(" · "), "iu-badge"),
+      );
+  }
+  function personalInput() {
+    return {
+      homeworkText: $("personalHomework").value,
+      notes: $("personalNotes").value,
+      textbook: {
+        paragraph: $("textbookParagraph").value,
+        exercise: $("textbookExercise").value,
+      },
+    };
+  }
+  function qmjPreview() {
+    const p = LessonQmj.plan(
+        current.material,
+        current.catalog,
+        personalInput(),
+        selectedGame,
+      ),
+      out = $("qmjPreview");
+    out.replaceChildren(
+      node("h3", p.title),
+      node("p", p.context),
+      node("p", "Бөлім: " + p.section),
+      node("h4", "Оқу мақсаттары · КТП"),
+      node("p", p.objective),
+      node("h4", "Сабақ мақсаты"),
+      node("p", p.goal || "Әзірге енгізілмеген"),
+      node(
+        "p",
+        "Алдыңғы білім: " + (p.priorKnowledge || "Әзірге енгізілмеген"),
+      ),
+      node("p", "Ресурстар: " + p.resources.join(", ")),
+      node("p", `${p.minutes} минут · ${p.tasks}`),
+    );
+    const table = node("table"),
+      head = node("thead"),
+      row = node("tr");
+    for (const title of ["Кезең / уақыт", "Мұғалім әрекеті", "Оқушы әрекеті"]) {
+      const th = node("th", title);
+      th.scope = "col";
+      row.append(th);
+    }
+    head.append(row);
+    const body = node("tbody");
+    for (const stage of p.stages) {
+      const tr = node("tr");
+      tr.append(
+        node("td", `${stage.title} · ${stage.minutes} мин`),
+        node("td", stage.teacher),
+        node("td", stage.student),
+      );
+      body.append(tr);
+    }
+    table.append(head, body);
+    out.append(table, node("h4", "Бағалау критерийлері мен дескрипторлар"));
+    for (const a of p.assessment) {
+      out.append(node("p", a.criterion));
+      const list = node("ul");
+      for (const d of a.descriptors)
+        list.append(node("li", `${d.text} — ${d.points} ұпай`));
+      out.append(list);
+    }
+    out.append(
+      node("p", "Таңдалған ойын: " + p.game),
+      node("h4", "Ортақ үй тапсырмасы"),
+    );
+    for (const text of p.commonHomework) out.append(node("p", text));
+    out.append(node("h4", "Мұғалім енгізген үй тапсырмасы"));
+    for (const text of p.homework.length
+      ? p.homework
+      : ["Әзірге енгізілмеген."])
+      out.append(node("p", text));
   }
   function render(material, catalog) {
     const c = catalog.identity;
     current = { material, catalog };
+    answersShown = false;
+    selectedLevel = "A";
+    selectedGame = null;
+    answerVisibility();
+    $("teacherControls").hidden = false;
+    $("lessonNavigation").hidden = false;
     $("materialBody").hidden = false;
     $("materialLogin").hidden = true;
     $("materialTitle").textContent = catalog.lesson.title;
+    document.title = catalog.lesson.title + " · iUSTAZ";
     $("materialTitle").tabIndex = -1;
     $("materialContext").textContent =
       `${c.grade}-сынып · ${catalog.subjectTitle} · ${c.quarter}-тоқсан · №${catalog.lesson.number} · ${catalog.lesson.section}`;
@@ -114,7 +249,7 @@
     $("videoStatus").textContent =
       material.video?.publication === "published"
         ? material.video.title
-        : "Видеосабақ жарияланбаған немесе метадерегі жоқ.";
+        : "Видеосабақ жақын арада енгізіледі";
     $("playVideo").hidden = material.video?.publication !== "published";
     for (const id of [
       "materialTheory",
@@ -130,15 +265,33 @@
       $(id).replaceChildren();
     for (const b of material.theory)
       $("materialTheory").append(
-        node(b.kind === "formula" ? "pre" : "p", b.text),
+        b.kind === "visual"
+          ? LessonVisuals.figure(b.visual, b.text)
+          : b.kind === "formula"
+            ? LessonVisuals.formula(b.text)
+            : node(b.kind === "heading" ? "h3" : "p", b.text),
       );
     if (!material.theory.length) empty($("materialTheory"));
     for (const e of material.examples) {
       const a = node("article", undefined, "material-task");
       a.append(node("h3", e.title));
       const ol = node("ol");
-      for (const step of e.steps) ol.append(node("li", step));
-      a.append(ol, node("strong", e.answer));
+      let count = Math.min(1, e.steps.length);
+      const result = node("strong", "Нәтиже: " + e.answer),
+        next = node("button", "Келесі қадам", "iu-button");
+      next.type = "button";
+      const draw = () => {
+        ol.replaceChildren();
+        for (const step of e.steps.slice(0, count)) ol.append(node("li", step));
+        result.hidden = count < e.steps.length;
+        next.hidden = count >= e.steps.length;
+      };
+      next.onclick = () => {
+        count = Math.min(count + 1, e.steps.length);
+        draw();
+      };
+      draw();
+      a.append(ol, next, result);
       $("materialExamples").append(a);
     }
     if (!material.examples.length) empty($("materialExamples"));
@@ -167,6 +320,8 @@
     if (!material.groupWork.length) empty($("materialGroups"));
     for (const level of ["A", "B", "C"]) {
       const section = node("section");
+      section.dataset.workLevel = level;
+      section.hidden = level !== selectedLevel;
       section.append(node("h3", level + " деңгейі"));
       for (const t of material.individualWork[level])
         section.append(showTask(t));
@@ -201,6 +356,9 @@
     for (const r of material.qmj.resources) resources.append(node("li", r));
     $("materialQmj").append(resources);
     const topic = [c.grade, c.subject, c.quarter, c.number].join("-");
+    $("chooseGame").replaceChildren();
+    $("chooseGame").disabled = !GameLearning.lessons[topic];
+    $("launchSelectedGame").hidden = !GameLearning.lessons[topic];
     if (GameLearning.lessons[topic])
       for (const game of ConstructorGameLinks.list(GameLearning)) {
         const a = node("a", game.title, "iu-button");
@@ -208,6 +366,9 @@
         a.dataset.gameLink = game.id;
         a.setAttribute("aria-label", game.title + " — ойындар каталогын ашу");
         $("materialGames").append(a);
+        const option = node("option", game.title);
+        option.value = game.id;
+        $("chooseGame").append(option);
       }
     else
       $("materialGames").append(
@@ -216,6 +377,7 @@
           "Бұл КТП сабағына ойын тапсырмаларының сәйкестігі әзірге расталмаған. Қолданыстағы ойындар банкі 5–7-сыныптарды қамтиды.",
         ),
       );
+    chooseGame();
     try {
       privateStore = new LessonMaterialsPrivate.LocalHomework(
         localStorage,
@@ -225,6 +387,10 @@
       privateRevision = d.revision;
       $("personalHomework").value = d.homeworkText;
       $("personalNotes").value = d.notes;
+      $("textbookParagraph").value = d.textbook?.paragraph || "";
+      $("textbookExercise").value = d.textbook?.exercise || "";
+      $("textbookParagraph").disabled = false;
+      $("textbookExercise").disabled = false;
       $("privateHomework").hidden = false;
       $("savePersonal").disabled = false;
       $("personalHomework").disabled = false;
@@ -248,6 +414,8 @@
     clearPrivate();
     closeDialogs();
     $("materialBody").hidden = true;
+    $("teacherControls").hidden = true;
+    $("lessonNavigation").hidden = true;
     for (const id of [
       "legacyMaterial",
       "constructorMaterial",
@@ -265,8 +433,10 @@
       $("materialTitle").focus({ preventScroll: true });
       message(
         data.available
-          ? "Демонстрациялық сабақ жүктелді. Мазмұнын мұғалім тексеруі тиіс."
+          ? "Сабақ материалы дайын."
           : "КТП сабағы бар. Бұл сабақтың мазмұны әлі модульдік қорға көшірілмеген; бос бөлімдер қате емес.",
+        false,
+        data.available,
       );
       const rows = await LessonMaterialsKtp.rows(c);
       if (ticket !== version || owner?.uid !== uid) return;
@@ -331,23 +501,67 @@
       });
       $("slideBody").append(f);
     }
-    if (s.diagram) {
-      const bar = node("div", undefined, "material-fraction-bar");
-      bar.setAttribute("role", "img");
-      bar.setAttribute(
-        "aria-label",
-        `${s.diagram.parts} тең бөліктің ${s.diagram.filled} бөлігі боялған`,
-      );
-      for (let i = 0; i < s.diagram.parts; i++)
-        bar.append(
-          node("span", undefined, i < s.diagram.filled ? "filled" : ""),
-        );
-      $("slideBody").append(bar);
-    }
+    if (s.diagram) $("slideBody").append(LessonVisuals.figure(s.diagram));
+    slideStepCount = 0;
+    drawSlideSteps();
     $("slidePosition").textContent =
       `${slides.start + slideIndex} / ${slides.total} слайд · Осы сабақтың аралығы: ${slides.start}–${slides.end}`;
     $("previousSlide").disabled = slideIndex === 0;
     $("nextSlide").disabled = slideIndex === slides.slides.length - 1;
+  }
+  function drawSlideSteps() {
+    const steps = slides?.slides[slideIndex].steps || [];
+    $("slideSteps").replaceChildren();
+    for (const text of steps.slice(0, slideStepCount))
+      $("slideSteps").append(node("li", text));
+    $("nextSlideStep").hidden = slideStepCount >= steps.length;
+    $("slideStepPosition").textContent = steps.length
+      ? `${slideStepCount} / ${steps.length} түсіндіру қадамы ашылды`
+      : "";
+  }
+  function changeSlide(step) {
+    if (!slides) return;
+    slideIndex = Math.max(
+      0,
+      Math.min(slides.slides.length - 1, slideIndex + step),
+    );
+    drawSlide();
+    $("slideBody").focus({ preventScroll: true });
+  }
+  function fullscreenState() {
+    $("fullscreenSlides").setAttribute(
+      "aria-pressed",
+      String(
+        document.fullscreenElement === $("presentationScreen") ||
+          $("presentationDialog").classList.contains("presentation-expanded"),
+      ),
+    );
+  }
+  async function fullscreen() {
+    const dialog = $("presentationDialog"),
+      screen = $("presentationScreen");
+    if (!dialog.open) return;
+    if (document.fullscreenElement === screen) {
+      await document.exitFullscreen().catch(() => {});
+      return;
+    }
+    if (dialog.classList.contains("presentation-expanded")) {
+      dialog.classList.remove("presentation-expanded");
+      fullscreenState();
+      return;
+    }
+    try {
+      if (!screen.requestFullscreen) throw Error("unavailable");
+      await screen.requestFullscreen();
+      if (!dialog.open || !owner) await document.exitFullscreen();
+    } catch {
+      if (dialog.open) {
+        dialog.classList.add("presentation-expanded");
+        $("fullscreenStatus").textContent =
+          "Браузер толық экранды қолдамайды. Кеңейтілген көрініс ашылды.";
+      }
+    }
+    fullscreenState();
   }
   function boot() {
     // The shared shell hides profile text on narrow screens. Keep its control named here.
@@ -355,6 +569,31 @@
       .querySelector(".iu-profile > summary")
       ?.setAttribute("aria-label", "Профиль мәзірі");
     requireRole(["teacher", "admin", "super_admin"]);
+    $("toggleAnswers").onclick = () => {
+      if (!current || !owner) return;
+      answersShown = !answersShown;
+      answerVisibility();
+    };
+    document
+      .querySelectorAll("[data-level-select]")
+      .forEach((b) => (b.onclick = () => chooseLevel(b.dataset.levelSelect)));
+    $("chooseGame").onchange = chooseGame;
+    const showQmj = (e) => {
+      if (!current || !owner) return;
+      qmjPreview();
+      qmjOwner = { version, uid: owner.uid, opener: e.currentTarget };
+      $("qmjDialog").showModal();
+    };
+    $("openQmj").onclick = showQmj;
+    $("openQmjInline").onclick = showQmj;
+    $("closeQmj").onclick = () => $("qmjDialog").close();
+    $("printQmj").onclick = () => window.print();
+    $("qmjDialog").addEventListener("close", () => {
+      $("qmjPreview").replaceChildren();
+      if (qmjOwner?.version === version && qmjOwner.uid === owner?.uid)
+        qmjOwner.opener.focus();
+      qmjOwner = null;
+    });
     $("nextPair").onclick = () => {
       if (!current) return;
       pairCount = Math.min(pairCount + 1, current.material.pairWork.length);
@@ -373,10 +612,7 @@
       try {
         const d = privateStore.save(
           current.catalog.id,
-          {
-            homeworkText: $("personalHomework").value,
-            notes: $("personalNotes").value,
-          },
+          personalInput(),
           privateRevision,
         );
         privateRevision = d.revision;
@@ -402,6 +638,7 @@
         drawSlide();
         dialogOwner = { version: ticket, uid };
         $("presentationDialog").showModal();
+        $("slideBody").focus({ preventScroll: true });
       } catch (e) {
         if (ticket === version && e.name !== "AbortError")
           $("presentationStatus").textContent = e.message;
@@ -411,7 +648,13 @@
     };
     $("closePresentation").onclick = () => $("presentationDialog").close();
     $("presentationDialog").addEventListener("close", () => {
+      if (document.fullscreenElement === $("presentationScreen"))
+        document.exitFullscreen().catch(() => {});
+      $("presentationDialog").classList.remove("presentation-expanded");
+      $("fullscreenStatus").textContent = "";
+      fullscreenState();
       $("slideBody").replaceChildren();
+      $("slideSteps").replaceChildren();
       slides = null;
       if (
         dialogOwner?.version === version &&
@@ -421,18 +664,57 @@
         $("openPresentation").focus();
       dialogOwner = null;
     });
-    $("previousSlide").onclick = () => {
-      if (slides && slideIndex > 0) {
-        slideIndex--;
-        drawSlide();
-      }
+    $("previousSlide").onclick = () => changeSlide(-1);
+    $("nextSlide").onclick = () => changeSlide(1);
+    $("nextSlideStep").onclick = () => {
+      if (!slides) return;
+      slideStepCount = Math.min(
+        slideStepCount + 1,
+        (slides.slides[slideIndex].steps || []).length,
+      );
+      drawSlideSteps();
+      if ($("nextSlideStep").hidden)
+        $("slideBody").focus({ preventScroll: true });
     };
-    $("nextSlide").onclick = () => {
-      if (slides && slideIndex < slides.slides.length - 1) {
-        slideIndex++;
-        drawSlide();
+    $("fullscreenSlides").onclick = fullscreen;
+    document.addEventListener("fullscreenchange", fullscreenState);
+    $("presentationDialog").addEventListener("keydown", (e) => {
+      if (
+        !slides ||
+        e.altKey ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.target.matches("input,textarea,select")
+      )
+        return;
+      if (
+        [
+          "ArrowRight",
+          "PageDown",
+          "ArrowLeft",
+          "PageUp",
+          "Home",
+          "End",
+        ].includes(e.key)
+      ) {
+        e.preventDefault();
+        changeSlide(
+          e.key === "Home"
+            ? -slides.slides.length
+            : e.key === "End"
+              ? slides.slides.length
+              : ["ArrowRight", "PageDown"].includes(e.key)
+                ? 1
+                : -1,
+        );
+      } else if (e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        fullscreen();
+      } else if (e.key === " " && !e.target.closest("button,a,summary")) {
+        e.preventDefault();
+        $("nextSlideStep").click();
       }
-    };
+    });
     $("playVideo").onclick = () => {
       const video = current?.material.video;
       if (!owner || video?.publication !== "published") return;
@@ -480,7 +762,12 @@
         clearPrivate();
         closeDialogs();
         $("materialBody").hidden = true;
+        $("teacherControls").hidden = true;
+        $("lessonNavigation").hidden = true;
+        answersShown = false;
+        answerVisibility();
         $("materialTitle").textContent = "Сабақ материалы";
+        document.title = "Сабақ кеңістігі · iUSTAZ";
         $("materialContext").textContent = "";
         $("materialObjective").textContent = "";
         $("materialId").textContent = "";
