@@ -148,9 +148,13 @@
       text(x.video.title, 500);
     }
     for (const b of list(x.theory, 40)) {
-      record(b, ["kind", "text"]);
-      if (!["text", "formula"].includes(b.kind)) fail("Теория блогы белгісіз.");
+      record(b, ["kind", "text", "visual"]);
+      if (!["text", "formula", "visual", "heading"].includes(b.kind))
+        fail("Теория блогы белгісіз.");
       text(b.text);
+      if (b.kind === "visual") visual(b.visual);
+      else if (b.visual !== undefined)
+        fail("Көрнекілік блогының түрі сәйкес емес.");
     }
     for (const e of list(x.examples, 20)) {
       record(e, ["id", "title", "steps", "answer"]);
@@ -217,17 +221,14 @@
     if (x.slides.length < 10)
       fail("Ортақ презентация 10–15 слайдтан тұруы тиіс.");
     for (const s of x.slides) {
-      record(s, ["id", "title", "text", "formula", "diagram"]);
+      record(s, ["id", "title", "text", "formula", "diagram", "steps"]);
       key(s.id);
       text(s.title, 500);
       text(s.text);
       text(s.formula, 2000);
-      if (s.diagram !== null) {
-        record(s.diagram, ["kind", "parts", "filled"]);
-        if (s.diagram.kind !== "fraction-bar") fail("Сызба түрі белгісіз.");
-        integer(s.diagram.parts, 1, 20);
-        integer(s.diagram.filled, 0, s.diagram.parts);
-      }
+      if (s.diagram !== null) visual(s.diagram);
+      if (s.steps !== undefined)
+        list(s.steps, 8).forEach((step) => text(step, 1000));
     }
     if (new Set(x.slides.map((s) => s.id)).size !== x.slides.length)
       fail("Слайд ID қайталанды.");
@@ -241,6 +242,7 @@
       "homeworkText",
       "notes",
       "revision",
+      "textbook",
     ]);
     if (x.schemaVersion !== 1 || x.ownerId !== uid || x.lessonId !== lessonId)
       fail("Жеке деректің иесі немесе сабағы сәйкес емес.");
@@ -250,7 +252,44 @@
     text(x.homeworkText, 10000);
     text(x.notes, 10000);
     integer(x.revision, 0, 1000000000);
+    if (x.textbook !== undefined) {
+      record(x.textbook, ["paragraph", "exercise"]);
+      text(x.textbook.paragraph, 200);
+      text(x.textbook.exercise, 200);
+    }
     return clone(x);
+  }
+  function visual(x) {
+    if (x?.kind === "fraction-bar") {
+      record(x, ["kind", "parts", "filled"]);
+      integer(x.parts, 1, 20);
+      integer(x.filled, 0, x.parts);
+    } else if (x?.kind === "number-line") {
+      record(x, ["kind", "divisions", "marks"]);
+      integer(x.divisions, 2, 16);
+      for (const mark of list(x.marks, 8)) {
+        record(mark, ["tick", "label"]);
+        integer(mark.tick, 0, x.divisions);
+        text(mark.label, 80);
+      }
+    } else if (x?.kind === "coordinate-graph") {
+      record(x, ["kind", "maxX", "maxY", "points", "xLabel", "yLabel"]);
+      integer(x.maxX, 1, 20);
+      integer(x.maxY, 1, 20);
+      text(x.xLabel, 80);
+      text(x.yLabel, 80);
+      list(x.points, 20);
+      if (x.points.length < 2) fail("Графикке кемінде екі нүкте қажет.");
+      let previous = -1;
+      for (const point of x.points) {
+        record(point, ["x", "y"]);
+        integer(point.x, 0, x.maxX);
+        integer(point.y, 0, x.maxY);
+        if (point.x <= previous) fail("График нүктелерінің реті жарамсыз.");
+        previous = point.x;
+      }
+    } else fail("Сызба түрі белгісіз.");
+    return x;
   }
   const api = {
     identity,
@@ -263,6 +302,7 @@
     privateDoc,
     clone,
     key,
+    visual,
   };
   if (typeof module !== "undefined") module.exports = api;
   else root.LessonMaterialsModel = api;

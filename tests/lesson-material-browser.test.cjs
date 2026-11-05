@@ -64,6 +64,9 @@ test("presentation opens only on demand, respects ranges and reuses one 12-slide
   }
   assert.equal(await p.locator("#nextSlide").isDisabled(), true);
   await p.keyboard.press("Escape");
+  await p.waitForFunction(
+    () => document.activeElement.id === "openPresentation",
+  );
   assert.equal(
     await p
       .locator("#openPresentation")
@@ -259,6 +262,9 @@ for (const width of [320, 390, 768, 1440])
         ),
       );
       await p.keyboard.press("Escape");
+      await p.waitForFunction(
+        () => document.activeElement.id === "openPresentation",
+      );
       assert.equal(
         await p
           .locator("#openPresentation")
