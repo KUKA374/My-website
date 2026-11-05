@@ -1,5 +1,5 @@
 {
-  "firestore": { "rules": "../../security/lesson-materials-v1.rules" },
+  "firestore": { "rules": "lesson-materials-v1.rules" },
   "emulators": {
     "firestore": { "host": "127.0.0.1", "port": 8187 },
     "ui": { "enabled": false },

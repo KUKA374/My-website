@@ -13,7 +13,7 @@
 - [Тест нәтижелері және командалар](TESTING.md)
 - [Pull Request мәтіні](PULL_REQUEST.md)
 
-206 тест өтті. 7 Firestore emulator тесті желілік шектеуден орындалмады; серверлік сақтау
+208 жергілікті тест өтті. 7 Firestore emulator тесті желілік шектеуден орындалмады; серверлік сақтау
 іске қосылмаған. Демоны review жасауға болады, жаңа cloud қауіпсіздігін production-ға
 дайын деп санауға болмайды. Main-ға автоматты merge немесе жариялау рұқсаты жоқ.
 
@@ -35,7 +35,9 @@
 | Шағын индекс | `lesson-materials/index/6/math/q1.json` |
 | Ортақ презентация | `lesson-materials/presentations/fractions-review-v1.json` |
 | Белсенді емес rules кандидаты | `security/lesson-materials-v1.rules` |
-| Эмулятор конфигурациясы | `tests/emulator/firebase.json` |
+| Эмулятор конфигурациясы | `security/firebase.emulator.json` (бұрынғы tests/emulator орнына) |
+| CI қауіпсіздік қақпасы | `.github/workflows/stage-8a-security.yml`, `tests/run-lesson-security-qa.cjs`, `tests/security-ci/package.json`, `package-lock.json`, `.gitignore` |
+| Rules сақталу регрессиясы | `tests/lesson-material-security-contract.test.cjs` |
 | Автоматты тесттер | `tests/lesson-material-model.test.cjs`, `lesson-material-loader.test.cjs`, `lesson-material-browser.test.cjs`, `lesson-material-rules.test.cjs` |
 | Сақталу эталондары | `tests/fixtures/stage8a-preserved.json`, `stage8a-ktp-contexts.json` |
 | QA runner | `tests/run-lesson-material-qa.py` |

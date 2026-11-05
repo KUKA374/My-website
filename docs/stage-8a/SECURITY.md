@@ -44,16 +44,18 @@ pipeline толық `model.js` валидациясы мен педагогик�
 байланысты бұғатталды. **Rules компиляциясы мен серверлік рұқсаттар әлі расталған жоқ.**
 UI тесттері немесе мәтіндік ереже салыстыруы осы қақпаны алмастырмайды.
 
-Ресми құралдарды репозиторийден тыс орнату (Node 20+, Java 21):
+Бекітілген CI құралдарын орнату (Node >=24.12, осы workflow-да 24.19.0; Java 21):
 
 ```sh
-npm install --prefix /tmp/iustaz-8a-tools --ignore-scripts --no-audit --no-fund firebase-tools@15.35.0 @firebase/rules-unit-testing@6.0.0 firebase@13.2.0
-/tmp/iustaz-8a-tools/node_modules/.bin/firebase setup:emulators:firestore
-IUSTAZ_FIREBASE_TOOLS=/tmp/iustaz-8a-tools /tmp/iustaz-8a-tools/node_modules/.bin/firebase emulators:exec --config tests/emulator/firebase.json --project demo-iustaz-stage8a --only firestore 'node tests/lesson-material-rules.test.cjs'
+npm ci --prefix tests/security-ci --ignore-scripts --no-audit --no-fund
+node tests/lesson-material-security-contract.test.cjs
+IUSTAZ_FIREBASE_TOOLS="$PWD/tests/security-ci" tests/security-ci/node_modules/.bin/firebase emulators:exec --config security/firebase.emulator.json --project demo-iustaz-stage8a --only firestore 'node tests/run-lesson-security-qa.cjs'
 ```
 
 `demo-iustaz-stage8a` — тек тест namespace, production Firebase конфигурациясы емес.
-`tests/emulator/firebase.json` тек localhost:8187 эмуляторын көрсетеді. Тест тірі endpoint-ті қолданбайды.
+`security/firebase.emulator.json` тек localhost:8187 эмуляторын көрсетеді. Тест тірі endpoint-ті қолданбайды.
+Конфигурация кандидат rules-пен бір каталогта: CLI оны project directory сыртында деп қабылдамайды.
+Бұрынғы `tests/emulator/firebase.json` осы себеппен көшірілді. Production конфигурациясы өзгермеген.
 Тесттер UID/lesson оқшаулауы, бөгде UID/admin кіруі, revision/extra fields, role spoofing,
 draft/anonymous/student рұқсаттары, видео жариялау және ортақ презентация диапазонын тексереді.
 
@@ -61,3 +63,22 @@ draft/anonymous/student рұқсаттары, видео жариялау жән
 App Check/квота/логтау жоспары керек. Тек содан кейін әкімшілік бекітумен production deploy.
 Көшіру кезінде серверлік транзакция/revision бақылауы және published материалдың сабақ ID сәйкестігі
 gateway-де тексеріледі. Қазіргі браузерлік сабақ кітапханасы сол күйінде қалады.
+
+## PR #5 GitHub Actions қақпасы
+
+`.github/workflows/stage-8a-security.yml` main-ға бағытталған pull_request оқиғасында,
+draft PR үшін де, және workflow_dispatch арқылы орындалады. `pull_request_target` қолданылмайды.
+Тек `contents: read`; checkout credentials сақталмайды, Firebase/GCP secret, id-token, deploy,
+Pages немесе main-ға push қадамдары жоқ. Ресми actions өзгермейтін SHA-мен бекітілген.
+
+`tests/security-ci/package-lock.json` нақты dependency graph-ты бекітеді. `npm ci --ignore-scripts`
+таза орнатудан өтті; production application тәуелділігі қосылмайды. Қауіпсіздік тесттері әрқайсысы
+жаңа emulator деректерінен басталады. Бұрынғы users/lessonMaterials рөлдік матрицасы да тексеріледі.
+
+Runner тек `127.0.0.1:8187` қабылдайды; TAP-та дәл 7 pass, 0 fail/cancelled/skipped/todo болғанда
+ғана нөлдік exit code береді. Жалған skip пен толық орындалмаған жиынтық жасыл бола алмайды.
+Job summary, JSON/TAP және эмулятор диагностикасы artifact ретінде 7 күн сақталады.
+
+`Firestore emulator (7 security tests)` нақты жасыл нәтиже бермейінше merge дайындығы расталмайды.
+Репозиторий иесі осы status check-ті branch protection-да міндетті ете алады; бұл жұмыс branch
+protection баптауларын өзгертпейді. Жергілікті құрылымдық екі тест серверлік тесттерді алмастырмайды.

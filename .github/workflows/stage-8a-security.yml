@@ -1,0 +1,82 @@
+name: Stage 8A Firestore security
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - ".github/workflows/stage-8a-security.yml"
+      - "firestore.rules"
+      - "firebase-config.js"
+      - "security/**"
+      - "lesson-materials/**"
+      - "tests/emulator/**"
+      - "tests/security-ci/**"
+      - "tests/fixtures/stage8a-preserved.json"
+      - "tests/lesson-material-rules.test.cjs"
+      - "tests/lesson-material-security-contract.test.cjs"
+      - "tests/run-lesson-security-qa.cjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage-8a-security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  firestore-security:
+    name: Firestore emulator (7 security tests)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CI: "true"
+      IUSTAZ_FIREBASE_TOOLS: ${{ github.workspace }}/tests/security-ci
+      IUSTAZ_SECURITY_REPORT_DIR: ${{ github.workspace }}/.stage-8a-security-report
+    steps:
+      - name: Checkout PR without stored credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "24.19.0"
+          cache: npm
+          cache-dependency-path: tests/security-ci/package-lock.json
+      - name: Set up Java for the official emulator
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Install locked emulator tools without lifecycle scripts
+        run: npm ci --prefix tests/security-ci --ignore-scripts --no-audit --no-fund
+      - name: Verify production rules and legacy permissions are preserved
+        run: node tests/lesson-material-security-contract.test.cjs
+      - name: Run the seven actual Firestore security tests on localhost
+        run: >-
+          tests/security-ci/node_modules/.bin/firebase emulators:exec
+          --config security/firebase.emulator.json
+          --project demo-iustaz-stage8a --only firestore
+          'node tests/run-lesson-security-qa.cjs'
+      - name: Record job outcome
+        if: always()
+        env:
+          SECURITY_JOB_STATUS: ${{ job.status }}
+        run: |
+          mkdir -p "$IUSTAZ_SECURITY_REPORT_DIR"
+          printf 'Job status: %s\n' "$SECURITY_JOB_STATUS" > "$IUSTAZ_SECURITY_REPORT_DIR/job-status.txt"
+          printf '\nStage 8A security job: **%s**. No Firebase deployment was performed.\n' "$SECURITY_JOB_STATUS" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload test output and emulator diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: stage-8a-security-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            ${{ github.workspace }}/.stage-8a-security-report/
+            tests/emulator/*-debug.log
+            security/*-debug.log
+            *-debug.log

@@ -54,6 +54,15 @@ test("presentation opens only on demand, respects ranges and reuses one 12-slide
   assert.equal(await p.locator("#slideBody .katex").count(), 0);
   await p.locator("#nextSlide").click();
   assert.equal(await p.locator("#slideBody .katex").count(), 1);
+  for (let number = 3; number <= 8; number++) {
+    await p.locator("#nextSlide").click();
+    assert.match(
+      await p.locator("#slidePosition").textContent(),
+      new RegExp(`^${number} / 12`),
+    );
+    assert.ok((await p.locator("#slideBody").textContent()).trim().length > 0);
+  }
+  assert.equal(await p.locator("#nextSlide").isDisabled(), true);
   await p.keyboard.press("Escape");
   assert.equal(
     await p
@@ -72,7 +81,14 @@ test("presentation opens only on demand, respects ranges and reuses one 12-slide
   await p.locator("#openPresentation").click();
   await p.waitForSelector("#presentationDialog[open]");
   assert.match(await p.locator("#slidePosition").textContent(), /^9 \/ 12/);
-  for (let i = 0; i < 3; i++) await p.locator("#nextSlide").click();
+  for (let number = 10; number <= 12; number++) {
+    await p.locator("#nextSlide").click();
+    assert.match(
+      await p.locator("#slidePosition").textContent(),
+      new RegExp(`^${number} / 12`),
+    );
+    assert.ok((await p.locator("#slideBody").textContent()).trim().length > 0);
+  }
   assert.equal(await p.locator("#nextSlide").isDisabled(), true);
   assert.equal(
     await p.evaluate(

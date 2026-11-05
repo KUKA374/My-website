@@ -1,5 +1,5 @@
 /* Actual Firestore emulator tests. No mocks can satisfy this suite. */
-const { test, before, after } = require("node:test"),
+const { test, before, beforeEach, after } = require("node:test"),
   assert = require("node:assert/strict"),
   fs = require("node:fs"),
   { createRequire } = require("node:module"),
@@ -55,6 +55,9 @@ before(async () => {
       rules: fs.readFileSync("security/lesson-materials-v1.rules", "utf8"),
     },
   });
+});
+beforeEach(async () => {
+  await env.clearFirestore();
   await env.withSecurityRulesDisabled(async (c) => {
     const d = c.firestore();
     for (const [uid, role] of [
@@ -121,6 +124,7 @@ test("server isolates private homework by UID and lesson, including from admins"
 test("server rejects reassignment, extra shared fields, bad revision, unknown lesson and collection enumeration", async () => {
   const a = db("alice"),
     p = doc(a, "teacherLessonOverrides/alice/lessons", id);
+  await assertSucceeds(setDoc(p, personal("alice")));
   await assertFails(
     updateDoc(p, { ownerId: "bob", revision: 2, updatedAt: serverTimestamp() }),
   );
@@ -262,7 +266,46 @@ test("KTP registry and role profiles remain unwriteable, and legacy material per
     getDoc(doc(db("bob"), "teacherLessonOverrides/alice/lessons", id)),
   );
   await assertSucceeds(
+    setDoc(
+      doc(db("alice"), "teacherLessonOverrides/alice/lessons", id),
+      personal("alice"),
+    ),
+  );
+  await assertSucceeds(
     deleteDoc(doc(db("alice"), "teacherLessonOverrides/alice/lessons", id)),
+  );
+  // Check the old system's full role matrix under the candidate rules.
+  for (const uid of ["alice", "bob", "admin", "super", "student"]) {
+    await assertSucceeds(getDoc(doc(db(uid), "users", uid)));
+    await assertFails(
+      getDoc(doc(db(uid), "users", uid === "alice" ? "bob" : "alice")),
+    );
+    await assertFails(setDoc(doc(db(uid), "users", uid), { role: "admin" }));
+    const legacy = doc(db(uid), "lessonMaterials", "legacy-test");
+    if (uid === "student") await assertFails(getDoc(legacy));
+    else await assertSucceeds(getDoc(legacy));
+    if (["admin", "super"].includes(uid)) {
+      await assertSucceeds(updateDoc(legacy, { theory: uid }));
+      await assertSucceeds(deleteDoc(legacy));
+      await assertSucceeds(setDoc(legacy, { theory: "Legacy" }));
+    } else {
+      await assertFails(updateDoc(legacy, { theory: "Denied" }));
+      await assertFails(deleteDoc(legacy));
+    }
+    await assertFails(
+      setDoc(doc(db(uid), "unrecognizedNamespace", "document"), {
+        value: true,
+      }),
+    );
+  }
+  await assertFails(
+    getDoc(
+      doc(
+        env.unauthenticatedContext().firestore(),
+        "lessonMaterials",
+        "legacy-test",
+      ),
+    ),
   );
 });
 test("server validates video metadata and presentation bounds, and hides draft blocks", async () => {
