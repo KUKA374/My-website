@@ -41,21 +41,21 @@ test("one presentation serves both lessons and response clones prevent cache mut
   const first = await repo.load(ctx);
   first.material.theory[0].text = "changed";
   assert.notEqual((await repo.load(ctx)).material.theory[0].text, "changed");
-  const fifth = await repo.load({ ...ctx, number: "5" });
+  const fifth = await repo.load({ ...ctx, number: "8" });
   const a = await repo.slides(fifth.material.presentation);
-  const second = await repo.load({ ...ctx, number: "6" });
-  assert.equal(second.available, false);
-  assert.equal(second.material.theory.length, 0);
+  const second = await repo.load({ ...ctx, number: "9" });
+  assert.equal(second.available, true);
+  assert.ok(second.material.theory.length > 0);
   const b = await repo.slides(second.material.presentation);
   assert.equal(a.id, b.id);
   assert.equal(a.total, 12);
-  assert.equal(b.start, 10);
+  assert.equal(b.start, 3);
   assert.equal(b.end, 12);
   assert.equal(requests.filter((x) => x.includes("/presentations/")).length, 1);
 });
 test("missing content entry or quarter is an empty lesson, not fabricated material or a bulk fallback", async () => {
   const { repo, requests } = setup();
-  assert.equal((await repo.load({ ...ctx, number: "7" })).available, false);
+  assert.equal((await repo.load({ ...ctx, number: "11" })).available, false);
   assert.equal((await repo.load({ ...ctx, quarter: "2" })).available, false);
   assert.equal(
     requests.some((x) => /lesson-content|database|games.js/.test(x)),

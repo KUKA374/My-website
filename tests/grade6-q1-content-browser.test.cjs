@@ -146,8 +146,8 @@ test("the live canonical catalogue still matches all 39 original records includi
   });
   assert.deepEqual(rows, catalog);
 });
-test("unprepared lesson six has no content fetch or invented tasks, while its shared theory range remains explicit", async (t) => {
-  const p = await open(t, 6, 390);
+test("unprepared lesson eleven has no content fetch, invented tasks or presentation", async (t) => {
+  const p = await open(t, 11, 390);
   assert.equal(await p.locator("#materialPairs .material-task").count(), 0);
   assert.equal(await p.locator("#materialGroups .material-task").count(), 0);
   assert.match(
@@ -158,13 +158,11 @@ test("unprepared lesson six has no content fetch or invented tasks, while its sh
     await p.evaluate(() =>
       performance
         .getEntriesByType("resource")
-        .some((r) => r.name.endsWith("/content/6/math/q1/6.json")),
+        .some((r) => r.name.endsWith("/content/6/math/q1/11.json")),
     ),
     false,
   );
-  await p.locator("#openPresentation").click();
-  await p.waitForSelector("#presentationDialog[open]");
-  assert.match(await p.locator("#slidePosition").textContent(), /^10 \/ 12/);
+  assert.equal(await p.locator("#openPresentation").isVisible(), false);
 });
 test("all 72 new and retained slide formulas and diagrams render safely with the shared components", async (t) => {
   const p = await open(t, 1);

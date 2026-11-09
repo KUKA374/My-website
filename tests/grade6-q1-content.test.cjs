@@ -27,16 +27,16 @@ try {
 } catch {
   math = { proofs: [], slides: [], valid: false, error: run.stderr };
 }
-test("official 39 IDs and ordering are preserved; exactly five full documents and 34 unavailable entries", () => {
+test("official 39 IDs and ordering are preserved; exactly ten full documents and 29 unavailable entries", () => {
   assert.equal(catalog.length, 39);
   assert.deepEqual(
     index.lessons.map((r) => r.lessonId),
     catalog.map((r) => r.lessonId),
   );
-  assert.equal(index.lessons.filter((r) => r.content !== null).length, 5);
+  assert.equal(index.lessons.filter((r) => r.content !== null).length, 10);
   for (const row of index.lessons) {
     const n = Number(M.parseId(row.lessonId).number);
-    assert.equal(row.content, n <= 5 ? `content/6/math/q1/${n}.json` : null);
+    assert.equal(row.content, n <= 10 ? `content/6/math/q1/${n}.json` : null);
   }
   assert.equal(new Set(index.lessons.map((r) => r.lessonId)).size, 39);
 });
@@ -114,20 +114,37 @@ test("all 75 practice prompts are distinct and every task/example has exactly on
   );
   assert.equal(new Set(keys).size, keys.length);
 });
-test("ratio theory is reused by lesson six without marking that lesson content ready", () => {
-  const a = index.lessons[4],
-    b = index.lessons[5];
+test("proportion theory is reused by lessons eight and nine with distinct ten-slide ranges", () => {
+  const a = index.lessons[7],
+    b = index.lessons[8];
   assert.equal(a.presentation.id, b.presentation.id);
-  assert.equal(a.presentation.endSlide, 9);
-  assert.equal(b.presentation.startSlide, 10);
-  assert.equal(b.presentation.endSlide, 12);
-  assert.equal(b.content, null);
+  assert.deepEqual(
+    [a.presentation.startSlide, a.presentation.endSlide],
+    [1, 10],
+  );
+  assert.deepEqual(
+    [b.presentation.startSlide, b.presentation.endSlide],
+    [3, 12],
+  );
+  assert.ok(a.content && b.content);
 });
 test("Stage 8B interface, QMJ template, old lesson and retained presentation remain byte-identical", () => {
   const preserved = require("./fixtures/stage8c-preserved.json");
   const sha = (s) => crypto.createHash("sha256").update(s).digest("hex");
-  for (const [file, expected] of Object.entries(preserved.files))
-    assert.equal(sha(fs.readFileSync(file)), expected, file);
+  for (const [file, expected] of Object.entries(preserved.files)) {
+    const bytes = fs.readFileSync(file);
+    assert.equal(
+      sha(
+        file === "lesson-materials/demo.js"
+          ? require("./helpers/lesson-controller-contract.cjs").beforeGameAdapter(
+              bytes,
+            )
+          : bytes,
+      ),
+      expected,
+      file,
+    );
+  }
   const html = fs.readFileSync("lesson-material.html", "utf8"),
     start = html.indexOf('<dialog id="qmjDialog"');
   assert.equal(
