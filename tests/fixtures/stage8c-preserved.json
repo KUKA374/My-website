@@ -1,0 +1,16 @@
+{
+  "base": "f424ee323d31027d199821ac4677fcc106dcf634",
+  "files": {
+    "lesson-materials/qmj.js": "591e61e8863bd72f413375b36768f20642dbc5111c666de51cfc671757a88fd4",
+    "lesson-materials/demo.js": "9372b6207c5f36e0dbce0607b13a6333d216c538b3a4f7d8f4d204052aacd668",
+    "lesson-materials/demo.css": "d6e4ea5756189d62d494c5f37d0551f39fd56688035164e746131f3105cb290b",
+    "lesson-materials/private.js": "1c915c23a6fce7adc611b500603e06bc8cacbacaff065989762614b15619e4af",
+    "lesson-materials/loader.js": "6591fdfe31ede364c252f3008a61054847384bbb5b2c57eceaee2321e18dac77",
+    "lesson-materials/legacy.js": "a8e125fab92de0f7807b6ee3332ec2d9acebea60caf0f819efc3bcecd6f49f37",
+    "lesson-materials/ktp.js": "c8e544cedcfa23481a43ef9e5296ae141d95ca59fadaa34e82cee7eac68d7861",
+    "lesson.html": "67ec1db574ba6ea53c02d62936ab86d31a2d85e78feb97279c2622832f0a4742",
+    "ktp-6-q1.js": "fd5b7fe8e6ebae1dcda9bbfcdf2a3c92c5f1055dce7cc01c3a78754fc3f7e84a",
+    "lesson-materials/presentations/fractions-review-v1.json": "a16eb9caae4efc0355896a0d97cfeacde14d72badd79b9936d08d4214d211624"
+  },
+  "qmjHtmlSha256": "b33519cbbe217f0b0a32624c61990d5ce011310bd4ff40f163b61e7c71aed67f"
+}

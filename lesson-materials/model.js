@@ -288,6 +288,41 @@
         if (point.x <= previous) fail("График нүктелерінің реті жарамсыз.");
         previous = point.x;
       }
+    } else if (x?.kind === "venn") {
+      record(x, [
+        "kind",
+        "leftLabel",
+        "rightLabel",
+        "leftOnly",
+        "common",
+        "rightOnly",
+        "outside",
+      ]);
+      text(x.leftLabel, 20);
+      text(x.rightLabel, 20);
+      const elements = [];
+      for (const region of ["leftOnly", "common", "rightOnly", "outside"]) {
+        list(x[region], 4).forEach((value) => {
+          text(value, 8);
+          elements.push(value);
+        });
+      }
+      if (new Set(elements).size !== elements.length)
+        fail("Венн сызбасында элемент екі аймаққа жазылған.");
+    } else if (x?.kind === "bar-chart") {
+      record(x, ["kind", "max", "categories"]);
+      integer(x.max, 1, 1000);
+      list(x.categories, 6);
+      if (x.categories.length < 2) fail("Диаграммаға кемінде екі баған қажет.");
+      for (const category of x.categories) {
+        record(category, ["label", "value"]);
+        text(category.label, 12);
+        integer(category.value, 0, x.max);
+      }
+      if (
+        new Set(x.categories.map((c) => c.label)).size !== x.categories.length
+      )
+        fail("Диаграмма санаты қайталанды.");
     } else fail("Сызба түрі белгісіз.");
     return x;
   }
