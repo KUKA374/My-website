@@ -149,6 +149,7 @@
         node("p", selectedGame.rule),
         node("span", selectedGame.formats.join(" · "), "iu-badge"),
       );
+    if (current) LessonGames.describe(current, GameLearning, $("gameChoice"));
   }
   function personalInput() {
     return {
@@ -355,7 +356,7 @@
     const resources = node("ul");
     for (const r of material.qmj.resources) resources.append(node("li", r));
     $("materialQmj").append(resources);
-    const topic = [c.grade, c.subject, c.quarter, c.number].join("-");
+    const topic = LessonGames.key(material, c, GameLearning);
     $("chooseGame").replaceChildren();
     $("chooseGame").disabled = !GameLearning.lessons[topic];
     $("launchSelectedGame").hidden = !GameLearning.lessons[topic];

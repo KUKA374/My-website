@@ -1,0 +1,32 @@
+{
+  "base": "1d69d3a8edfd64d5fd2266ec45a5ab07b3d091ad",
+  "files": {
+    "lesson-materials/qmj.js": "591e61e8863bd72f413375b36768f20642dbc5111c666de51cfc671757a88fd4",
+    "lesson-materials/demo.css": "d6e4ea5756189d62d494c5f37d0551f39fd56688035164e746131f3105cb290b",
+    "lesson-materials/private.js": "1c915c23a6fce7adc611b500603e06bc8cacbacaff065989762614b15619e4af",
+    "lesson-materials/loader.js": "6591fdfe31ede364c252f3008a61054847384bbb5b2c57eceaee2321e18dac77",
+    "lesson-materials/ktp.js": "c8e544cedcfa23481a43ef9e5296ae141d95ca59fadaa34e82cee7eac68d7861",
+    "lesson-materials/legacy.js": "a8e125fab92de0f7807b6ee3332ec2d9acebea60caf0f819efc3bcecd6f49f37",
+    "lesson-materials/model.js": "96d3a526cb5a00ba9eb47892ddb28f0267978b36bb70357fa59e5f4f009c47c6",
+    "lesson-materials/visuals.js": "63eb7be3f9f643bc3ab5a4b540cec654cff80f13f8869168875355088375b0fe",
+    "ktp-6-q1.js": "fd5b7fe8e6ebae1dcda9bbfcdf2a3c92c5f1055dce7cc01c3a78754fc3f7e84a",
+    "firestore.rules": "b47c938c9ed6d99afff55797247ad46291089c43bcb6b3e87f2e9da7e62f856b",
+    "firebase-config.js": "142656447a68bbc020c06ff78261caef034547cac6938eb61e506d9a2047a37c",
+    "constructor-app.js": "c39a7f02f2697661d85a8d6c450f98b09973b2863f59076bc1865799a90df7ef",
+    "constructor-game-links.js": "3c7c5c76fc8865dd3a91b8580e9d946f42d915f38c0150b5585b775574a5e1a6",
+    "games-learning.js": "3c6ef7f397a50704c34c9a2eba886fcbc4f01550a016372be2cc80487bbac9ef",
+    "lesson-materials/content/6/math/q1/1.json": "364dcbf3221ed7d60b67ee2bfcb23ebe89b388b5918c4a86351814ab7efd448e",
+    "lesson-materials/content/6/math/q1/2.json": "496c185fe266aae545663686951ec7d89c30c18b7dbfd5aebee3ca60986cdaf1",
+    "lesson-materials/content/6/math/q1/3.json": "68c16612e829d27586bf22a8cc0b875a626f92af6802bae4eaa5853087ea2b0e",
+    "lesson-materials/content/6/math/q1/4.json": "e9a68c35c7cfed0d654e5d6d1708bdf1475d41abafaa59a11a15fc80b344efe9",
+    "lesson-materials/content/6/math/q1/5.json": "8420051fba0c225250dd7aef4d6b0d1578cdb0195ae3f79f313608f4cd13e986",
+    "lesson-materials/presentations/fractions-operations-v2.json": "9999f46699e4c233c7ef1b5cd605d29018ae8c7af6a94c578d563ae5fded6e29",
+    "lesson-materials/presentations/fractions-review-v1.json": "a16eb9caae4efc0355896a0d97cfeacde14d72badd79b9936d08d4214d211624",
+    "lesson-materials/presentations/decimal-operations-v1.json": "f622f619ca7391ea02305fcd25418e825dd830746aee6d845675e462476cfd39",
+    "lesson-materials/presentations/percent-charts-v1.json": "cff5b4cabcbfd3bbd1a3269a446c594bc5a14aae7cd0f8064cb089df1a683c8d",
+    "lesson-materials/presentations/sets-union-intersection-v1.json": "ca63d2911ca3c91fed62ef8fb6baa5a3a6a448d32d7231eeff7db1049b80e3c6",
+    "lesson-materials/presentations/ratios-percent-v1.json": "9d00b4522b4818682180309911d4e96e46b791a73c092e26dbb8f8a550cfd2e5"
+  },
+  "qmjHtmlSha256": "b33519cbbe217f0b0a32624c61990d5ce011310bd4ff40f163b61e7c71aed67f",
+  "controllerSha256": "9372b6207c5f36e0dbce0607b13a6333d216c538b3a4f7d8f4d204052aacd668"
+}

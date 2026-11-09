@@ -1,0 +1,1595 @@
+{
+  "proofs": [
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "example",
+      "id": "l6-e1",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "8",
+          "b": "12"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "example",
+      "id": "l6-e2",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "90",
+          "b": "150"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "example",
+      "id": "l6-e3",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "2/3",
+          "b": "5/6"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "example",
+      "id": "l6-e4",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "15",
+          "b": "10"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-p1",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "7",
+          "b": "11"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-p2",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "18",
+          "b": "30"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-p3",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": ".4",
+          "b": "1.2"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-g1",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "16",
+          "b": "24"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-g2",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "240",
+          "b": "160"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-g3",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "3/4",
+          "b": "1/2"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-g4",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "5",
+          "b": "8"
+        },
+        {
+          "op": "ratio",
+          "a": 5,
+          "b": 13
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-a1",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "4",
+          "b": "13"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-a2",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "21",
+          "b": "14"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-b1",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": ".6",
+          "b": "1.5"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-b2",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "35",
+          "b": "70"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-c1",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "5/8",
+          "b": "3/4"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-c2",
+      "parts": [
+        {
+          "op": "ratio",
+          "a": 180,
+          "b": 120
+        },
+        {
+          "op": "inverse",
+          "a": "180",
+          "b": "120"
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-h1",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "32",
+          "b": "56"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:6",
+      "kind": "task",
+      "id": "l6-h2",
+      "parts": [
+        {
+          "op": "inverse",
+          "a": "750",
+          "b": "250"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "example",
+      "id": "l7-e1",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "6",
+            "9",
+            "10",
+            "15"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "example",
+      "id": "l7-e2",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "7",
+            "10",
+            "14",
+            "25"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "example",
+      "id": "l7-e3",
+      "parts": [
+        {
+          "op": "scaled-ratio",
+          "a": "5",
+          "b": "8",
+          "factor": "3"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "example",
+      "id": "l7-e4",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            ".9",
+            "1.5",
+            "3",
+            "5"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-p1",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "8",
+            "12",
+            "14",
+            "21"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-p2",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "9",
+            "15",
+            "12",
+            "18"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-p3",
+      "parts": [
+        {
+          "op": "scaled-ratio",
+          "a": "2",
+          "b": "9",
+          "factor": "5"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-g1",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "12",
+            "16",
+            "21",
+            "28"
+          ]
+        },
+        {
+          "op": "number",
+          "expression": "12",
+          "format": "decimal"
+        },
+        {
+          "op": "number",
+          "expression": "28",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1} және {2}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-g2",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            ".6",
+            "1.4",
+            "9",
+            "21"
+          ]
+        },
+        {
+          "op": "number",
+          "expression": "1.4",
+          "format": "decimal"
+        },
+        {
+          "op": "number",
+          "expression": "9",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1} және {2}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-g3",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "600",
+            "4",
+            "1050",
+            "7"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-g4",
+      "parts": [
+        {
+          "op": "scaled-ratio",
+          "a": "3",
+          "b": "11",
+          "factor": "6"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-a1",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "5",
+            "20",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-a2",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "6",
+            "7",
+            "12",
+            "21"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-b1",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "15",
+            "35",
+            "9",
+            "21"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-b2",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            ".8",
+            "2",
+            "6",
+            "15"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-c1",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "2/5",
+            "3/10",
+            "8",
+            "6"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-c2",
+      "parts": [
+        {
+          "op": "scaled-ratio",
+          "a": "2",
+          "b": "3",
+          "factor": "45/(2+3)"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-h1",
+      "parts": [
+        {
+          "op": "valid-proportion",
+          "terms": [
+            "16",
+            "24",
+            "22",
+            "33"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:7",
+      "kind": "task",
+      "id": "l7-h2",
+      "parts": [
+        {
+          "op": "scaled-ratio",
+          "a": "7",
+          "b": "12",
+          "factor": "4"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "example",
+      "id": "l8-e1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x",
+            "15",
+            "4",
+            "5"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "example",
+      "id": "l8-e2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "14",
+            "x",
+            "7",
+            "9"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "example",
+      "id": "l8-e3",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            ".6",
+            "1.5",
+            "x",
+            "10"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "example",
+      "id": "l8-e4",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x+2",
+            "9",
+            "4",
+            "3"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-p1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x",
+            "18",
+            "5",
+            "6"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-p2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "20",
+            "x",
+            "4",
+            "7"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-p3",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "9",
+            "12",
+            "x",
+            "28"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-g1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "16",
+            "24",
+            "10",
+            "x"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-g2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            ".8",
+            "2",
+            "x",
+            "15"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-g3",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "3/4",
+            "1/2",
+            "x",
+            "8"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-g4",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x+3",
+            "12",
+            "5",
+            "4"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-a1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x",
+            "8",
+            "3",
+            "4"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-a2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "15",
+            "5",
+            "21",
+            "x"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-b1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "2.4",
+            "x",
+            ".6",
+            "2"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-b2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "5",
+            "8",
+            "3/4",
+            "x"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-c1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "2*x",
+            "21",
+            "4",
+            "7"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-c2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "18",
+            "x-1",
+            "6",
+            "5"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-h1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "7",
+            "9",
+            "28",
+            "x"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:8",
+      "kind": "task",
+      "id": "l8-h2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x+4",
+            "15",
+            "2",
+            "3"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "example",
+      "id": "l9-e1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "1020",
+            "6",
+            "x",
+            "9"
+          ]
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "example",
+      "id": "l9-e2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "42",
+            "x",
+            "35",
+            "100"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "example",
+      "id": "l9-e3",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "4.8",
+            "12",
+            "x",
+            "17"
+          ]
+        }
+      ],
+      "template": "{0} м",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "example",
+      "id": "l9-e4",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "3600",
+            "8",
+            "x",
+            "5"
+          ]
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-p1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "650",
+            "5",
+            "x",
+            "8"
+          ]
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-p2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "2.1",
+            "14",
+            "x",
+            "20"
+          ]
+        }
+      ],
+      "template": "{0} кг",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-p3",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "54",
+            "x",
+            "24",
+            "100"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-g1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "3150",
+            "7",
+            "x",
+            "4.5"
+          ]
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-g2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "72",
+            "x",
+            "40",
+            "100"
+          ]
+        },
+        {
+          "op": "number",
+          "expression": "72*100/40-72",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} л; {1} л",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-g3",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "6.3",
+            "9",
+            "x",
+            "16"
+          ]
+        }
+      ],
+      "template": "{0} л",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-g4",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x+5",
+            "18",
+            "7",
+            "6"
+          ]
+        },
+        {
+          "op": "number",
+          "expression": "18*7/6",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-a1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "540",
+            "3",
+            "x",
+            "7"
+          ]
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-a2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "x",
+            "80",
+            "15",
+            "100"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-b1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "96",
+            "8",
+            "x",
+            "14"
+          ]
+        }
+      ],
+      "template": "{0} бет",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-b2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "88",
+            "x",
+            "32",
+            "100"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-c1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "7.5*6/10+1.2",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} кг",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-c2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "2*x+1",
+            "14",
+            "3",
+            "2"
+          ]
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-h1",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "4560",
+            "12",
+            "x",
+            "9"
+          ]
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:9",
+      "kind": "task",
+      "id": "l9-h2",
+      "parts": [
+        {
+          "op": "proportion",
+          "terms": [
+            "63",
+            "x",
+            "28",
+            "100"
+          ]
+        },
+        {
+          "op": "number",
+          "expression": "63*100/28-63",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} км; {1} км",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "example",
+      "id": "l10-e1",
+      "parts": [
+        {
+          "op": "coefficient",
+          "rule": "7*x"
+        },
+        {
+          "op": "number",
+          "expression": "7*9",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "example",
+      "id": "l10-e2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "1500/2.5*4.2",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "example",
+      "id": "l10-e3",
+      "parts": [
+        {
+          "op": "direct",
+          "rule": "4*x+6"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "example",
+      "id": "l10-e4",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "72*2.5",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} км",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-p1",
+      "parts": [
+        {
+          "op": "coefficient",
+          "rule": "8*x"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-p2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "5*7.2",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-p3",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2100/3*5.5",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-g1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "54*1.5",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} км",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-g2",
+      "parts": [
+        {
+          "op": "coefficient",
+          "rule": "3*x"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-g3",
+      "parts": [
+        {
+          "op": "direct",
+          "rule": "200*x+300"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-g4",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "117/(52/4)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} минут",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-a1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "6*4",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-a2",
+      "parts": [
+        {
+          "op": "direct",
+          "rule": "9*x+4"
+        }
+      ],
+      "template": "{0}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-b1",
+      "parts": [
+        {
+          "op": "coefficient",
+          "rule": "3.75*x"
+        },
+        {
+          "op": "number",
+          "expression": "30/8*12",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-b2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "2240/1.6*3.25",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-c1",
+      "parts": [
+        {
+          "op": "linear-equation",
+          "left": "3*x",
+          "right": "x+8"
+        }
+      ],
+      "template": "{0} минут; бірінші",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-c2",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "7.25/(4.5/18)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} минут",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-h1",
+      "parts": [
+        {
+          "op": "number",
+          "expression": "1920/2.4*3.75",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0} теңге",
+      "equations": []
+    },
+    {
+      "lessonId": "ktp1:6:math:1:10",
+      "kind": "task",
+      "id": "l10-h2",
+      "parts": [
+        {
+          "op": "coefficient",
+          "rule": "4.5*x"
+        },
+        {
+          "op": "number",
+          "expression": "54/(27/6)",
+          "format": "decimal"
+        }
+      ],
+      "template": "{0}; {1}",
+      "equations": []
+    }
+  ]
+}

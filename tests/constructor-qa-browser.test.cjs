@@ -35,6 +35,11 @@ test("F: keyboard stage/game selectors and section navigation retain usable focu
   await p.locator('.section-nav a[href="#stagesSection"]').focus();
   await p.keyboard.press("Enter");
   assert.equal(await p.locator("#editorPanel").isVisible(), true);
+  // Section navigation focuses its target in setTimeout(..., 0).
+  // Wait for that observable result rather than racing the next event-loop task.
+  await p.waitForFunction(
+    () => document.activeElement.id === "stagesSection",
+  );
   assert.equal(
     await p.evaluate(() => document.activeElement.id),
     "stagesSection",

@@ -48,32 +48,48 @@
     },
     {
       "lessonId": "ktp1:6:math:1:6",
-      "content": null,
+      "content": "content/6/math/q1/6.json",
       "presentation": {
-        "id": "ratios-percent-v1",
-        "startSlide": 10,
+        "id": "inverse-ratios-v1",
+        "startSlide": 1,
         "endSlide": 12
       }
     },
     {
       "lessonId": "ktp1:6:math:1:7",
-      "content": null,
-      "presentation": null
+      "content": "content/6/math/q1/7.json",
+      "presentation": {
+        "id": "proportion-definition-v1",
+        "startSlide": 1,
+        "endSlide": 12
+      }
     },
     {
       "lessonId": "ktp1:6:math:1:8",
-      "content": null,
-      "presentation": null
+      "content": "content/6/math/q1/8.json",
+      "presentation": {
+        "id": "proportion-properties-v1",
+        "startSlide": 1,
+        "endSlide": 10
+      }
     },
     {
       "lessonId": "ktp1:6:math:1:9",
-      "content": null,
-      "presentation": null
+      "content": "content/6/math/q1/9.json",
+      "presentation": {
+        "id": "proportion-properties-v1",
+        "startSlide": 3,
+        "endSlide": 12
+      }
     },
     {
       "lessonId": "ktp1:6:math:1:10",
-      "content": null,
-      "presentation": null
+      "content": "content/6/math/q1/10.json",
+      "presentation": {
+        "id": "direct-proportionality-v1",
+        "startSlide": 1,
+        "endSlide": 12
+      }
     },
     {
       "lessonId": "ktp1:6:math:1:11",

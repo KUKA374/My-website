@@ -46,16 +46,16 @@ test("initial real HTTP loads one material, one small index and zero slide/video
     "games.html",
   );
 });
-test("presentation opens only on demand, respects ranges and reuses the ratio block for lessons five and six", async (t) => {
+test("presentation opens only on demand, respects ranges and reuses the proportion block for lessons eight and nine", async (t) => {
   const p = await demo(t);
   await p.goto(
     new URL(
-      "lesson-material.html?class=6&subject=math&quarter=1&lesson=5",
+      "lesson-material.html?class=6&subject=math&quarter=1&lesson=8",
       p.url(),
     ).href,
   );
   await p.waitForFunction(
-    () => LessonMaterialDemo.currentId() === "ktp1:6:math:1:5",
+    () => LessonMaterialDemo.currentId() === "ktp1:6:math:1:8",
   );
   await p.locator("#openPresentation").click();
   await p.waitForSelector("#presentationDialog[open]");
@@ -63,7 +63,7 @@ test("presentation opens only on demand, respects ranges and reuses the ratio bl
   assert.equal(await p.locator("#slideBody .katex").count(), 1);
   await p.locator("#nextSlide").click();
   assert.equal(await p.locator("#slideBody .katex").count(), 1);
-  for (let number = 3; number <= 9; number++) {
+  for (let number = 3; number <= 10; number++) {
     await p.locator("#nextSlide").click();
     assert.match(
       await p.locator("#slidePosition").textContent(),
@@ -84,16 +84,12 @@ test("presentation opens only on demand, respects ranges and reuses the ratio bl
   );
   await p.locator("#nextLesson").click();
   await p.waitForFunction(
-    () => LessonMaterialDemo.currentId() === "ktp1:6:math:1:6",
-  );
-  assert.match(
-    await p.locator("#materialStatus").textContent(),
-    /бос бөлімдер қате емес/,
+    () => LessonMaterialDemo.currentId() === "ktp1:6:math:1:9",
   );
   await p.locator("#openPresentation").click();
   await p.waitForSelector("#presentationDialog[open]");
-  assert.match(await p.locator("#slidePosition").textContent(), /^10 \/ 12/);
-  for (let number = 11; number <= 12; number++) {
+  assert.match(await p.locator("#slidePosition").textContent(), /^3 \/ 12/);
+  for (let number = 4; number <= 12; number++) {
     await p.locator("#nextSlide").click();
     assert.match(
       await p.locator("#slidePosition").textContent(),
@@ -107,7 +103,7 @@ test("presentation opens only on demand, respects ranges and reuses the ratio bl
       () =>
         performance
           .getEntriesByType("resource")
-          .filter((r) => r.name.endsWith("ratios-percent-v1.json")).length,
+          .filter((r) => r.name.endsWith("proportion-properties-v1.json")).length,
     ),
     1,
   );
