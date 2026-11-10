@@ -1,0 +1,17 @@
+{
+  "name": "iustaz-ai-lesson-lab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Admin-only server-side Gemini lesson draft experiment; no Firebase writes or publishing",
+  "engines": {
+    "node": ">=24.19.0 <25"
+  },
+  "scripts": {
+    "start": "node index.cjs",
+    "demo": "node demo.cjs",
+    "test": "node ../../tests/ai-lessons.test.cjs"
+  },
+  "dependencies": {
+    "firebase-admin": "14.5.0"
+  }
+}

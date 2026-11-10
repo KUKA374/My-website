@@ -1,0 +1,90 @@
+.ai-lab[hidden],
+.ai-lab [hidden] {
+  display: none !important;
+}
+.ai-lab {
+  border: 2px solid #d8c9fb;
+}
+.ai-lab .ai-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.ai-lab button {
+  min-height: 44px;
+}
+.ai-lab .ai-state {
+  padding: 12px;
+  border-radius: 10px;
+  background: #f6f2ff;
+  overflow-wrap: anywhere;
+}
+.ai-lab .ai-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 10px;
+}
+.ai-lab .ai-stats div {
+  border: 1px solid #e6e0ef;
+  border-radius: 10px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+.ai-lab .ai-stats strong {
+  display: block;
+}
+.ai-lab .ai-content {
+  overflow-wrap: anywhere;
+}
+.ai-lab details {
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid #e0d7ed;
+  border-radius: 12px;
+}
+.ai-lab summary {
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 32px;
+}
+.ai-lab .ai-task {
+  padding: 12px;
+  margin: 10px 0;
+  border-left: 3px solid #8251c8;
+  background: #faf8fd;
+}
+.ai-lab .ai-slide {
+  background: #f8f4ff;
+  padding: 20px;
+  border-radius: 12px;
+}
+.ai-lab pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+}
+.ai-lab table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ai-lab td,
+.ai-lab th {
+  padding: 8px;
+  border: 1px solid #ddd;
+  vertical-align: top;
+}
+.ai-lab .ai-table {
+  overflow-x: auto;
+}
+.ai-lab :focus-visible,
+#aiOpenLab:focus-visible {
+  outline: 3px solid #7040b1;
+  outline-offset: 3px;
+}
+.ai-lab .ai-slide .katex {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 4px 0;
+}
